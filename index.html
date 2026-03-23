@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Martinique – Île aux Fleurs</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ======= NAVIGATION ======= -->
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="#" class="nav-logo">
+        <span class="logo-flower">✿</span>
+        <span class="logo-text">Martinique</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#destinations">Destinations</a>
+        <a href="#experiences">Expériences</a>
+        <a href="#culture">Culture</a>
+        <a href="#contact" class="btn-nav">Planifier mon voyage</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ======= HERO ======= -->
+  <section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-label">Bienvenue en Martinique</p>
+      <h1 class="hero-title">L'Île aux Fleurs<br />vous invite</h1>
+      <p class="hero-sub">Là où la mer turquoise rencontre la forêt tropicale,<br />où chaque coucher de soleil est une fête des couleurs.</p>
+      <div class="hero-actions">
+        <a href="#destinations" class="btn btn-primary madras-hover">Explorer les destinations</a>
+        <a href="#experiences" class="btn btn-ghost">Voir les expériences</a>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <span>Découvrir</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ======= INTRO BAND ======= -->
+  <section class="intro-band">
+    <div class="intro-band-inner">
+      <div class="intro-stat">
+        <strong>1 100 km²</strong>
+        <span>de paysages à couper le souffle</span>
+      </div>
+      <div class="intro-divider"></div>
+      <div class="intro-stat">
+        <strong>34</strong>
+        <span>communes à explorer</span>
+      </div>
+      <div class="intro-divider"></div>
+      <div class="intro-stat">
+        <strong>365 jours</strong>
+        <span>de lumière caraïbe</span>
+      </div>
+      <div class="intro-divider"></div>
+      <div class="intro-stat">
+        <strong>100 %</strong>
+        <span>d'authenticité créole</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= DESTINATIONS ======= -->
+  <section class="section destinations" id="destinations">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Nos incontournables</span>
+        <h2 class="section-title">Des paysages pour tous les regards</h2>
+        <p class="section-sub">De la montagne Pelée aux anses de sable blanc, la Martinique est un tableau vivant.</p>
+      </div>
+      <div class="cards-grid">
+
+        <article class="card card--tall">
+          <div class="card-img card-img--nord"></div>
+          <div class="card-body">
+            <span class="card-tag">Forêt tropicale</span>
+            <h3 class="card-title">Le Nord sauvage</h3>
+            <p class="card-desc">Montagne Pelée, forêt de la Caravelle, rivières secrètes… Un nord verdoyant et mystérieux.</p>
+            <a href="#" class="card-link">Découvrir <span>→</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-img card-img--plage"></div>
+          <div class="card-body">
+            <span class="card-tag">Plages</span>
+            <h3 class="card-title">Les Salines & Anse Cafard</h3>
+            <p class="card-desc">Les plus belles plages des Caraïbes à portée de main, entre sable doré et eaux cristallines.</p>
+            <a href="#" class="card-link">Découvrir <span>→</span></a>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-img card-img--ville"></div>
+          <div class="card-body">
+            <span class="card-tag">Culture</span>
+            <h3 class="card-title">Fort-de-France</h3>
+            <p class="card-desc">La capitale vibrante, ses marchés colorés, sa bibliothèque Schœlcher et son âme créole.</p>
+            <a href="#" class="card-link">Découvrir <span>→</span></a>
+          </div>
+        </article>
+
+        <article class="card card--wide">
+          <div class="card-img card-img--mer"></div>
+          <div class="card-body">
+            <span class="card-tag">Mer & Lagon</span>
+            <h3 class="card-title">La côte Atlantique</h3>
+            <p class="card-desc">Vents de voyage, rouleaux de surf, fonds marins multicolores — une côte pour tous les aventuriers.</p>
+            <a href="#" class="card-link">Découvrir <span>→</span></a>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= EXPERIENCES ======= -->
+  <section class="section experiences" id="experiences">
+    <div class="container">
+      <div class="section-header section-header--light">
+        <span class="section-label">Vivez l'instant</span>
+        <h2 class="section-title">Des expériences inoubliables</h2>
+      </div>
+      <div class="experiences-grid">
+
+        <div class="exp-card">
+          <div class="exp-icon">🌺</div>
+          <h3>Jardin de Balata</h3>
+          <p>Promenez-vous dans ce jardin suspendu entre ciel et tropiques, parmi 3 000 espèces végétales.</p>
+        </div>
+
+        <div class="exp-card">
+          <div class="exp-icon">🥃</div>
+          <h3>Route des Rhums</h3>
+          <p>Visitez les distilleries AOC, découvrez le rhum agricole et ses arômes uniques au monde.</p>
+        </div>
+
+        <div class="exp-card">
+          <div class="exp-icon">🐢</div>
+          <h3>Plongée & Snorkeling</h3>
+          <p>Explorez les récifs coralliens, nager avec des tortues marines dans des eaux d'un bleu absolu.</p>
+        </div>
+
+        <div class="exp-card">
+          <div class="exp-icon">🥘</div>
+          <h3>Gastronomie créole</h3>
+          <p>Colombo, accras de morue, blaff de poisson — une cuisine métissée aux saveurs explosives.</p>
+        </div>
+
+        <div class="exp-card">
+          <div class="exp-icon">🥁</div>
+          <h3>Carnaval & Musique</h3>
+          <p>Zouk, biguine, gwoka — la Martinique danse. Le carnaval transforme l'île en explosion de joie.</p>
+        </div>
+
+        <div class="exp-card">
+          <div class="exp-icon">🏄</div>
+          <h3>Sports Nautiques</h3>
+          <p>Kitesurf, kayak, voile — les vents des alizés font de la Martinique un paradis des sports de mer.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= CULTURE BANNER ======= -->
+  <section class="culture-banner" id="culture">
+    <div class="culture-madras-stripe"></div>
+    <div class="container culture-inner">
+      <div class="culture-text">
+        <span class="section-label section-label--light">Identité créole</span>
+        <h2>La Martinique, une île qui porte son âme en couleurs</h2>
+        <p>Le madras — ce tissu aux carreaux solaires — habille l'île depuis des siècles. Il est la fierté, la fête, l'identité. Vous le retrouverez sur les marchés, dans les fêtes, dans l'art… et dans chaque détail de votre voyage.</p>
+        <a href="#contact" class="btn btn-primary madras-hover">Préparer mon séjour</a>
+      </div>
+      <div class="culture-visual">
+        <div class="madras-block">
+          <div class="madras-pattern"></div>
+          <div class="madras-caption">Le Madras — tissu emblématique de la culture créole</div>
+        </div>
+      </div>
+    </div>
+    <div class="culture-madras-stripe"></div>
+  </section>
+
+  <!-- ======= TÉMOIGNAGES ======= -->
+  <section class="section testimonials">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Ils l'ont vécu</span>
+        <h2 class="section-title">Des voyageurs comblés</h2>
+      </div>
+      <div class="testimonials-grid">
+
+        <div class="testimonial">
+          <p class="testimonial-text">« Une île d'une richesse incroyable. La gentillesse des habitants, la beauté des paysages et la cuisine… Je reviendrai sans hésiter. »</p>
+          <div class="testimonial-author">
+            <div class="author-avatar avatar-1"></div>
+            <div>
+              <strong>Sophie M.</strong>
+              <span>Paris, France</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial testimonial--accent">
+          <p class="testimonial-text">« Le carnaval de Martinique est une expérience hors du commun. Les couleurs, la musique, l'énergie — c'est magique ! »</p>
+          <div class="testimonial-author">
+            <div class="author-avatar avatar-2"></div>
+            <div>
+              <strong>Julien B.</strong>
+              <span>Lyon, France</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial">
+          <p class="testimonial-text">« Les fonds marins sont à couper le souffle. J'ai nagé avec des tortues aux Salines — un souvenir gravé à jamais. »</p>
+          <div class="testimonial-author">
+            <div class="author-avatar avatar-3"></div>
+            <div>
+              <strong>Amara D.</strong>
+              <span>Montréal, Canada</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= CTA / CONTACT ======= -->
+  <section class="cta-section" id="contact">
+    <div class="cta-bg"></div>
+    <div class="container cta-inner">
+      <h2 class="cta-title">Prêt à vivre la Martinique ?</h2>
+      <p class="cta-sub">Planifiez votre voyage idéal avec nos experts locaux. Séjours sur-mesure, hébergements authentiques et expériences exclusives.</p>
+      <form class="cta-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Votre prénom</label>
+            <input type="text" id="name" placeholder="Ex. : Marie" autocomplete="given-name" />
+          </div>
+          <div class="form-group">
+            <label for="email">Votre e-mail</label>
+            <input type="email" id="email" placeholder="marie@exemple.fr" autocomplete="email" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="dates">Dates envisagées</label>
+          <input type="text" id="dates" placeholder="Ex. : Juillet 2025, 2 semaines" />
+        </div>
+        <div class="form-group">
+          <label for="message">Votre projet de voyage</label>
+          <textarea id="message" rows="4" placeholder="Dites-nous en plus sur vos envies…"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-large madras-hover">
+          Envoyer ma demande
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ======= FOOTER ======= -->
+  <footer class="footer">
+    <div class="footer-madras-band"></div>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo">
+          <span class="logo-flower">✿</span>
+          <span class="logo-text">Martinique</span>
+        </a>
+        <p>L'île aux fleurs vous attend, entre Caraïbe et Atlantique, entre nature et culture.</p>
+        <div class="footer-socials">
+          <a href="#" aria-label="Facebook">f</a>
+          <a href="#" aria-label="Instagram">ig</a>
+          <a href="#" aria-label="YouTube">▶</a>
+        </div>
+      </div>
+      <div class="footer-links">
+        <h4>Explorer</h4>
+        <ul>
+          <li><a href="#destinations">Destinations</a></li>
+          <li><a href="#experiences">Expériences</a></li>
+          <li><a href="#culture">Culture créole</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Pratique</h4>
+        <ul>
+          <li><a href="#">Vols & Hébergements</a></li>
+          <li><a href="#">Carte de la Martinique</a></li>
+          <li><a href="#">Météo & Saisons</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Légal</h4>
+        <ul>
+          <li><a href="#">Mentions légales</a></li>
+          <li><a href="#">Politique de confidentialité</a></li>
+          <li><a href="#">Conditions d'utilisation</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Martinique – Île aux Fleurs. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
