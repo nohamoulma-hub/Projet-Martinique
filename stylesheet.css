@@ -1,5 +1,5 @@
 /* madras colors */
-:root {
+    :root {
         --rouge:   #C8392B;
         --jaune:   #F0B429;
         --vert:    #1D7A4E;
@@ -23,7 +23,7 @@
         --rayon: 4px;
     }
 
- /* Reset & base */
+/* Reset & base */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
@@ -45,7 +45,7 @@
       );
     }
 
-  /* Navbar */
+/* Navbar */
     nav {
         position: fixed; /* It remains fixed during scrolling */
         top: 6px;
@@ -62,7 +62,7 @@
     }
     .navigation-logo {
         font-family: var(--font-titre);
-        font-size: 22px;
+        font-size: 24px;
         color: var(--jaune);
         letter-spacing: -0.5px;
         text-decoration: none;
@@ -76,7 +76,7 @@
     }
     .navigation-link {
         display: flex;
-        gap: 32px;
+        gap: 25px;
         list-style: none;
     }
     .navigation-link a {
@@ -100,3 +100,21 @@
         transition: background .2s !important;
     }
     .travel-button:hover { background: #a52d20 !important; color: white !important; }
+
+/* Hero */
+    .hero {
+        position: relative;
+        height: 100vh; /* use all screen height */
+        min-height: 600px; /* security for little screen */
+        display: flex;
+        align-items: flex-end; /* push all content at the end */
+        overflow: hidden;
+    }
+    .hero-background {
+        position: absolute;
+        inset: 0; /* = top: 0; right: 0; bottom: 0; left: 0 */
+        background:
+            linear-gradient(to bottom, rgba(13,31,45,0.15) 0%, rgba(13,31,45,0.7) 100%),
+            linear-gradient(135deg, #0D4F6C 0%, #1A7A5E 35%, #2D6A3F 60%, #0D3B5E 100%);
+        
+    }
