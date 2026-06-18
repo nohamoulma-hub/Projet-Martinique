@@ -1,0 +1,142 @@
+/* madras colors */
+    :root {
+        --rouge:   #C8392B;
+        --jaune:   #F0B429;
+        --vert:    #1D7A4E;
+        --bleu:    #1A5C8A;
+        --sable:   #F5EDD8;
+        --nuit:    #0D1F2D;
+        --blanc:   #FEFCF7;
+        --texte:   #1A1208;
+        --doux:    #6B5B45;
+
+        --madras-stripe: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 6px,
+            rgba(200,57,43,0.18) 6px,
+            rgba(200,57,43,0.18) 7px
+    );
+
+        --font-titre: 'Playfair Display', Georgia, serif;
+        --font-corps: 'DM Sans', sans-serif;
+        --rayon: 4px;
+    }
+
+/* Reset & base */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+        font-family: var(--font-corps);
+        background: var(--blanc);
+        color: var(--texte);
+        overflow-x: hidden;
+    }
+
+/* bar de chargement décorative madras */
+.madras-bar {
+      height: 6px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--rouge) 0px, var(--rouge) 18px,
+        var(--jaune) 18px, var(--jaune) 36px,
+        var(--vert) 36px, var(--vert) 54px,
+        var(--bleu) 54px, var(--bleu) 72px
+      );
+    }
+
+/* Navbar */
+    nav {
+        position: fixed; /* It remains fixed during scrolling */
+        top: 6px;
+        left: 0; right: 0;
+        z-index: 100; /* remains as an "overlay" */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 40px;
+        height: 64px;
+        background: rgba(13, 31, 45, 0.92);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(240,180,41,0.15);
+    }
+    .navigation-logo {
+        font-family: var(--font-titre);
+        font-size: 24px;
+        color: var(--jaune);
+        letter-spacing: -0.5px;
+        text-decoration: none;
+    }
+    .navigation-logo span {
+        color: rgba(240,180,41,0.45);
+        font-style: italic;
+        font-weight: 400;
+        font-size: 16px;
+        margin-left: 6px;
+    }
+    .navigation-link {
+        display: flex;
+        gap: 25px;
+        list-style: none;
+    }
+    .navigation-link a {
+        color: rgba(255,255,255,0.75);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 400;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        transition: color .2s;
+    }
+    .navigation-link a:hover {color: var(--jaune);} /* text highlighted when the cursor is over */
+    .travel-button {
+        background: var(--rouge);
+        color: white !important;
+        padding: 8px, 18px;
+        border-radius: var(--rayon);
+        font-weight: 500 !important;
+        text-transform: none !important;
+        letter-spacing: 0 !important;
+        transition: background .2s !important;
+    }
+    .travel-button:hover { background: #a52d20 !important; color: white !important; }
+
+/* Hero */
+    .hero {
+        position: relative;
+        height: 100vh; /* use all screen height */
+        min-height: 600px; /* security for little screen */
+        display: flex;
+        align-items: flex-end; /* push all content at the end */
+        overflow: hidden;
+    }
+    .hero-background {
+        position: absolute;
+        inset: 0; /* = top: 0; right: 0; bottom: 0; left: 0 */
+        background:
+            linear-gradient(to bottom, rgba(13,31,45,0.15) 0%, rgba(13,31,45,0.7) 100%),
+            linear-gradient(135deg, #0D4F6C 0%, #1A7A5E 35%, #2D6A3F 60%, #0D3B5E 100%);
+
+    }
+    .hero-content {
+        position: relative;
+        z-index: auto;
+        padding: 0 8% 100px;
+        max-width: 760px;
+    }
+    .hero-label {
+        font-family: var(--font-corps);
+        font-size: 11px;
+        color: var(--jaune);
+        letter-spacing: 3px;
+        margin-bottom: 16px; /* marge between label and title */
+        opacity: 0;
+        animation: fadeUp .8s .3s forwards;
+    }
+    .hero-title {
+        font-family: var(--font-titre);
+    }
+    @keyframes fadeUp {
+        from {opacity: 0; transform: translateY(20px);}
+        to {opacity: 1; transform: translateY(0);}
+    }

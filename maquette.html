@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Martinique — L'Île aux Fleurs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ─── Variables — palette madras & créole ─── */
+    :root {
+      --rouge:   #C8392B;
+      --jaune:   #F0B429;
+      --vert:    #1D7A4E;
+      --bleu:    #1A5C8A;
+      --sable:   #F5EDD8;
+      --nuit:    #0D1F2D;
+      --blanc:   #FEFCF7;
+      --texte:   #1A1208;
+      --doux:    #6B5B45;
+
+      --madras-stripe: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 6px,
+        rgba(200,57,43,0.18) 6px,
+        rgba(200,57,43,0.18) 7px
+      );
+
+      --font-titre: 'Playfair Display', Georgia, serif;
+      --font-corps: 'DM Sans', sans-serif;
+      --rayon: 4px;
+    }
+
+    /* ─── Reset & base ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-corps);
+      background: var(--blanc);
+      color: var(--texte);
+      overflow-x: hidden;
+    }
+
+    /* ─── Barre de chargement décorative (madras) ─── */
+    .madras-bar {
+      height: 6px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--rouge) 0px, var(--rouge) 18px,
+        var(--jaune) 18px, var(--jaune) 36px,
+        var(--vert) 36px, var(--vert) 54px,
+        var(--bleu) 54px, var(--bleu) 72px
+      );
+    }
+
+    /* ─── Navbar ─── */
+    nav {
+      position: fixed;
+      top: 6px;
+      left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 64px;
+      background: rgba(13, 31, 45, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(240,180,41,0.15);
+    }
+    .nav-logo {
+      font-family: var(--font-titre);
+      font-size: 22px;
+      color: var(--jaune);
+      letter-spacing: -0.5px;
+      text-decoration: none;
+    }
+    .nav-logo span {
+      color: rgba(240,180,41,0.45);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 16px;
+      margin-left: 6px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--jaune); }
+    .nav-cta {
+      background: var(--rouge);
+      color: white !important;
+      padding: 8px 18px;
+      border-radius: var(--rayon);
+      font-weight: 500 !important;
+      text-transform: none !important;
+      letter-spacing: 0 !important;
+      transition: background .2s !important;
+    }
+    .nav-cta:hover { background: #a52d20 !important; color: white !important; }
+
+    /* ─── Hero ─── */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(13,31,45,0.15) 0%, rgba(13,31,45,0.7) 100%),
+        linear-gradient(135deg, #0D4F6C 0%, #1A7A5E 35%, #2D6A3F 60%, #0D3B5E 100%);
+    }
+    /* Effet soleil couchant stylisé */
+    .hero-sun {
+      position: absolute;
+      right: 12%;
+      top: 22%;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--jaune) 30%, rgba(240,100,41,0.6) 65%, transparent 100%);
+      opacity: 0.75;
+      animation: sunPulse 6s ease-in-out infinite;
+    }
+    @keyframes sunPulse {
+      0%, 100% { transform: scale(1); opacity: 0.75; }
+      50% { transform: scale(1.05); opacity: 0.85; }
+    }
+    /* Vague décorative */
+    .hero-wave {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+    }
+    .hero-wave svg { display: block; width: 100%; }
+
+    /* Motif madras en overlay subtil */
+    .hero-madras {
+      position: absolute;
+      inset: 0;
+      background: var(--madras-stripe);
+      opacity: 0.06;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 8% 100px;
+      max-width: 760px;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-corps);
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--jaune);
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: fadeUp .8s .3s forwards;
+    }
+    .hero-titre {
+      font-family: var(--font-titre);
+      font-size: clamp(44px, 7vw, 82px);
+      line-height: 1.05;
+      color: var(--blanc);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp .8s .5s forwards;
+    }
+    .hero-titre em {
+      color: var(--jaune);
+      font-style: italic;
+    }
+    .hero-sous {
+      font-size: 17px;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.6;
+      max-width: 500px;
+      margin-bottom: 36px;
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeUp .8s .7s forwards;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp .8s .9s forwards;
+    }
+    .btn-primaire {
+      background: var(--rouge);
+      color: white;
+      padding: 14px 28px;
+      border-radius: var(--rayon);
+      font-weight: 500;
+      font-size: 15px;
+      text-decoration: none;
+      transition: transform .15s, background .2s;
+    }
+    .btn-primaire:hover { background: #a52d20; transform: translateY(-1px); }
+    .btn-secondaire {
+      background: rgba(255,255,255,0.12);
+      color: white;
+      padding: 14px 28px;
+      border-radius: var(--rayon);
+      font-weight: 400;
+      font-size: 15px;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.25);
+      transition: background .2s;
+    }
+    .btn-secondaire:hover { background: rgba(255,255,255,0.2); }
+
+    /* Stats hero */
+    .hero-stats {
+      position: absolute;
+      right: 8%;
+      bottom: 100px;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      opacity: 0;
+      animation: fadeLeft .8s 1.1s forwards;
+    }
+    .stat-item {
+      text-align: right;
+    }
+    .stat-num {
+      font-family: var(--font-titre);
+      font-size: 36px;
+      color: var(--jaune);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.55);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeLeft {
+      from { opacity: 0; transform: translateX(20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ─── Section titre générique ─── */
+    .section-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .section-tag {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--rouge);
+      margin-bottom: 12px;
+    }
+    .section-titre {
+      font-family: var(--font-titre);
+      font-size: clamp(28px, 4vw, 44px);
+      color: var(--texte);
+      line-height: 1.15;
+    }
+    .section-sous {
+      font-size: 16px;
+      color: var(--doux);
+      margin-top: 12px;
+      line-height: 1.6;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .trait {
+      display: block;
+      width: 40px;
+      height: 3px;
+      margin: 16px auto 0;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--rouge) 0,var(--rouge) 10px,
+        var(--jaune) 10px,var(--jaune) 20px,
+        var(--vert) 20px,var(--vert) 30px,
+        var(--bleu) 30px,var(--bleu) 40px
+      );
+    }
+
+    /* ─── Section rubriques ─── */
+    .section-rubriques {
+      padding: 96px 6%;
+      background: var(--blanc);
+    }
+    .rubriques-grille {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .rubrique-card {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid rgba(0,0,0,0.07);
+      background: var(--blanc);
+      transition: transform .2s, box-shadow .2s;
+      cursor: pointer;
+    }
+    .rubrique-card:hover { transform: translateY(-4px); box-shadow: 0 12px 36px rgba(0,0,0,0.1); }
+    .rubrique-visuel {
+      height: 160px;
+      position: relative;
+      overflow: hidden;
+    }
+    .rubrique-card:hover .rubrique-visuel-bg {
+      transform: scale(1.05);
+    }
+    .rubrique-visuel-bg {
+      position: absolute;
+      inset: 0;
+      transition: transform .4s;
+    }
+    /* Fonds colorés par rubrique */
+    .rc-plages .rubrique-visuel-bg { background: linear-gradient(135deg, #1A7A9E 0%, #0D4F6C 100%); }
+    .rc-sargasses .rubrique-visuel-bg { background: linear-gradient(135deg, #5A7A3A 0%, #2D4F1E 100%); }
+    .rc-randos .rubrique-visuel-bg { background: linear-gradient(135deg, #2D6A3F 0%, #1A4228 100%); }
+    .rc-cascades .rubrique-visuel-bg { background: linear-gradient(135deg, #1A5C8A 0%, #0D3B5E 100%); }
+    .rc-restos .rubrique-visuel-bg { background: linear-gradient(135deg, #C8392B 0%, #8B1A0D 100%); }
+    .rc-activites .rubrique-visuel-bg { background: linear-gradient(135deg, #F0B429 0%, #C87D14 100%); }
+    .rc-rhum .rubrique-visuel-bg { background: linear-gradient(135deg, #8B4513 0%, #5C2D08 100%); }
+    .rc-vols .rubrique-visuel-bg { background: linear-gradient(135deg, #4A5568 0%, #1A202C 100%); }
+    .rc-logement .rubrique-visuel-bg { background: linear-gradient(135deg, #D69E2E 0%, #975A16 100%); }
+    .rc-ia .rubrique-visuel-bg { background: linear-gradient(135deg, #6B46C1 0%, #2D1B6E 100%); }
+
+    .rubrique-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 40px;
+      line-height: 1;
+      opacity: 0.9;
+    }
+    .rubrique-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+    }
+    .badge-live { background: rgba(29,122,78,0.85); color: #ADFFD7; }
+    .badge-nouveau { background: rgba(200,57,43,0.85); color: #FFD5D0; }
+    .badge-ia { background: rgba(107,70,193,0.85); color: #E9D8FD; }
+
+    .rubrique-corps {
+      padding: 18px 20px 20px;
+    }
+    .rubrique-titre {
+      font-family: var(--font-titre);
+      font-size: 19px;
+      color: var(--texte);
+      margin-bottom: 6px;
+    }
+    .rubrique-desc {
+      font-size: 13px;
+      color: var(--doux);
+      line-height: 1.5;
+    }
+
+    /* ─── Section météo / vols ─── */
+    .section-live {
+      padding: 80px 6%;
+      background: var(--nuit);
+      position: relative;
+      overflow: hidden;
+    }
+    .section-live::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--madras-stripe);
+      opacity: 0.04;
+    }
+    .section-live .section-titre { color: var(--blanc); }
+    .section-live .section-sous { color: rgba(255,255,255,0.55); }
+    .section-live .section-tag { color: var(--jaune); }
+    .live-grille {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .live-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 8px;
+      padding: 24px;
+    }
+    .live-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .live-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--vert);
+      box-shadow: 0 0 6px var(--vert);
+      animation: blink 2s infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .live-label {
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+    }
+    .live-valeur {
+      font-family: var(--font-titre);
+      font-size: 42px;
+      color: var(--blanc);
+      line-height: 1;
+    }
+    .live-unite {
+      font-family: var(--font-corps);
+      font-size: 18px;
+      color: rgba(255,255,255,0.4);
+    }
+    .live-sous {
+      font-size: 13px;
+      color: rgba(255,255,255,0.4);
+      margin-top: 6px;
+    }
+    .live-alerte {
+      border-color: rgba(200,57,43,0.4);
+    }
+    .live-alerte .live-dot { background: var(--rouge); box-shadow: 0 0 6px var(--rouge); }
+    .live-alerte .live-valeur { color: #FF8A80; }
+
+    /* ─── Section "Préparez votre voyage" ─── */
+    .section-prep {
+      padding: 96px 6%;
+      background: var(--sable);
+    }
+    .prep-grille {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      max-width: 1100px;
+      margin: 0 auto;
+      align-items: center;
+    }
+    .prep-texte h2 {
+      font-family: var(--font-titre);
+      font-size: clamp(28px, 3.5vw, 42px);
+      color: var(--texte);
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+    .prep-texte h2 em { color: var(--rouge); font-style: italic; }
+    .prep-texte p {
+      font-size: 16px;
+      color: var(--doux);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .prep-liste {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .prep-liste li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--doux);
+    }
+    .prep-liste li::before {
+      content: '';
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      min-width: 16px;
+      border-radius: 50%;
+      background: var(--vert);
+      margin-top: 2px;
+    }
+    /* Carte IA stylisée */
+    .prep-carte {
+      background: var(--nuit);
+      border-radius: 12px;
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .prep-carte::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--madras-stripe);
+      opacity: 0.05;
+    }
+    .prep-carte-tag {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--jaune);
+      margin-bottom: 18px;
+    }
+    .prep-chat {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .chat-bulle {
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.5;
+      max-width: 85%;
+    }
+    .chat-user {
+      background: rgba(240,180,41,0.12);
+      color: rgba(255,255,255,0.75);
+      border: 1px solid rgba(240,180,41,0.18);
+      align-self: flex-end;
+    }
+    .chat-ia {
+      background: rgba(255,255,255,0.07);
+      color: rgba(255,255,255,0.65);
+      border: 1px solid rgba(255,255,255,0.09);
+      align-self: flex-start;
+    }
+    .chat-ia strong { color: var(--jaune); font-weight: 500; }
+
+    /* ─── Footer ─── */
+    footer {
+      background: var(--nuit);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 60px 6% 30px;
+    }
+    .footer-grille {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      max-width: 1100px;
+      margin: 0 auto 40px;
+    }
+    .footer-brand .nav-logo { display: inline-block; margin-bottom: 14px; }
+    .footer-desc {
+      font-size: 13px;
+      color: rgba(255,255,255,0.4);
+      line-height: 1.7;
+    }
+    .footer-col h4 {
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 16px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a {
+      font-size: 14px;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .footer-col a:hover { color: var(--jaune); }
+    .footer-bas {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: rgba(255,255,255,0.25);
+    }
+    .footer-madras {
+      height: 4px;
+      margin-top: 30px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--rouge) 0px, var(--rouge) 18px,
+        var(--jaune) 18px, var(--jaune) 36px,
+        var(--vert) 36px, var(--vert) 54px,
+        var(--bleu) 54px, var(--bleu) 72px
+      );
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hero-content { padding: 0 6% 80px; }
+      .hero-stats { display: none; }
+      .prep-grille { grid-template-columns: 1fr; }
+      .footer-grille { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .footer-grille { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barre madras tout en haut -->
+  <div class="madras-bar"></div>
+
+  <!-- ─── Navbar ─── -->
+  <nav>
+    <a href="#" class="nav-logo">Martinique <span>— l'île aux fleurs</span></a>
+    <ul class="nav-links">
+      <li><a href="#rubriques">Explorer</a></li>
+      <li><a href="#live">Conditions</a></li>
+      <li><a href="#prep">Préparer</a></li>
+      <li><a href="#" class="nav-cta">Mon voyage</a></li>
+    </ul>
+  </nav>
+
+  <!-- ─── Hero ─── -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-madras"></div>
+    <div class="hero-sun"></div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">Martinique · Antilles françaises</p>
+      <h1 class="hero-titre">
+        Découvrez<br><em>l'île aux fleurs</em><br>autrement
+      </h1>
+      <p class="hero-sous">
+        Plages, randonnées, cascades, gastronomie créole — toutes les conditions en temps réel pour voyager en toute sérénité.
+      </p>
+      <div class="hero-actions">
+        <a href="#rubriques" class="btn-primaire">Explorer le site</a>
+        <a href="#prep" class="btn-secondaire">Créer mon programme IA</a>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">34</div>
+        <div class="stat-label">Plages référencées</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">18</div>
+        <div class="stat-label">Randonnées</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">12</div>
+        <div class="stat-label">Rhummeries</div>
+      </div>
+    </div>
+
+    <div class="hero-wave">
+      <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,40 C360,80 720,0 1080,50 C1260,70 1380,30 1440,40 L1440,80 L0,80 Z" fill="#FEFCF7"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ─── Rubriques principales ─── -->
+  <section class="section-rubriques" id="rubriques">
+    <div class="section-header">
+      <span class="section-tag">Explorez</span>
+      <h2 class="section-titre">Tout ce que l'île a à offrir</h2>
+      <p class="section-sous">Des informations à jour pour profiter de chaque journée en Martinique.</p>
+      <span class="trait"></span>
+    </div>
+
+    <div class="rubriques-grille">
+
+      <a href="#" class="rubrique-card rc-plages">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">🏖️</div>
+          <span class="rubrique-badge badge-live">Mise à jour saisonnière</span>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Plages</h3>
+          <p class="rubrique-desc">Classées par saison, fréquentation et sécurité de baignade. 34 plages référencées.</p>
+        </div>
+      </a>
+
+      <a href="#" class="rubrique-card rc-sargasses">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">🌿</div>
+          <span class="rubrique-badge badge-live">Temps réel</span>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Sargasses</h3>
+          <p class="rubrique-desc">Carte satellite des arrivages selon Météo France. Zones à éviter actualisées chaque jour.</p>
+        </div>
+      </a>
+
+      <a href="#" class="rubrique-card rc-randos">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">🥾</div>
+          <span class="rubrique-badge badge-live">Météo intégrée</span>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Randonnées</h3>
+          <p class="rubrique-desc">Difficulté réelle ajustée à la chaleur du jour. Dénivelé, durée, niveau requis.</p>
+        </div>
+      </a>
+
+      <a href="#" class="rubrique-card rc-cascades">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">💧</div>
+          <span class="rubrique-badge badge-live">Pluies 7 jours</span>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Cascades</h3>
+          <p class="rubrique-desc">Indice de dangerosité calculé selon les précipitations des derniers jours.</p>
+        </div>
+      </a>
+
+      <a href="#" class="rubrique-card rc-restos">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">🍽️</div>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Restaurants</h3>
+          <p class="rubrique-desc">Les meilleures tables créoles. Tri par prix, notes, type de cuisine et localisation.</p>
+        </div>
+      </a>
+
+      <a href="#" class="rubrique-card rc-activites">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">🤿</div>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Activités</h3>
+          <p class="rubrique-desc">Plongée, voile, kayak, quad... Les plus proches de vous en premier. Recherche sur carte.</p>
+        </div>
+      </a>
+
+      <a href="#" class="rubrique-card rc-rhum">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">🥃</div>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Rhummeries</h3>
+          <p class="rubrique-desc">La route du rhum AOC Martinique. 12 distilleries, horaires de visite et dégustations.</p>
+        </div>
+      </a>
+
+      <a href="#" class="rubrique-card rc-vols">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">✈️</div>
+          <span class="rubrique-badge badge-live">Prix du moment</span>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Billets d'avion</h3>
+          <p class="rubrique-desc">Prix moyens comparés Air France, Air Caraïbes et Corsair pour planifier au bon moment.</p>
+        </div>
+      </a>
+
+      <a href="#" class="rubrique-card rc-logement">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">🏠</div>
+          <span class="rubrique-badge badge-nouveau">Bientôt</span>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Logements</h3>
+          <p class="rubrique-desc">Annonces de particuliers et hébergements locaux. Trouvez votre pied-à-terre en Martinique.</p>
+        </div>
+      </a>
+
+      <a href="#prep" class="rubrique-card rc-ia">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">✨</div>
+          <span class="rubrique-badge badge-ia">Intelligence artificielle</span>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Programme IA</h3>
+          <p class="rubrique-desc">Un programme sur-mesure généré selon votre budget, vos dates et la météo prévue.</p>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ─── Section conditions live ─── -->
+  <section class="section-live" id="live">
+    <div class="section-header">
+      <span class="section-tag">Conditions actuelles</span>
+      <h2 class="section-titre" style="color:var(--blanc)">Martinique en ce moment</h2>
+      <p class="section-sous">Ces données seront connectées à Météo France en phase 3.</p>
+      <span class="trait"></span>
+    </div>
+
+    <div class="live-grille">
+      <div class="live-card">
+        <div class="live-card-header">
+          <div class="live-dot"></div>
+          <span class="live-label">Température mer</span>
+        </div>
+        <div class="live-valeur">27<span class="live-unite">°C</span></div>
+        <div class="live-sous">Parfaite pour la baignade</div>
+      </div>
+
+      <div class="live-card">
+        <div class="live-card-header">
+          <div class="live-dot"></div>
+          <span class="live-label">Ensoleillement</span>
+        </div>
+        <div class="live-valeur">8<span class="live-unite">h</span></div>
+        <div class="live-sous">Aujourd'hui · Fort-de-France</div>
+      </div>
+
+      <div class="live-card live-alerte">
+        <div class="live-card-header">
+          <div class="live-dot"></div>
+          <span class="live-label">Sargasses</span>
+        </div>
+        <div class="live-valeur" style="font-size:26px">Modéré</div>
+        <div class="live-sous">Côte atlantique · Mise à jour : aujourd'hui</div>
+      </div>
+
+      <div class="live-card">
+        <div class="live-card-header">
+          <div class="live-dot"></div>
+          <span class="live-label">Pluies (7 jours)</span>
+        </div>
+        <div class="live-valeur">14<span class="live-unite">mm</span></div>
+        <div class="live-sous">Cascades : risque faible</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Préparez votre voyage / IA ─── -->
+  <section class="section-prep" id="prep">
+    <div class="prep-grille">
+      <div class="prep-texte">
+        <span class="section-tag">Intelligence artificielle</span>
+        <h2>Votre programme<br><em>créé sur-mesure</em><br>en quelques secondes</h2>
+        <p>Dites-nous vos dates, votre budget, vos envies — notre IA combine la météo prévue, les conditions des plages et cascades, et vos préférences pour construire un itinéraire parfait.</p>
+        <ul class="prep-liste">
+          <li>Adapté à la saison et aux conditions météo réelles</li>
+          <li>Équilibré entre nature, culture et gastronomie</li>
+          <li>Sauvegardable dans votre espace personnel</li>
+          <li>Modifiable à votre guise, jour par jour</li>
+        </ul>
+      </div>
+      <div class="prep-carte">
+        <p class="prep-carte-tag">✦ Aperçu du programme IA</p>
+        <div class="prep-chat">
+          <div class="chat-bulle chat-user">
+            7 jours en janvier, budget 1 200€, on adore la nature et le rhum 🥃
+          </div>
+          <div class="chat-bulle chat-ia">
+            <strong>Jour 1 — Arrivée & Fort-de-France</strong><br>
+            Marché du Plateau Didier, Rhummerie Dillon (visite + dégustation).<br><br>
+            <strong>Jour 2 — Montagne Pelée</strong><br>
+            Météo favorable ce jour (26°C, vent modéré). Randonnée niveau 6/10, départ 7h recommandé...
+          </div>
+          <div class="chat-bulle chat-user">
+            Parfait ! Remplace le jour 4 par une journée plage moins fréquentée
+          </div>
+          <div class="chat-bulle chat-ia">
+            <strong>Plage de l'Anse Céron</strong> — note 4.8/5 en janvier, sargasses : aucune cette semaine ✓
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Footer ─── -->
+  <footer>
+    <div class="footer-grille">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo">Martinique <span>— l'île aux fleurs</span></a>
+        <p class="footer-desc">
+          Un guide touristique indépendant, pensé pour ceux qui veulent découvrir la Martinique comme les locaux — avec toutes les conditions en temps réel.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>Explorer</h4>
+        <ul>
+          <li><a href="#">Plages</a></li>
+          <li><a href="#">Randonnées</a></li>
+          <li><a href="#">Cascades</a></li>
+          <li><a href="#">Sargasses</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Découvrir</h4>
+        <ul>
+          <li><a href="#">Restaurants</a></li>
+          <li><a href="#">Activités</a></li>
+          <li><a href="#">Rhummeries</a></li>
+          <li><a href="#">Événements</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Mon voyage</h4>
+        <ul>
+          <li><a href="#">Créer un compte</a></li>
+          <li><a href="#">Programme IA</a></li>
+          <li><a href="#">Billets d'avion</a></li>
+          <li><a href="#">Logements</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bas">
+      <span>© 2025 Martinique — L'Île aux Fleurs</span>
+      <span>Données météo : Météo France · Cartes : OpenStreetMap</span>
+    </div>
+    <div class="footer-madras"></div>
+  </footer>
+
+</body>
+</html>
