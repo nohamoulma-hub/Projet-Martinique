@@ -1,0 +1,7 @@
+# Dépendances Python du backend, installées avec : pip install -r requirements.txt
+fastapi==0.115.0          # framework web pour construire l'API
+uvicorn[standard]==0.30.6 # serveur qui exécute l'app FastAPI
+pydantic-settings==2.5.2  # lecture des variables d'environnement dans app/core/config.py
+python-dotenv==1.0.1      # charge le fichier .env
+sqlalchemy==2.0.35        # ORM : permet de définir les tables comme des classes Python
+alembic==1.13.3           # gère les migrations (évolutions du schéma de la base dans le temps)
