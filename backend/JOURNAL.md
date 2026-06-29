@@ -77,3 +77,11 @@ Historique chronologique des actions effectuées et des décisions prises, pour 
 
 - Créer les tables réellement en base (via `Base.metadata.create_all` ou une première migration Alembic) pour valider le schéma.
 - Brancher une première route avec données statiques pour valider le flow API avant d'introduire la BDD réelle.
+
+## 2026-06-18 — Mise en place d'Alembic et création des tables
+
+- **Décision : utiliser Alembic** plutôt que `Base.metadata.create_all()`, malgré la phase encore expérimentale du projet — raison : apprendre l'outil de migration tôt plutôt que de tout refaire plus tard, et `create_all()` ne sait pas modifier une table existante (seulement créer celles qui manquent), ce qui devient un problème dès qu'il y a de vraies données en base.
+- Initialisation avec `alembic init alembic`, générant `alembic.ini`, `alembic/env.py`, `alembic/script.py.mako` et `alembic/versions/`.
+- Configuration de `alembic/env.py` : import de `Base` et de tous les modèles (pour qu'ils s'enregistrent sur `Base.metadata`), `target_metadata = Base.metadata` (permet l'autogeneration des migrations), et URL de connexion lue dynamiquement depuis `app.core.config.settings.database_url` plutôt que dupliquée en dur dans `alembic.ini`.
+- Génération de la première migration avec `alembic revision --autogenerate -m "create v1 tables"` : Alembic a correctement détecté les 6 tables à créer en comparant nos modèles à la base (encore vide).
+- Application avec `alembic upgrade head` : les 6 tables (`points_of_interest`, `users`, `beach_details`, `hike_details`, `travel_projects`, `travel_project_items`) + la table technique `alembic_version` existent désormais dans `martinique.db`. Vérifié directement via une requête SQLite.
