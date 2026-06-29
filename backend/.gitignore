@@ -3,3 +3,6 @@ venv/
 __pycache__/
 *.pyc
 .env
+
+# Fichier de base de données local (généré par les migrations Alembic, pas du code).
+*.db
