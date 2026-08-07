@@ -1,0 +1,194 @@
+<title>Mon espace personnel : Martinique</title>
+<link rel="stylesheet" href="css/espace-personnel.css">
+
+<!-- NAV -->
+<nav>
+  <div class="madras-bar" id="madrasBar"></div>
+  <a href="accueil.html" class="nav-logo">Martinique<svg class="logo-flower" width="14" height="14" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(0 16 16)"/><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(72 16 16)"/><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(144 16 16)"/><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(216 16 16)"/><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(288 16 16)"/><circle cx="16" cy="16" r="3.5" fill="#F0B429"/></svg><span>l'île aux fleurs</span></a>
+  <div class="nav-right-group">
+    <ul class="nav-links">
+      <li><a href="catalogue.html">Catalogue</a></li>
+      <li><a href="meteo.html">Météo</a></li>
+      <li><a href="planning-ia.html">Planning IA</a></li>
+    </ul>
+    <div class="nav-avatar">MD</div>
+  </div>
+</nav>
+
+<!-- HERO UTILISATEUR -->
+<div class="user-hero">
+  <div class="user-hero-inner">
+    <div class="user-info">
+      <div class="user-avatar-lg">M</div>
+      <div class="user-text">
+        <p class="greeting">Bon retour parmi nous</p>
+        <h1>Marie Dupont</h1>
+        <p class="user-since">Membre depuis juillet 2026</p>
+        <a href="#" class="back-link" onclick="history.back(); return false;">Retour au catalogue</a>
+      </div>
+    </div>
+    <div class="hero-stats-row">
+      <div class="hstat">
+        <div class="hstat-val">3</div>
+        <div class="hstat-label">Projets</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-val">12</div>
+        <div class="hstat-label">Activités sauvegardées</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-val">47</div>
+        <div class="hstat-label">Jours avant le départ</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="page-tabs">
+  <div class="page-tabs-inner">
+    <button class="ptab active">Vue d'ensemble</button>
+    <button class="ptab">Mes voyages</button>
+    <button class="ptab">Activités sauvegardées</button>
+    <button class="ptab">Paramètres</button>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="page-body">
+
+  <!-- Projets de voyage -->
+  <div class="section-head">
+    <h2>Mes projets de voyage</h2>
+    <a href="#" class="section-link">Voir tout</a>
+  </div>
+
+  <div class="voyage-grid">
+
+    <!-- Projet actif -->
+    <div class="voyage-card">
+      <div class="voyage-card-thumb active-trip">
+        <span class="voyage-status status-active">En cours</span>
+        <span class="voyage-thumb-label">Martinique · Sept. 2026</span>
+      </div>
+      <div class="voyage-card-body">
+        <p class="voyage-card-title">Martinique en famille</p>
+        <p class="voyage-card-dates">12 sept. — 22 sept. 2026 · 10 jours</p>
+        <div class="voyage-progress-wrap">
+          <div class="voyage-progress-label">
+            <span>Planification</span><span>7 / 10 étapes</span>
+          </div>
+          <div class="voyage-progress-bar">
+            <div class="voyage-progress-fill" style="width:70%"></div>
+          </div>
+        </div>
+        <div class="voyage-card-footer">
+          <p class="voyage-pois"><strong>14</strong> activités ajoutées</p>
+          <button class="voyage-btn">Ouvrir</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Projet brouillon -->
+    <div class="voyage-card">
+      <div class="voyage-card-thumb draft-trip">
+        <span class="voyage-status status-draft">Brouillon</span>
+        <span class="voyage-thumb-label">Martinique · Déc. 2026</span>
+      </div>
+      <div class="voyage-card-body">
+        <p class="voyage-card-title">Week-end randonnée</p>
+        <p class="voyage-card-dates">5 déc. — 8 déc. 2026 · 3 jours</p>
+        <div class="voyage-progress-wrap">
+          <div class="voyage-progress-label">
+            <span>Planification</span><span>2 / 10 étapes</span>
+          </div>
+          <div class="voyage-progress-bar">
+            <div class="voyage-progress-fill" style="width:20%; background: var(--jaune);"></div>
+          </div>
+        </div>
+        <div class="voyage-card-footer">
+          <p class="voyage-pois"><strong>3</strong> activités ajoutées</p>
+          <button class="voyage-btn">Ouvrir</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nouveau projet -->
+    <div class="voyage-new-card">
+      <div class="voyage-new-icon">+</div>
+      <span class="voyage-new-label">Nouveau projet</span>
+    </div>
+
+  </div>
+
+  <!-- Activités sauvegardées -->
+  <div class="section-head">
+    <h2>Activités sauvegardées</h2>
+    <a href="#" class="section-link">Voir les 12</a>
+  </div>
+
+  <div class="saved-grid">
+    <div class="saved-card">
+      <div class="saved-thumb plage">
+        <button class="saved-remove">×</button>
+      </div>
+      <div class="saved-body">
+        <p class="saved-cat">Plage</p>
+        <p class="saved-name">Anse Céron</p>
+        <p class="saved-loc">Le Prêcheur · Nord Caraïbe</p>
+      </div>
+    </div>
+    <div class="saved-card">
+      <div class="saved-thumb rando">
+        <button class="saved-remove">×</button>
+      </div>
+      <div class="saved-body">
+        <p class="saved-cat">Randonnée</p>
+        <p class="saved-name">Montagne Pelée</p>
+        <p class="saved-loc">Saint-Pierre · Nord</p>
+      </div>
+    </div>
+    <div class="saved-card">
+      <div class="saved-thumb rhum">
+        <button class="saved-remove">×</button>
+      </div>
+      <div class="saved-body">
+        <p class="saved-cat">Rhumerie</p>
+        <p class="saved-name">Habitation Clément</p>
+        <p class="saved-loc">Le François · Centre</p>
+      </div>
+    </div>
+    <div class="saved-card">
+      <div class="saved-thumb resto">
+        <button class="saved-remove">×</button>
+      </div>
+      <div class="saved-body">
+        <p class="saved-cat">Restaurant</p>
+        <p class="saved-name">Le Belem</p>
+        <p class="saved-loc">Fort-de-France · Centre</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bloc IA -->
+  <div class="ia-block">
+    <div class="ia-body">
+      <p class="ia-eyebrow">Planning intelligent</p>
+      <h2 class="ia-title">Laissez l'IA construire votre <span>itinéraire idéal</span></h2>
+      <p class="ia-desc">Décrivez votre séjour, vos envies et votre rythme. Notre assistant crée un planning jour par jour, optimisé selon la météo, les distances et vos activités sauvegardées.</p>
+      <button class="ia-cta">Générer mon planning</button>
+    </div>
+    <div class="ia-visual">
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="ia-chip highlight">Plages secrètes</div>
+        <div class="ia-chip">Éviter les foules</div>
+        <div class="ia-chip highlight">Avec enfants</div>
+        <div class="ia-chip">Budget modéré</div>
+        <div class="ia-chip">10 jours</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/espace-personnel.js"></script>
