@@ -1,0 +1,314 @@
+<title>Météo et sargasses : Martinique en temps réel</title>
+<link rel="stylesheet" href="css/meteo.css">
+
+<nav>
+  <a href="#" class="nav-logo">Martinique<svg class="logo-flower" width="14" height="14" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(0 16 16)"/><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(72 16 16)"/><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(144 16 16)"/><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(216 16 16)"/><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(288 16 16)"/><circle cx="16" cy="16" r="3.5" fill="#F0B429"/></svg><span>l'île aux fleurs</span></a>
+  <ul class="nav-links">
+    <li><a href="catalogue.html">Catalogue</a></li>
+    <li><a href="meteo.html" class="active">Météo</a></li>
+    <li><a href="planning-ia.html">Planning IA</a></li>
+    <li><a href="espace-personnel.html" class="nav-cta">Mon voyage</a></li>
+  </ul>
+  <div class="madras-bar"></div>
+</nav>
+
+<div class="breadcrumb">
+  <div class="breadcrumb-inner">
+    <a href="#">Accueil</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-current">Météo et sargasses</span>
+  </div>
+</div>
+
+<!-- Hero météo -->
+<div class="hero-meteo">
+  <div class="hero-meteo-bg"></div>
+  <div class="hero-meteo-inner">
+    <div class="meteo-main-left">
+      <p class="meteo-localisation">📍 Fort-de-France · Martinique</p>
+      <div class="meteo-temp-row">
+        <div class="meteo-temp">28<sup>°C</sup></div>
+        <div class="meteo-condition-block">
+          <span class="meteo-icon">⛅</span>
+          <p class="meteo-condition">Partiellement nuageux</p>
+          <p class="meteo-ressenti">Ressenti 32°C</p>
+        </div>
+      </div>
+      <p class="meteo-update">Données Météo France · Actualisé à 14h00</p>
+    </div>
+    <div class="meteo-main-right">
+      <div class="meteo-stat-row">
+        <span class="meteo-stat-label">Vent</span>
+        <span class="meteo-stat-value">15 km/h NE</span>
+      </div>
+      <div class="meteo-stat-row">
+        <span class="meteo-stat-label">Humidité</span>
+        <span class="meteo-stat-value">78 %</span>
+      </div>
+      <div class="meteo-stat-row">
+        <span class="meteo-stat-label">Indice UV</span>
+        <span class="meteo-stat-value" style="color:#F0B429;">9, très élevé</span>
+      </div>
+      <div class="meteo-stat-row">
+        <span class="meteo-stat-label">Pression</span>
+        <span class="meteo-stat-value">1 013 hPa</span>
+      </div>
+      <div class="meteo-stat-row">
+        <span class="meteo-stat-label">Visibilité</span>
+        <span class="meteo-stat-value">15 km</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Corps de page -->
+<div class="page-content">
+
+  <!-- Prévisions 7 jours -->
+  <section style="margin-bottom: 56px;">
+    <span class="trait"></span>
+    <h2 class="section-title">Prévisions sur 7 jours</h2>
+    <div class="forecast-strip">
+      <div class="forecast-day today">
+        <span class="forecast-label">Auj.</span>
+        <span class="forecast-icon">⛅</span>
+        <div class="forecast-temps">
+          <p class="forecast-high">28°</p>
+          <p class="forecast-low">23°</p>
+        </div>
+        <p class="forecast-rain">💧 20 %</p>
+      </div>
+      <div class="forecast-day">
+        <span class="forecast-label">Mar.</span>
+        <span class="forecast-icon">☀️</span>
+        <div class="forecast-temps">
+          <p class="forecast-high">30°</p>
+          <p class="forecast-low">24°</p>
+        </div>
+        <p class="forecast-rain">💧 5 %</p>
+      </div>
+      <div class="forecast-day">
+        <span class="forecast-label">Mer.</span>
+        <span class="forecast-icon">🌧️</span>
+        <div class="forecast-temps">
+          <p class="forecast-high">26°</p>
+          <p class="forecast-low">22°</p>
+        </div>
+        <p class="forecast-rain">💧 75 %</p>
+      </div>
+      <div class="forecast-day">
+        <span class="forecast-label">Jeu.</span>
+        <span class="forecast-icon">⛅</span>
+        <div class="forecast-temps">
+          <p class="forecast-high">28°</p>
+          <p class="forecast-low">23°</p>
+        </div>
+        <p class="forecast-rain">💧 30 %</p>
+      </div>
+      <div class="forecast-day">
+        <span class="forecast-label">Ven.</span>
+        <span class="forecast-icon">🌤️</span>
+        <div class="forecast-temps">
+          <p class="forecast-high">29°</p>
+          <p class="forecast-low">24°</p>
+        </div>
+        <p class="forecast-rain">💧 10 %</p>
+      </div>
+      <div class="forecast-day">
+        <span class="forecast-label">Sam.</span>
+        <span class="forecast-icon">☀️</span>
+        <div class="forecast-temps">
+          <p class="forecast-high">31°</p>
+          <p class="forecast-low">25°</p>
+        </div>
+        <p class="forecast-rain">💧 5 %</p>
+      </div>
+      <div class="forecast-day">
+        <span class="forecast-label">Dim.</span>
+        <span class="forecast-icon">🌦️</span>
+        <div class="forecast-temps">
+          <p class="forecast-high">27°</p>
+          <p class="forecast-low">22°</p>
+        </div>
+        <p class="forecast-rain">💧 45 %</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sargasses -->
+  <section class="sargasses-section">
+    <span class="trait"></span>
+    <div class="sargasses-header">
+      <h2 class="section-title" style="margin-bottom:0;">Sargasses</h2>
+      <div class="alerte-globale moyen">
+        <span class="alerte-dot"></span>
+        Alerte modérée sur l'île
+      </div>
+    </div>
+
+    <div class="sarg-layout">
+
+      <!-- Carte SVG Martinique -->
+      <div class="sarg-map-container">
+        <div class="sarg-map-header">
+          <span>Carte des zones</span>
+          <span class="sarg-map-live"><span class="live-dot"></span> Temps réel</span>
+        </div>
+        <!-- Carte Leaflet + OpenStreetMap — intégration agent Frontend -->
+        <div style="height:320px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:rgba(255,255,255,.3);">
+          <span style="font-size:32px;">🗺️</span>
+          <span style="font-size:13px;font-family:sans-serif;">Carte interactive (Leaflet + SaWS)</span>
+        </div>
+      </div>
+
+      <!-- Zones par carte -->
+      <div class="zones-grid">
+        <div class="zone-card">
+          <div class="zone-bar bar-faible"></div>
+          <div class="zone-header">
+            <span class="zone-name">Nord Caraïbe</span>
+            <span class="zone-badge badge-faible">Faible</span>
+          </div>
+          <div class="zone-body">
+            <p class="zone-plages">Anse Céron, Anse Couleuvre, Grande Anse de Saint-Pierre</p>
+          </div>
+        </div>
+        <div class="zone-card">
+          <div class="zone-bar bar-fort"></div>
+          <div class="zone-header">
+            <span class="zone-name">Nord Atlantique</span>
+            <span class="zone-badge badge-fort">Fort</span>
+          </div>
+          <div class="zone-body">
+            <p class="zone-plages">Anse Azérot, Fond Lahaye, Anse Latouche</p>
+          </div>
+        </div>
+        <div class="zone-card">
+          <div class="zone-bar bar-nul"></div>
+          <div class="zone-header">
+            <span class="zone-name">Centre Caraïbe</span>
+            <span class="zone-badge badge-nul">Nul</span>
+          </div>
+          <div class="zone-body">
+            <p class="zone-plages">Anse à l'Ane, Anse Mitan, Pointe du Bout</p>
+          </div>
+        </div>
+        <div class="zone-card">
+          <div class="zone-bar bar-moyen"></div>
+          <div class="zone-header">
+            <span class="zone-name">Centre Atlantique</span>
+            <span class="zone-badge badge-moyen">Modéré</span>
+          </div>
+          <div class="zone-body">
+            <p class="zone-plages">Presqu'île de la Caravelle, Trinité, Robert</p>
+          </div>
+        </div>
+        <div class="zone-card">
+          <div class="zone-bar bar-nul"></div>
+          <div class="zone-header">
+            <span class="zone-name">Sud Caraïbe</span>
+            <span class="zone-badge badge-nul">Nul</span>
+          </div>
+          <div class="zone-body">
+            <p class="zone-plages">Sainte-Anne, Les Salines, Grande Anse du Diamant</p>
+          </div>
+        </div>
+        <div class="zone-card">
+          <div class="zone-bar bar-fort"></div>
+          <div class="zone-header">
+            <span class="zone-name">Sud Atlantique</span>
+            <span class="zone-badge badge-fort">Fort</span>
+          </div>
+          <div class="zone-body">
+            <p class="zone-plages">Le Vauclin, Sainte-Marie, Rivière-Pilote</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="sarg-footer">
+      <div class="legende">
+        <div class="legende-item"><div class="legende-dot" style="background:var(--alert-nul);"></div> Nul</div>
+        <div class="legende-item"><div class="legende-dot" style="background:var(--alert-faible);"></div> Faible</div>
+        <div class="legende-item"><div class="legende-dot" style="background:var(--alert-moyen);"></div> Modéré</div>
+        <div class="legende-item"><div class="legende-dot" style="background:var(--alert-fort);"></div> Fort</div>
+      </div>
+    </div>
+
+    <div class="conseil-card">
+      <p class="conseil-title">Conseil du jour</p>
+      <p>Les plages du Sud Caraïbe (Les Salines, Anse à l'Ane) et du Nord Caraïbe (Anse Céron) sont les meilleures options aujourd'hui. Évitez les côtes atlantiques du nord et du sud, où les arrivages sont importants. Les sargasses sont naturelles et non toxiques, mais leur décomposition peut dégager des odeurs en bord de plage.</p>
+    </div>
+  </section>
+
+  <!-- Plages recommandées -->
+  <section class="reco-section">
+    <span class="trait"></span>
+    <h2 class="section-title">Plages recommandées aujourd'hui</h2>
+    <p class="reco-subtitle">Sélection basée sur les conditions actuelles : absence de sargasses, mer calme, ensoleillement.</p>
+    <div class="reco-grid">
+      <a href="#" class="reco-card">
+        <div class="reco-visual" style="background:linear-gradient(135deg,#1A7A9E,#0D4F6C);">
+          <div class="reco-icon">🏖️</div>
+          <div class="reco-tags">
+            <span class="reco-tag tag-green">Sargasses : nul</span>
+            <span class="reco-tag tag-sun">☀️ 30°</span>
+          </div>
+        </div>
+        <div class="reco-body">
+          <p class="reco-name">Plage des Salines</p>
+          <p class="reco-loc">📍 Sainte-Anne · Sud Caraïbe</p>
+          <div class="reco-meteo">
+            <span class="reco-meteo-item">💨 12 km/h</span>
+            <span class="reco-meteo-item">🌊 Mer calme</span>
+            <span class="reco-meteo-item">☀️ UV 9</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="reco-card">
+        <div class="reco-visual" style="background:linear-gradient(135deg,#1A6A8E,#0D3F5C);">
+          <div class="reco-icon">🏖️</div>
+          <div class="reco-tags">
+            <span class="reco-tag tag-green">Sargasses : nul</span>
+            <span class="reco-tag tag-sun">⛅ 28°</span>
+          </div>
+        </div>
+        <div class="reco-body">
+          <p class="reco-name">Anse à l'Ane</p>
+          <p class="reco-loc">📍 Les Trois-Îlets · Centre Caraïbe</p>
+          <div class="reco-meteo">
+            <span class="reco-meteo-item">💨 14 km/h</span>
+            <span class="reco-meteo-item">🌊 Mer calme</span>
+            <span class="reco-meteo-item">☀️ UV 8</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="reco-card">
+        <div class="reco-visual" style="background:linear-gradient(135deg,#1A7A9E,#0A3D5A);">
+          <div class="reco-icon">🏖️</div>
+          <div class="reco-tags">
+            <span class="reco-tag" style="background:rgba(240,180,41,.85);color:#3A2800;">Sargasses : faible</span>
+            <span class="reco-tag tag-sun">☀️ 28°</span>
+          </div>
+        </div>
+        <div class="reco-body">
+          <p class="reco-name">Anse Céron</p>
+          <p class="reco-loc">📍 Le Prêcheur · Nord Caraïbe</p>
+          <div class="reco-meteo">
+            <span class="reco-meteo-item">💨 16 km/h</span>
+            <span class="reco-meteo-item">🌊 Légère houle</span>
+            <span class="reco-meteo-item">☀️ UV 9</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <span>© 2026 Martinique, L'Île aux Fleurs · Données météo : Météo France · Données sargasses : Université des Antilles</span>
+</footer>
+
+<script src="js/meteo.js"></script>
