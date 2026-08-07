@@ -73,7 +73,7 @@ Historique chronologique des actions effectuées et des décisions prises, pour 
 - Création de `app/models/travel_project_item.py` (table `travel_project_items`) : table de liaison many-to-many "enrichie" (objet d'association) entre `travel_projects` et `points_of_interest`, avec deux `ForeignKey` (`travel_project_id`, `point_of_interest_id`) volontairement **non uniques** — une activité peut apparaître dans plusieurs projets, un projet peut contenir plusieurs activités. Champs propres à l'association : `day_number` (numéro du jour du voyage), `status` (Enum `Status` : `PLANNED`/`CONFIRMED`/`DONE`). Correction en relecture : import erroné de `Base` depuis `sqlalchemy` (même erreur que sur `beach_details`, corrigée en `app.core.database`). Confirmé que `Column(ForeignKey(...))` sans type explicite est valide en SQLAlchemy (déduction automatique du type `INTEGER` depuis la colonne référencée).
 - Vérification : les 6 modèles (`User`, `PointOfInterest`, `BeachDetails`, `HikeDetails`, `TravelProject`, `TravelProjectItem`) s'importent ensemble sans conflit.
 
-## Prochaines étapes envisagées
+## Prochaines étapes envisagées (rédigé le 2026-06-18, réalisé le 2026-08-06)
 
 - Créer les tables réellement en base (via `Base.metadata.create_all` ou une première migration Alembic) pour valider le schéma.
 - Brancher une première route avec données statiques pour valider le flow API avant d'introduire la BDD réelle.
@@ -85,3 +85,53 @@ Historique chronologique des actions effectuées et des décisions prises, pour 
 - Configuration de `alembic/env.py` : import de `Base` et de tous les modèles (pour qu'ils s'enregistrent sur `Base.metadata`), `target_metadata = Base.metadata` (permet l'autogeneration des migrations), et URL de connexion lue dynamiquement depuis `app.core.config.settings.database_url` plutôt que dupliquée en dur dans `alembic.ini`.
 - Génération de la première migration avec `alembic revision --autogenerate -m "create v1 tables"` : Alembic a correctement détecté les 6 tables à créer en comparant nos modèles à la base (encore vide).
 - Application avec `alembic upgrade head` : les 6 tables (`points_of_interest`, `users`, `beach_details`, `hike_details`, `travel_projects`, `travel_project_items`) + la table technique `alembic_version` existent désormais dans `martinique.db`. Vérifié directement via une requête SQLite.
+
+## 2026-08-04 — Décision d'adopter une approche agentique
+
+- **Décision : développer le projet avec des agents IA (Claude Code)** plutôt qu'en codant manuellement chaque fonctionnalité.
+  - Motivation principale : volonté de s'entraîner au développement agentique — apprendre à orchestrer des agents IA sur un projet réel, comprendre comment les cadrer, valider leur travail et les corriger.
+  - Avantage pratique : projet mené en solo par un développeur junior — les agents permettent de produire du code de qualité plus rapidement tout en gardant une posture d'apprentissage (comprendre ce qui est généré, valider les décisions, itérer).
+  - Approche retenue : un agent par domaine fonctionnel (backend, frontend), lancés séquentiellement (backend d'abord, frontend ensuite une fois les endpoints disponibles). Les agents travaillent sur des périmètres bornés pour que leurs résultats restent lisibles et vérifiables.
+- **Décision : commencer par le v1 uniquement** plutôt que de créer tous les agents pour le produit final.
+  - Raison : un périmètre réduit produit un résultat fonctionnel plus vite, les bugs sont plus faciles à isoler, et les besoins des fonctionnalités avancées (IA de planning, sargasses) seront mieux définis une fois le v1 en production. Les agents futurs s'appuieront sur les bases posées par le v1.
+
+## 2026-08-04 — Création des maquettes frontend (8 pages)
+
+- **Décision : concevoir toutes les maquettes HTML/CSS/JS avant de brancher le backend**, pour avoir une référence visuelle claire de ce que chaque endpoint doit retourner.
+- **Design system "Madras"** défini et appliqué sur toutes les pages :
+  - Variables CSS : `--rouge #C8392B`, `--jaune #F0B429`, `--vert #1D7A4E`, `--bleu #1A5C8A`, `--sable #F5EDD8`, `--nuit #0D1F2D`
+  - Typographies : Playfair Display (titres) + DM Sans (corps)
+  - Logo fleur SVG (5 ellipses roses + centre jaune), barre de progression madras en haut de nav
+- **8 pages créées** dans `frontend/` :
+  - `accueil.html` — page d'accueil avec hero, aperçu catalogue/météo/planning IA, prix moyens des vols
+  - `catalogue.html` — liste des activités filtrables par catégorie
+  - `detail.html` — fiche détail d'une activité (plage Anse Céron comme exemple)
+  - `meteo.html` — météo en direct + alertes sargasses
+  - `planning-ia.html` — interface chat IA + planning généré en accordéon par semaine
+  - `auth.html` — connexion / inscription
+  - `espace-personnel.html` — tableau de bord utilisateur connecté, liste des projets
+  - `detail-voyage.html` — détail d'un projet de voyage avec activités
+- **Choix de navigation** : nav commune sur toutes les pages (Catalogue / Météo / Planning IA / Mon voyage), avec lien actif surligné en jaune. Les pages "connecté" (espace personnel, détail voyage, planning IA) affichent la bulle d'initiales du client à la place du bouton "Mon voyage".
+
+## 2026-08-06 — Séparation HTML / CSS / JS
+
+- **Décision : séparer le CSS et le JS des fichiers HTML** pour respecter les bonnes pratiques de développement web (lisibilité, maintenabilité, réutilisabilité).
+- Extraction automatique via script Python : chaque page génère son propre `css/[page].css` et `js/[page].js` dans des sous-dossiers dédiés.
+- Chaque fichier HTML référence désormais ses ressources via `<link rel="stylesheet">` et `<script src="">`.
+- Structure finale de `frontend/` :
+  ```
+  frontend/
+  ├── *.html       (structure uniquement)
+  ├── css/         (un fichier CSS par page)
+  └── js/          (un fichier JS par page)
+  ```
+
+## 2026-08-07 — Lancement de l'agent Backend v1
+
+- **Prochaine étape : agent Backend v1** — construire les endpoints FastAPI pour le périmètre v1 :
+  1. Catalogue : liste et détail des activités (plages, randos)
+  2. Utilisateurs : inscription, connexion (auth JWT), profil
+  3. Projets de voyage : CRUD (créer, lire, modifier, supprimer)
+  4. Météo : endpoint proxy vers une API météo externe
+- La base de données est prête (6 tables créées via Alembic). Il reste à écrire les routeurs, schémas Pydantic et services.
+- Une fois les endpoints disponibles, un agent Frontend viendra connecter les 8 maquettes à l'API.
