@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Martinique — L'Île aux Fleurs</title>
+  <link rel="stylesheet" href="css/accueil.css">
+</head>
+<body>
+
+  <!-- ─── Navbar ─── -->
+  <nav>
+    <div class="madras-bar" id="madrasBar"></div>
+    <a href="#" class="nav-logo">
+      Martinique<svg class="logo-flower" width="14" height="14" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(0 16 16)"/>
+        <ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(72 16 16)"/>
+        <ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(144 16 16)"/>
+        <ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(216 16 16)"/>
+        <ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(288 16 16)"/>
+        <circle cx="16" cy="16" r="3.5" fill="#F0B429"/>
+      </svg><span>l'île aux fleurs</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#rubriques">Catalogue</a></li>
+      <li><a href="#live">Météo</a></li>
+      <li><a href="#prep">Planning IA</a></li>
+      <li><a href="#" class="nav-cta">Mon voyage</a></li>
+    </ul>
+  </nav>
+
+  <!-- ─── Hero ─── -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-madras"></div>
+    <div class="hero-vols">
+      <p class="vols-titre">Paris → Martinique · <span>Prix moy.</span></p>
+      <div class="vol-ligne">
+        <span class="vol-compagnie">Air France</span>
+        <span class="vol-prix">~420 €</span>
+      </div>
+      <div class="vol-ligne">
+        <span class="vol-compagnie">Air Caraïbes</span>
+        <span class="vol-prix">~380 €</span>
+      </div>
+      <div class="vol-ligne">
+        <span class="vol-compagnie">Corsair</span>
+        <span class="vol-prix bas">~310 €</span>
+      </div>
+    </div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">Martinique · Antilles françaises</p>
+      <h1 class="hero-titre">
+        Découvrez<br><em>l'île aux fleurs</em><br>autrement
+      </h1>
+      <p class="hero-sous">
+        Plages, randonnées, cascades, gastronomie créole : toutes les conditions en temps réel pour voyager en toute sérénité.
+      </p>
+      <div class="hero-actions">
+        <a href="auth.html" class="btn-primaire">Se connecter</a>
+        <a href="#prep" class="btn-secondaire">Créer mon programme IA</a>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">34</div>
+        <div class="stat-label">Plages référencées</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">18</div>
+        <div class="stat-label">Randonnées</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">12</div>
+        <div class="stat-label">Rhummeries</div>
+      </div>
+    </div>
+
+    <div class="hero-wave">
+      <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0,40 C360,80 720,0 1080,50 C1260,70 1380,30 1440,40 L1440,80 L0,80 Z" fill="#FEFCF7"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ─── Rubriques principales ─── -->
+  <section class="section-rubriques" id="rubriques">
+    <div class="section-header">
+      <span class="section-tag">Explorez</span>
+      <h2 class="section-titre">Tout ce que l'île a à offrir</h2>
+      <p class="section-sous">Des informations à jour pour profiter de chaque journée en Martinique.</p>
+      <span class="trait"></span>
+    </div>
+
+    <div class="rubriques-grille">
+
+      <a href="#" class="rubrique-card rc-plages">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">🏖️</div>
+          <span class="rubrique-badge badge-live">Mise à jour saisonnière</span>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Plages</h3>
+          <p class="rubrique-desc">Classées par saison, fréquentation et sécurité de baignade. 34 plages référencées.</p>
+        </div>
+      </a>
+
+      <a href="#" class="rubrique-card rc-sargasses">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">🌿</div>
+          <span class="rubrique-badge badge-live">Temps réel</span>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Sargasses</h3>
+          <p class="rubrique-desc">Carte satellite des arrivages selon Météo France. Zones à éviter actualisées chaque jour.</p>
+        </div>
+      </a>
+
+      <a href="#" class="rubrique-card rc-randos">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">🥾</div>
+          <span class="rubrique-badge badge-live">Météo intégrée</span>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Randonnées</h3>
+          <p class="rubrique-desc">Difficulté réelle ajustée à la chaleur du jour. Dénivelé, durée, niveau requis.</p>
+        </div>
+      </a>
+
+      <a href="#" class="rubrique-card rc-cascades">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">💧</div>
+          <span class="rubrique-badge badge-live">Pluies 7 jours</span>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Cascades</h3>
+          <p class="rubrique-desc">Indice de dangerosité calculé selon les précipitations des derniers jours.</p>
+        </div>
+      </a>
+
+      <a href="#" class="rubrique-card rc-restos">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">🍽️</div>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Restaurants</h3>
+          <p class="rubrique-desc">Les meilleures tables créoles. Tri par prix, notes, type de cuisine et localisation.</p>
+        </div>
+      </a>
+
+      <a href="#" class="rubrique-card rc-activites">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">🤿</div>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Activités</h3>
+          <p class="rubrique-desc">Plongée, voile, kayak, quad... Les plus proches de vous en premier. Recherche sur carte.</p>
+        </div>
+      </a>
+
+      <a href="#" class="rubrique-card rc-rhum">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">🥃</div>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Rhummeries</h3>
+          <p class="rubrique-desc">La route du rhum AOC Martinique. 12 distilleries, horaires de visite et dégustations.</p>
+        </div>
+      </a>
+
+      <a href="#" class="rubrique-card rc-vols">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">✈️</div>
+          <span class="rubrique-badge badge-live">Prix du moment</span>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Billets d'avion</h3>
+          <p class="rubrique-desc">Prix moyens comparés Air France, Air Caraïbes et Corsair pour planifier au bon moment.</p>
+        </div>
+      </a>
+
+      <a href="#" class="rubrique-card rc-logement">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">🏠</div>
+          <span class="rubrique-badge badge-nouveau">Bientôt</span>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Logements</h3>
+          <p class="rubrique-desc">Annonces de particuliers et hébergements locaux. Trouvez votre pied-à-terre en Martinique.</p>
+        </div>
+      </a>
+
+      <a href="#prep" class="rubrique-card rc-ia">
+        <div class="rubrique-visuel">
+          <div class="rubrique-visuel-bg"></div>
+          <div class="rubrique-icon">✨</div>
+          <span class="rubrique-badge badge-ia">Intelligence artificielle</span>
+        </div>
+        <div class="rubrique-corps">
+          <h3 class="rubrique-titre">Programme IA</h3>
+          <p class="rubrique-desc">Un programme sur-mesure généré selon votre budget, vos dates et la météo prévue.</p>
+        </div>
+      </a>
+
+    </div>
+    <div style="text-align:center; margin-top:40px;">
+      <a href="catalogue.html" class="btn-jaune">Voir le catalogue complet</a>
+    </div>
+  </section>
+
+  <!-- ─── Section conditions live ─── -->
+  <section class="section-live" id="live">
+    <div class="section-header">
+      <span class="section-tag">Conditions actuelles</span>
+      <h2 class="section-titre" style="color:var(--blanc)">Martinique en ce moment</h2>
+      <p class="section-sous">Ces données seront connectées à Météo France en phase 3.</p>
+      <span class="trait"></span>
+    </div>
+
+    <div class="live-grille">
+      <div class="live-card">
+        <div class="live-card-header">
+          <div class="live-dot"></div>
+          <span class="live-label">Température mer</span>
+        </div>
+        <div class="live-valeur">27<span class="live-unite">°C</span></div>
+        <div class="live-sous">Parfaite pour la baignade</div>
+      </div>
+
+      <div class="live-card">
+        <div class="live-card-header">
+          <div class="live-dot"></div>
+          <span class="live-label">Ensoleillement</span>
+        </div>
+        <div class="live-valeur">8<span class="live-unite">h</span></div>
+        <div class="live-sous">Aujourd'hui · Fort-de-France</div>
+      </div>
+
+      <div class="live-card live-alerte">
+        <div class="live-card-header">
+          <div class="live-dot"></div>
+          <span class="live-label">Sargasses</span>
+        </div>
+        <div class="live-valeur" style="font-size:26px">Modéré</div>
+        <div class="live-sous">Côte atlantique · Mise à jour : aujourd'hui</div>
+      </div>
+
+      <div class="live-card">
+        <div class="live-card-header">
+          <div class="live-dot"></div>
+          <span class="live-label">Pluies (7 jours)</span>
+        </div>
+        <div class="live-valeur">14<span class="live-unite">mm</span></div>
+        <div class="live-sous">Cascades : risque faible</div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:40px;">
+      <a href="meteo.html" class="btn-jaune">Voir la météo en détail</a>
+    </div>
+  </section>
+
+  <!-- ─── Préparez votre voyage / IA ─── -->
+  <section class="section-prep" id="prep">
+    <div class="prep-grille">
+      <div class="prep-texte">
+        <span class="section-tag">Intelligence artificielle</span>
+        <h2>Votre programme<br><em>créé sur-mesure</em><br>en quelques secondes</h2>
+        <p>Dites-nous vos dates, votre budget, vos envies. Notre IA combine la météo prévue, les conditions des plages et cascades, et vos préférences pour construire un itinéraire parfait.</p>
+        <ul class="prep-liste">
+          <li>Adapté à la saison et aux conditions météo réelles</li>
+          <li>Équilibré entre nature, culture et gastronomie</li>
+          <li>Sauvegardable dans votre espace personnel</li>
+          <li>Modifiable à votre guise, jour par jour</li>
+        </ul>
+        <a href="planning-ia.html" class="btn-jaune">Générer mon planning IA</a>
+      </div>
+      <div class="prep-carte">
+        <p class="prep-carte-tag">✦ Aperçu du programme IA</p>
+        <div class="prep-chat">
+          <div class="chat-bulle chat-user">
+            7 jours en janvier, budget 1 200€, on adore la nature et le rhum 🥃
+          </div>
+          <div class="chat-bulle chat-ia">
+            <strong>Jour 1 · Arrivée à Fort-de-France</strong><br>
+            Marché du Plateau Didier, Rhummerie Dillon (visite + dégustation).<br><br>
+            <strong>Jour 2 · Montagne Pelée</strong><br>
+            Météo favorable ce jour (26°C, vent modéré). Randonnée niveau 6/10, départ 7h recommandé...
+          </div>
+          <div class="chat-bulle chat-user">
+            Parfait ! Remplace le jour 4 par une journée plage moins fréquentée
+          </div>
+          <div class="chat-bulle chat-ia">
+            <strong>Plage de l'Anse Céron</strong> · note 4.8/5 en janvier, sargasses : aucune cette semaine ✓
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Footer ─── -->
+  <footer>
+    <div class="footer-grille">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo">
+          Martinique<svg class="logo-flower" width="12" height="12" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".6" transform="rotate(0 16 16)"/>
+            <ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".6" transform="rotate(72 16 16)"/>
+            <ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".6" transform="rotate(144 16 16)"/>
+            <ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".6" transform="rotate(216 16 16)"/>
+            <ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".6" transform="rotate(288 16 16)"/>
+            <circle cx="16" cy="16" r="3.5" fill="#F0B429" opacity=".6"/>
+          </svg><span>l'île aux fleurs</span>
+        </a>
+        <p class="footer-desc">
+          Un guide touristique indépendant, pensé pour ceux qui veulent découvrir la Martinique comme les locaux, avec toutes les conditions en temps réel.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>Explorer</h4>
+        <ul>
+          <li><a href="#">Plages</a></li>
+          <li><a href="#">Randonnées</a></li>
+          <li><a href="#">Cascades</a></li>
+          <li><a href="#">Sargasses</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Découvrir</h4>
+        <ul>
+          <li><a href="#">Restaurants</a></li>
+          <li><a href="#">Activités</a></li>
+          <li><a href="#">Rhummeries</a></li>
+          <li><a href="#">Événements</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Mon voyage</h4>
+        <ul>
+          <li><a href="#">Créer un compte</a></li>
+          <li><a href="#">Programme IA</a></li>
+          <li><a href="#">Billets d'avion</a></li>
+          <li><a href="#">Logements</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bas">
+      <span>© 2026 Martinique, L'Île aux Fleurs</span>
+      <span>Données météo : Météo France · Cartes : OpenStreetMap</span>
+    </div>
+    <div class="footer-madras"></div>
+  </footer>
+
+  <script src="js/accueil.js"></script>
+
+</body>
+</html>
