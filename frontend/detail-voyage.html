@@ -1,0 +1,267 @@
+<title>Martinique en famille : mon projet de voyage</title>
+<link rel="stylesheet" href="css/detail-voyage.css">
+
+<!-- NAV -->
+<nav>
+  <div class="madras-bar" id="madrasBar"></div>
+  <a href="accueil.html" class="nav-logo">Martinique<svg class="logo-flower" width="14" height="14" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(0 16 16)"/><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(72 16 16)"/><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(144 16 16)"/><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(216 16 16)"/><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(288 16 16)"/><circle cx="16" cy="16" r="3.5" fill="#F0B429"/></svg><span>l'île aux fleurs</span></a>
+  <div class="nav-right-group">
+    <ul class="nav-links">
+      <li><a href="catalogue.html">Catalogue</a></li>
+      <li><a href="meteo.html">Météo</a></li>
+      <li><a href="planning-ia.html">Planning IA</a></li>
+    </ul>
+    <div class="nav-avatar">MD</div>
+  </div>
+</nav>
+
+<!-- HERO PROJET -->
+<div class="projet-hero">
+  <div class="projet-hero-inner">
+    <a href="#" class="back-link" onclick="history.back(); return false;">Mon espace personnel</a>
+    <div class="projet-meta">
+      <div class="projet-left">
+        <span class="projet-status">En cours</span>
+        <h1 class="projet-title">Martinique en famille</h1>
+        <p class="projet-dates"><strong>12 sept. — 22 sept. 2026</strong> · 10 jours · 4 voyageurs</p>
+      </div>
+      <div class="projet-actions">
+        <button class="btn-outline">Partager</button>
+        <button class="btn-outline">Exporter PDF</button>
+        <button class="btn-ia">Optimiser avec l'IA</button>
+      </div>
+    </div>
+    <div class="projet-progress">
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" style="width: 70%"></div>
+      </div>
+      <span class="progress-label">14 activités planifiées · 6 jours restants à remplir</span>
+    </div>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="page-body">
+
+  <!-- COLONNE PRINCIPALE -->
+  <div>
+
+  <!-- ONGLETS SEMAINES -->
+  <div class="week-tabs">
+    <button class="week-tab active" onclick="switchWeek(1)">Semaine 1 · Jours 1-7</button>
+    <button class="week-tab" onclick="switchWeek(2)">Semaine 2 · Jours 8-10</button>
+  </div>
+
+  <!-- SEMAINE 1 -->
+  <div class="week-content active" id="week-1">
+
+    <!-- Jour 1 -->
+    <div class="day-block">
+      <div class="day-header">
+        <span class="day-number">Jour 1</span>
+        <span class="day-date">Samedi 12 septembre 2026</span>
+        <div class="day-line"></div>
+      </div>
+      <div class="activity-list">
+        <div class="activity-card">
+          <div class="activity-time"><div class="time">14h00</div><div class="moment">Après-midi</div></div>
+          <div class="activity-info">
+            <span class="activity-cat cat-plage">Plage</span>
+            <p class="activity-name">Anse Céron</p>
+            <p class="activity-loc">Le Prêcheur · Nord Caraïbe</p>
+          </div>
+          <div class="activity-actions">
+            <button class="act-btn edit">Modifier</button>
+            <button class="act-btn">Retirer</button>
+          </div>
+        </div>
+        <div class="activity-card">
+          <div class="activity-time"><div class="time">19h30</div><div class="moment">Soir</div></div>
+          <div class="activity-info">
+            <span class="activity-cat cat-resto">Restaurant</span>
+            <p class="activity-name">Le Belem</p>
+            <p class="activity-loc">Fort-de-France · Centre</p>
+          </div>
+          <div class="activity-actions">
+            <button class="act-btn edit">Modifier</button>
+            <button class="act-btn">Retirer</button>
+          </div>
+        </div>
+        <button class="add-activity">+ Ajouter une activité</button>
+      </div>
+    </div>
+
+    <!-- Jour 2 -->
+    <div class="day-block">
+      <div class="day-header">
+        <span class="day-number">Jour 2</span>
+        <span class="day-date">Dimanche 13 septembre 2026</span>
+        <div class="day-line"></div>
+      </div>
+      <div class="activity-list">
+        <div class="activity-card">
+          <div class="activity-time"><div class="time">09h00</div><div class="moment">Matin</div></div>
+          <div class="activity-info">
+            <span class="activity-cat cat-rando">Randonnée</span>
+            <p class="activity-name">Montagne Pelée</p>
+            <p class="activity-loc">Saint-Pierre · Nord</p>
+          </div>
+          <div class="activity-actions">
+            <button class="act-btn edit">Modifier</button>
+            <button class="act-btn">Retirer</button>
+          </div>
+        </div>
+        <div class="activity-card">
+          <div class="activity-time"><div class="time">15h00</div><div class="moment">Après-midi</div></div>
+          <div class="activity-info">
+            <span class="activity-cat cat-rhum">Rhumerie</span>
+            <p class="activity-name">Habitation Clément</p>
+            <p class="activity-loc">Le François · Centre Atlantique</p>
+          </div>
+          <div class="activity-actions">
+            <button class="act-btn edit">Modifier</button>
+            <button class="act-btn">Retirer</button>
+          </div>
+        </div>
+        <button class="add-activity">+ Ajouter une activité</button>
+      </div>
+    </div>
+
+    <!-- Jour 3 -->
+    <div class="day-block">
+      <div class="day-header">
+        <span class="day-number">Jour 3</span>
+        <span class="day-date">Lundi 14 septembre 2026</span>
+        <div class="day-line"></div>
+      </div>
+      <div class="activity-list">
+        <div class="activity-card">
+          <div class="activity-time"><div class="time">10h00</div><div class="moment">Matin</div></div>
+          <div class="activity-info">
+            <span class="activity-cat cat-culture">Culture</span>
+            <p class="activity-name">Musée de la Pagerie</p>
+            <p class="activity-loc">Les Trois-Îlets · Sud Caraïbe</p>
+          </div>
+          <div class="activity-actions">
+            <button class="act-btn edit">Modifier</button>
+            <button class="act-btn">Retirer</button>
+          </div>
+        </div>
+        <button class="add-activity">+ Ajouter une activité</button>
+      </div>
+    </div>
+
+    <!-- Jours 4-7 groupés -->
+    <div class="day-block">
+      <div class="day-header">
+        <span class="day-number">Jours 4 — 7</span>
+        <span class="day-date">Mardi 15 au vendredi 18 septembre 2026</span>
+        <div class="day-line"></div>
+      </div>
+      <div class="grouped-block">
+        <p class="grouped-note">Ces 4 journées ne sont pas encore planifiées.</p>
+        <button class="add-activity" onclick="togglePicker('picker-s1')">+ Ajouter une activité</button>
+        <div class="day-picker" id="picker-s1" style="display:none">
+          <p class="picker-label">Choisissez la journée à planifier</p>
+          <div class="picker-days">
+            <button class="picker-day">Jour 4 · Mar. 15 sept.</button>
+            <button class="picker-day">Jour 5 · Mer. 16 sept.</button>
+            <button class="picker-day">Jour 6 · Jeu. 17 sept.</button>
+            <button class="picker-day">Jour 7 · Ven. 18 sept.</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SEMAINE 2 -->
+  <div class="week-content" id="week-2">
+
+    <!-- Jours 8-10 groupés -->
+    <div class="day-block">
+      <div class="day-header">
+        <span class="day-number">Jours 8 — 10</span>
+        <span class="day-date">Samedi 19 au lundi 21 septembre 2026</span>
+        <div class="day-line"></div>
+      </div>
+      <div class="grouped-block">
+        <p class="grouped-note">Ces 3 journées ne sont pas encore planifiées.</p>
+        <button class="add-activity" onclick="togglePicker('picker-s2')">+ Ajouter une activité</button>
+        <div class="day-picker" id="picker-s2" style="display:none">
+          <p class="picker-label">Choisissez la journée à planifier</p>
+          <div class="picker-days">
+            <button class="picker-day">Jour 8 · Sam. 19 sept.</button>
+            <button class="picker-day">Jour 9 · Dim. 20 sept.</button>
+            <button class="picker-day">Jour 10 · Lun. 21 sept.</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  </div><!-- fin colonne principale -->
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- Récap -->
+    <div class="side-card">
+      <div class="side-card-head">Récapitulatif</div>
+      <div class="side-card-body">
+        <div class="recap-row"><span class="recap-label">Durée</span><span class="recap-val">10 jours</span></div>
+        <div class="recap-row"><span class="recap-label">Voyageurs</span><span class="recap-val">4 personnes</span></div>
+        <div class="recap-row"><span class="recap-label">Activités</span><span class="recap-val">14 / 20 prévues</span></div>
+        <div class="recap-row"><span class="recap-label">Jours planifiés</span><span class="recap-val jaune">3 / 10</span></div>
+        <div class="recap-row"><span class="recap-label">Sargasses</span><span class="recap-val vert">Faible en sept.</span></div>
+      </div>
+    </div>
+
+    <!-- Météo -->
+    <div class="side-card">
+      <div class="side-card-head">Météo prévue</div>
+      <div class="side-card-body" style="gap: 8px;">
+        <p style="font-size: 11px; color: var(--doux);">Semaine du 12 sept. · Prévisions approximatives</p>
+        <div class="meteo-strip">
+          <div class="meteo-day today">
+            <div class="meteo-day-name">Sam</div>
+            <div class="meteo-day-icon">⛅</div>
+            <div class="meteo-day-temp">29°</div>
+          </div>
+          <div class="meteo-day">
+            <div class="meteo-day-name">Dim</div>
+            <div class="meteo-day-icon">🌤</div>
+            <div class="meteo-day-temp">30°</div>
+          </div>
+          <div class="meteo-day">
+            <div class="meteo-day-name">Lun</div>
+            <div class="meteo-day-icon">🌧</div>
+            <div class="meteo-day-temp">27°</div>
+          </div>
+          <div class="meteo-day">
+            <div class="meteo-day-name">Mar</div>
+            <div class="meteo-day-icon">⛅</div>
+            <div class="meteo-day-temp">28°</div>
+          </div>
+          <div class="meteo-day">
+            <div class="meteo-day-name">Mer</div>
+            <div class="meteo-day-icon">☀️</div>
+            <div class="meteo-day-temp">31°</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IA -->
+    <div class="ia-side">
+      <p class="ia-side-title">Compléter avec <span>l'IA</span></p>
+      <p class="ia-side-desc">7 journées restent vides. L'IA peut les remplir automatiquement selon vos préférences et activités déjà planifiées.</p>
+      <button class="ia-side-btn">Générer les jours manquants</button>
+    </div>
+
+  </aside>
+
+</div>
+
+<script src="js/detail-voyage.js"></script>
