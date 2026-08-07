@@ -58,13 +58,47 @@ Projet-Martinique/
 - ✅ 8 maquettes HTML avec CSS et JS séparés
 - ❌ Aucune connexion à l'API (données statiques)
 
+## **ENVIRONNEMENT DE DÉVELOPPEMENT**
+
+- Backend accessible sur : `http://localhost:8000`
+- Documentation API (Swagger) : `http://localhost:8000/docs`
+- Activer l'environnement virtuel avant toute commande backend :
+  `source backend/venv/bin/activate` (Linux/Mac) ou `backend\venv\Scripts\activate` (Windows)
+- Commande pour lancer le backend : `uvicorn app.main:app --reload --port 8000`
+  (à exécuter depuis le dossier `backend/`)
+- Framework de tests : **pytest** + **httpx**
+- Commande pour lancer les tests : `pytest` (depuis le dossier `backend/`)
+
+## **DESIGN SYSTEM FRONTEND**
+
+Toutes les pages utilisent le design system "Madras". Ne pas s'en écarter.
+
+### Couleurs
+- `--rouge : #C8392B`
+- `--jaune : #F0B429`
+- `--vert : #1D7A4E`
+- `--bleu : #1A5C8A`
+- `--sable : #F5EDD8`
+- `--nuit : #0D1F2D`
+
+### Typographies
+- Titres : Playfair Display
+- Corps : DM Sans
+
+### Éléments communs
+- Logo : fleur SVG (5 ellipses roses #D4607A + centre jaune #F0B429)
+- Nav : sticky, hauteur 64px, barre de progression madras en haut
+- Bouton principal : fond `--rouge`, texte blanc
+- Bouton secondaire : fond `--jaune`, texte `--nuit`
+- Toutes les pages doivent être responsive (lisibles et utilisables sur mobile)
+
 ## **CONVENTIONS DE CODE**
 
 ### Langue
 - Code (variables, fonctions, classes) : anglais
 - Commentaires dans le code : français, courts et clairs
 - Messages d'erreur retournés par l'API : français
-- Commits : anglais
+- Commits : anglais, format conventional commits (ex: `feat:`, `fix:`, `docs:`)
 
 ### Nommage
 - Fichiers Python : `snake_case` (ex: `travel_project.py`)
@@ -77,6 +111,32 @@ Projet-Martinique/
 - Un commentaire court au-dessus de chaque fonction pour expliquer son rôle
 - Pas de blocs de commentaires longs
 - Expliquer le pourquoi quand ce n'est pas évident, pas le quoi
+
+### Variables d'environnement
+- Toute nouvelle variable ajoutée dans `.env` doit aussi être ajoutée
+  dans `.env.example` (sans la valeur réelle)
+- Jamais de secrets ou clés API dans le code
+
+## **GIT**
+
+- Branche principale : `main` (on travaille directement dessus, pas de feature branches)
+- Un commit par fichier créé ou modifié
+- Format des commits : conventional commits en anglais (ex: `feat:`, `fix:`, `docs:`, `chore:`)
+
+## **COMMUNICATION FRONTEND / BACKEND**
+
+- Le frontend appelle le backend via `fetch()` en JavaScript
+- URL de base de l'API en développement : `http://localhost:8000`
+- Format des erreurs retournées par l'API : `{"detail": "message d'erreur en français"}`
+- Pour les routes protégées, le frontend envoie le token JWT dans le header :
+  `Authorization: Bearer <token>`
+
+## **JOURNAL DU PROJET**
+
+Le fichier `backend/JOURNAL.md` contient l'historique chronologique de toutes
+les décisions prises sur le projet. Chaque agent doit y ajouter une entrée
+datée à la fin de sa mission, résumant ce qu'il a construit et les décisions
+techniques importantes qu'il a prises.
 
 ## **CE QU'IL NE FAUT PAS FAIRE**
 
