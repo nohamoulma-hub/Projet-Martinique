@@ -1,0 +1,272 @@
+<title>Catalogue des activités : Martinique</title>
+<link rel="stylesheet" href="css/catalogue.css">
+
+<nav>
+  <a href="#" class="nav-logo">Martinique<svg class="logo-flower" width="14" height="14" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(0 16 16)"/><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(72 16 16)"/><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(144 16 16)"/><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(216 16 16)"/><ellipse cx="16" cy="10" rx="4.5" ry="7" fill="#D4607A" opacity=".9" transform="rotate(288 16 16)"/><circle cx="16" cy="16" r="3.5" fill="#F0B429"/></svg><span>l'île aux fleurs</span></a>
+  <ul class="nav-links">
+    <li><a href="catalogue.html" class="active">Catalogue</a></li>
+    <li><a href="meteo.html">Météo</a></li>
+    <li><a href="planning-ia.html">Planning IA</a></li>
+    <li><a href="espace-personnel.html" class="nav-cta">Mon voyage</a></li>
+  </ul>
+  <div class="madras-bar"></div>
+</nav>
+
+<section class="page-header">
+  <div class="page-header-inner">
+    <p class="page-eyebrow">Martinique · Catalogue</p>
+    <h1 class="page-title">Explorez <em>l'île</em><br>à votre rythme</h1>
+    <p class="page-subtitle">Plages, randonnées, rhumeries, restaurants : toutes les activités de l'île en un seul endroit.</p>
+    <div class="search-bar">
+      <input class="search-input" type="text" placeholder="Rechercher une activité, un lieu...">
+      <button class="search-btn">Rechercher</button>
+    </div>
+  </div>
+</section>
+
+<div class="filters-bar">
+  <div class="filters-inner">
+    <span class="filter-label">Filtrer</span>
+    <button class="filter-btn active" onclick="setFilter(this)">Tout voir</button>
+    <button class="filter-btn" onclick="setFilter(this)">🏖️ Plages</button>
+    <button class="filter-btn" onclick="setFilter(this)">🥾 Randonnées</button>
+    <button class="filter-btn" onclick="setFilter(this)">🥃 Rhumeries</button>
+    <button class="filter-btn" onclick="setFilter(this)">🍽️ Restaurants</button>
+    <button class="filter-btn" onclick="setFilter(this)">🤿 Activités</button>
+    <button class="filter-btn" onclick="setFilter(this)">🎉 Événements</button>
+    <button class="filter-btn" onclick="setFilter(this)">🏠 Logements</button>
+    <button class="filter-btn" onclick="setFilter(this)">🛒 Marché</button>
+  </div>
+</div>
+
+<div class="results-bar">
+  <p class="results-count"><strong>24 résultats</strong> · Martinique</p>
+  <select class="sort-select">
+    <option>Trier par : Popularité</option>
+    <option>Trier par : Nom A–Z</option>
+    <option>Trier par : Moins fréquenté</option>
+  </select>
+</div>
+
+<section class="catalogue-section">
+  <div class="catalogue-grid">
+
+    <!-- Plage 1 -->
+    <article class="card cat-beach">
+      <div class="card-visual">
+        <div class="card-visual-bg"></div>
+        <div class="card-icon">🏖️</div>
+        <span class="card-badge badge-beach">Plage</span>
+      </div>
+      <div class="card-body">
+        <h2 class="card-name">Anse Céron</h2>
+        <p class="card-desc">Plage sauvage au nord de la presqu'île de la Caravelle, entourée de cocotiers. Eaux turquoise et calme absolu.</p>
+        <div class="card-meta">
+          <div class="tourist-score">
+            <span class="meta-icon">👥</span>
+            <div class="score-dots">
+              <div class="dot filled"></div><div class="dot filled"></div>
+              <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            </div>
+            <span class="score-label">Peu fréquentée</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <span class="meta-item"><span class="meta-icon">🚿</span> Douches</span>
+          <span class="meta-item"><span class="meta-icon">🅿️</span> Parking</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-location">📍 Le Prêcheur</span>
+        <a href="#" class="card-cta">Voir le détail →</a>
+      </div>
+    </article>
+
+    <!-- Rando 1 -->
+    <article class="card cat-hike">
+      <div class="card-visual">
+        <div class="card-visual-bg"></div>
+        <div class="card-icon">🥾</div>
+        <span class="card-badge badge-hike">Randonnée</span>
+      </div>
+      <div class="card-body">
+        <h2 class="card-name">Montagne Pelée</h2>
+        <p class="card-desc">Ascension du volcan emblématique de la Martinique. Vue panoramique sur toute l'île depuis le sommet à 1 397 m.</p>
+        <div class="card-meta">
+          <div class="difficulty-bar diff-hard">
+            <span class="meta-icon">⚡</span>
+            <div class="diff-track"><div class="diff-fill"></div></div>
+            <span style="font-size:12px;color:var(--rouge);font-weight:500;">Difficile</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <span class="meta-item"><span class="meta-icon">⏱️</span> 6h</span>
+          <span class="meta-item"><span class="meta-icon">↑</span> D+ 1 100 m</span>
+          <span class="meta-item"><span class="meta-icon">↓</span> D- 1 100 m</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-location">📍 Saint-Pierre</span>
+        <a href="#" class="card-cta">Voir le détail →</a>
+      </div>
+    </article>
+
+    <!-- Rhumerie -->
+    <article class="card cat-rum">
+      <div class="card-visual">
+        <div class="card-visual-bg"></div>
+        <div class="card-icon">🥃</div>
+        <span class="card-badge badge-rum">Rhumerie</span>
+      </div>
+      <div class="card-body">
+        <h2 class="card-name">Rhummerie JM</h2>
+        <p class="card-desc">L'une des plus anciennes distilleries de l'île, nichée sur les pentes de la Montagne Pelée. Rhum agricole AOC Martinique.</p>
+        <div class="card-meta">
+          <span class="meta-item"><span class="meta-icon">🕘</span> Lun. au Sam., 9h à 17h</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-item"><span class="meta-icon">🎟️</span> Visite gratuite</span>
+          <span class="meta-item"><span class="meta-icon">🥂</span> Dégustation</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-location">📍 Macouba</span>
+        <a href="#" class="card-cta">Voir le détail →</a>
+      </div>
+    </article>
+
+    <!-- Plage 2 -->
+    <article class="card cat-beach">
+      <div class="card-visual">
+        <div class="card-visual-bg"></div>
+        <div class="card-icon">🏖️</div>
+        <span class="card-badge badge-beach">Plage</span>
+      </div>
+      <div class="card-body">
+        <h2 class="card-name">Plage des Salines</h2>
+        <p class="card-desc">La plage la plus connue de la Martinique. Longue bande de sable blanc bordée de cocotiers, au sud de l'île.</p>
+        <div class="card-meta">
+          <div class="tourist-score">
+            <span class="meta-icon">👥</span>
+            <div class="score-dots">
+              <div class="dot filled"></div><div class="dot filled"></div>
+              <div class="dot filled"></div><div class="dot filled"></div>
+              <div class="dot filled"></div>
+            </div>
+            <span class="score-label">Très fréquentée</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <span class="meta-item"><span class="meta-icon">🚿</span> Douches</span>
+          <span class="meta-item"><span class="meta-icon">🍹</span> Snack</span>
+          <span class="meta-item"><span class="meta-icon">🅿️</span> Parking</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-location">📍 Sainte-Anne</span>
+        <a href="#" class="card-cta">Voir le détail →</a>
+      </div>
+    </article>
+
+    <!-- Restaurant -->
+    <article class="card cat-resto">
+      <div class="card-visual">
+        <div class="card-visual-bg"></div>
+        <div class="card-icon">🍽️</div>
+        <span class="card-badge badge-resto">Restaurant</span>
+      </div>
+      <div class="card-body">
+        <h2 class="card-name">Le Petibonum</h2>
+        <p class="card-desc">Table créole les pieds dans l'eau, tenue par le chef Ti'Bo. Poissons grillés, accras et punchs maison dans une ambiance authentique.</p>
+        <div class="card-meta">
+          <span class="meta-item"><span class="meta-icon">💰</span> €€</span>
+          <span class="meta-item"><span class="meta-icon">🍛</span> Cuisine créole</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-item"><span class="meta-icon">🕐</span> Midi & Soir</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-location">📍 Le Carbet</span>
+        <a href="#" class="card-cta">Voir le détail →</a>
+      </div>
+    </article>
+
+    <!-- Rando 2 -->
+    <article class="card cat-hike">
+      <div class="card-visual">
+        <div class="card-visual-bg"></div>
+        <div class="card-icon">🥾</div>
+        <span class="card-badge badge-hike">Randonnée</span>
+      </div>
+      <div class="card-body">
+        <h2 class="card-name">Cascade Vauchelet</h2>
+        <p class="card-desc">Courte randonnée en forêt tropicale menant à une cascade rafraîchissante. Idéale pour les familles et les débutants.</p>
+        <div class="card-meta">
+          <div class="difficulty-bar diff-easy">
+            <span class="meta-icon">⚡</span>
+            <div class="diff-track"><div class="diff-fill"></div></div>
+            <span style="font-size:12px;color:var(--vert);font-weight:500;">Facile</span>
+          </div>
+        </div>
+        <div class="card-meta">
+          <span class="meta-item"><span class="meta-icon">⏱️</span> 1h30</span>
+          <span class="meta-item"><span class="meta-icon">↑</span> D+ 180 m</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-location">📍 Caplet</span>
+        <a href="#" class="card-cta">Voir le détail →</a>
+      </div>
+    </article>
+
+    <!-- Activité -->
+    <article class="card cat-activity">
+      <div class="card-visual">
+        <div class="card-visual-bg"></div>
+        <div class="card-icon">🤿</div>
+        <span class="card-badge badge-act">Activité</span>
+      </div>
+      <div class="card-body">
+        <h2 class="card-name">Plongée Rocher du Diamant</h2>
+        <p class="card-desc">Site de plongée emblématique autour du Rocher du Diamant. Faune sous-marine exceptionnelle, accessible à tous niveaux.</p>
+        <div class="card-meta">
+          <span class="meta-item"><span class="meta-icon">🌊</span> Niveaux 1 à 3</span>
+          <span class="meta-item"><span class="meta-icon">💰</span> À partir de 45€</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-location">📍 Le Diamant</span>
+        <a href="#" class="card-cta">Voir le détail →</a>
+      </div>
+    </article>
+
+    <!-- Événement -->
+    <article class="card cat-event">
+      <div class="card-visual">
+        <div class="card-visual-bg"></div>
+        <div class="card-icon">🎉</div>
+        <span class="card-badge badge-event">Événement</span>
+      </div>
+      <div class="card-body">
+        <h2 class="card-name">Tour des Yoles Rondes</h2>
+        <p class="card-desc">La plus grande régate traditionnelle des Antilles, avec les emblématiques yoles martiniquaises. Spectacle exceptionnel et ambiance festive.</p>
+        <div class="card-meta">
+          <span class="meta-item"><span class="meta-icon">📅</span> du 2 au 9 août 2026</span>
+          <span class="meta-item"><span class="meta-icon">🎟️</span> Gratuit</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-location">📍 Le Marin</span>
+        <a href="#" class="card-cta">Voir le détail →</a>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Martinique, L'Île aux Fleurs · Données météo : Météo France</span>
+</footer>
+
+<script src="js/catalogue.js"></script>
