@@ -6,7 +6,7 @@ python-dotenv==1.0.1      # charge le fichier .env
 sqlalchemy==2.0.35        # ORM : permet de définir les tables comme des classes Python
 alembic==1.13.3           # gère les migrations (évolutions du schéma de la base dans le temps)
 python-jose[cryptography]==3.5.0  # génération et vérification des tokens JWT
-passlib[bcrypt]==1.7.4    # hachage sécurisé des mots de passe
+bcrypt==5.0.0             # hachage sécurisé des mots de passe (utilisé directement, sans passlib)
 pydantic[email]==2.13.4   # validation des adresses email (email-validator)
 httpx==0.28.1             # client HTTP pour les appels aux APIs externes et les tests
 pytest==9.1.1             # framework de tests
