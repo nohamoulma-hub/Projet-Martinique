@@ -1,7 +1,10 @@
 # Schémas Pydantic pour les projets de voyage et leurs items.
+# Note : le modèle SQLAlchemy utilise "title" et "point_of_interest_id",
+# mais l'API expose "name" et "activity_id" pour coller à la spec v1.
+# Le mapping est fait manuellement dans le routeur.
 from datetime import date, datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 from app.schemas.point_of_interest import PointOfInterestRead
 
@@ -13,13 +16,11 @@ class TravelProjectItemCreate(BaseModel):
 
 
 class TravelProjectItemRead(BaseModel):
-    """Item retourné dans le détail d'un projet (activité du catalogue)."""
+    """Item retourné dans le détail d'un projet."""
     id: int
     activity_id: int
     day_number: int | None
     activity: PointOfInterestRead
-
-    model_config = ConfigDict(from_attributes=True)
 
 
 class TravelProjectCreate(BaseModel):
@@ -47,5 +48,3 @@ class TravelProjectRead(BaseModel):
     budget: float | None
     created_at: datetime
     items: list[TravelProjectItemRead] = []
-
-    model_config = ConfigDict(from_attributes=True)
