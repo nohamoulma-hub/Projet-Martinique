@@ -126,6 +126,41 @@ Historique chronologique des actions effectuées et des décisions prises, pour 
   └── js/          (un fichier JS par page)
   ```
 
+## 2026-08-12 — Mission agent Backend v1 : construction des endpoints et des tests
+
+### Ce qui a été construit
+
+**Nouveaux fichiers créés (hors tests) :**
+- `app/core/security.py` : utilitaires JWT (création/décodage de token via python-jose) et hachage bcrypt des mots de passe. Utilise `bcrypt` directement sans passlib (passlib 1.7.4 incompatible avec bcrypt 5.x sur Python 3.14).
+- `app/schemas/user.py` : schémas Pydantic pour inscription (`UserCreate`), modification profil (`UserUpdate`) et lecture (`UserRead`).
+- `app/schemas/auth.py` : schémas `Token` et `LoginRequest`.
+- `app/schemas/travel_project.py` : schémas pour les projets et leurs items. Mapping manuel `title -> name` et `point_of_interest_id -> activity_id` géré dans le routeur (pas de modification des modèles existants).
+- `app/schemas/meteo.py` : schéma `MeteoActuelle`.
+- `app/services/auth_service.py` : dépendance FastAPI `get_current_user` (extraction et validation du token JWT depuis le header `Authorization: Bearer`).
+- `app/services/meteo_service.py` : appel à l'API Open-Meteo (gratuite, sans clé API, coordonnées de Fort-de-France).
+- `app/routers/activites.py` : `GET /activites` (pagination, filtres categorie/search/sort) et `GET /activites/{id}` avec beach_details ou hike_details selon la catégorie.
+- `app/routers/auth.py` : `POST /auth/inscription` et `POST /auth/connexion`.
+- `app/routers/utilisateurs.py` : `GET /utilisateurs/moi` et `PUT /utilisateurs/moi` (protégés).
+- `app/routers/projets.py` : CRUD complet `/projets` + `POST /projets/{id}/activites` et `DELETE /projets/{id}/activites/{item_id}` (tous protégés, isolation par utilisateur).
+- `app/routers/meteo.py` : `GET /meteo`.
+- `scripts/seed.py` : 8 vraies plages et 7 vraies randonnées de Martinique avec coordonnées GPS et détails (tourist_score, difficulte, denicelle, durée).
+- `tests/conftest.py`, `tests/test_activites.py`, `tests/test_auth.py`, `tests/test_projets.py` : 29 tests, tous verts.
+
+**Fichiers modifiés :**
+- `app/main.py` : enregistrement de tous les routeurs, description API pour Swagger, `allow_credentials=True` sur CORS.
+- `app/core/config.py` : ajout `jwt_secret_key`, `jwt_expire_hours`; migration vers Pydantic v2 (`model_config`, `computed_field`).
+- `app/schemas/point_of_interest.py` : ajout `BeachDetailsRead`, `HikeDetailsRead`, `PointOfInterestDetail`.
+- `requirements.txt` : ajout `python-jose[cryptography]`, `bcrypt`, `pydantic[email]`, `httpx`, `pytest`.
+- `.env` / `.env.example` : ajout `JWT_SECRET_KEY` et `JWT_EXPIRE_HOURS`.
+
+### Decisions techniques
+
+- **Météo** : Météo France nécessite une inscription et une clé API. Décision d'utiliser Open-Meteo (gratuite, sans clé, couvre la Martinique via coordonnées GPS). Le service peut être remplacé sans changer le routeur.
+- **bcrypt** : `passlib` 1.7.4 est incompatible avec `bcrypt` 5.0.0 (Python 3.14). Utilisation de `bcrypt` directement.
+- **Mapping title/name** : le modèle `TravelProject` utilise `title` mais la spec v1 expose `name`. Plutôt que de modifier le modèle, le mapping est fait manuellement dans le routeur via la fonction `_build_project_read()`.
+- **Tests** : base SQLite en mémoire, isolation par rollback de transaction (chaque test repart d'une base propre).
+- **18 routes enregistrées**, 29 tests, 15 activités en base (8 plages + 7 randonnées).
+
 ## 2026-08-07 — Lancement de l'agent Backend v1
 
 - **Prochaine étape : agent Backend v1** — construire les endpoints FastAPI pour le périmètre v1 :
