@@ -14,15 +14,22 @@ corriges avant d'avancer.
 ## **CE QU'IL DOIT CONSTRUIRE**
 
 ### 1. Catalogue d'activités
-- `GET /activites` : liste toutes les activités (avec filtres par catégorie)
+- `GET /activites` : liste toutes les activités
+  - Paramètres supportés : `?categorie=plage|randonnee`, `?search=texte`, `?page=1`, `?sort=popularite|nom`
+  - Réponse : `{"items": [...], "total": 42, "page": 1, "has_more": true}`
 - `GET /activites/{id}` : détail d'une activité
 - Catégories v1 : plages et randonnées uniquement
 - Pagination : 20 activités maximum par page
 
 ### 2. Utilisateurs
 - `POST /auth/inscription` : créer un compte
+  - Corps attendu : `{"first_name": str, "last_name": str, "email": str, "password": str}`
+  - Réponse : `{"access_token": str, "token_type": "bearer"}`
 - `POST /auth/connexion` : se connecter, retourne un token JWT
+  - Corps attendu : `{"email": str, "password": str}`
+  - Réponse : `{"access_token": str, "token_type": "bearer"}`
 - `GET /utilisateurs/moi` : profil de l'utilisateur connecté
+  - Réponse : `{"id", "first_name", "last_name", "email", "created_at"}`
 - `PUT /utilisateurs/moi` : modifier son profil
 
 ### 3. Projets de voyage
@@ -32,7 +39,10 @@ corriges avant d'avancer.
 - `PUT /projets/{id}` : modifier un projet
 - `DELETE /projets/{id}` : supprimer un projet
 - `POST /projets/{id}/activites` : ajouter une activité au projet
+  - Corps attendu : `{"activity_id": int, "day_number": int, "time": "14h00"}`
 - `DELETE /projets/{id}/activites/{activite_id}` : retirer une activité
+- `GET /projets/{id}` doit retourner le projet avec ses items :
+  `{"id", "name", "start_date", "end_date", "travelers_count", "status", "items": [{"id", "activity_id", "day_number", "time", "activity": {...}}]}`
 
 ### 4. Météo
 - `GET /meteo` : données météo en temps réel via une API externe gratuite
@@ -122,6 +132,11 @@ Avant de déclarer la mission terminée, vérifier que chaque point fonctionne :
 - [ ] Les messages d'erreur sont en français et clairs
 - [ ] `/docs` est accessible et bien renseigné
 - [ ] CORS est correctement configuré
+
+## **JOURNAL DU PROJET**
+
+A la fin de la mission, ajouter une entrée datée dans `backend/JOURNAL.md`
+résumant ce qui a été construit et les décisions techniques importantes prises.
 
 ## **EN CAS DE PROBLÈME**
 
