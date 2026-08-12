@@ -7,6 +7,24 @@ from pydantic import BaseModel, ConfigDict
 from app.models.point_of_interest import Category
 
 
+class BeachDetailsRead(BaseModel):
+    """Informations spécifiques à une plage."""
+    tourist_score: int
+    amenities: str | None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class HikeDetailsRead(BaseModel):
+    """Informations spécifiques à une randonnée."""
+    difficulty: str | None
+    elevation_gain: int | None
+    elevation_loss: int | None
+    duration: int | None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 # Champs communs à la création et à la lecture, pour éviter de les répéter.
 class PointOfInterestBase(BaseModel):
     name: str
@@ -30,3 +48,9 @@ class PointOfInterestRead(PointOfInterestBase):
 
     # Permet de créer ce schéma directement depuis un objet SQLAlchemy.
     model_config = ConfigDict(from_attributes=True)
+
+
+class PointOfInterestDetail(PointOfInterestRead):
+    """Détail complet : inclut les informations spécifiques à la catégorie."""
+    beach_details: BeachDetailsRead | None = None
+    hike_details: HikeDetailsRead | None = None
