@@ -170,3 +170,41 @@ Historique chronologique des actions effectuées et des décisions prises, pour 
   4. Météo : endpoint proxy vers une API météo externe
 - La base de données est prête (6 tables créées via Alembic). Il reste à écrire les routeurs, schémas Pydantic et services.
 - Une fois les endpoints disponibles, un agent Frontend viendra connecter les 8 maquettes à l'API.
+
+## 2026-08-12 — Mission agent Frontend v1 : connexion des 8 maquettes à l'API
+
+### Ce qui a été construit
+
+**Nouveau fichier cree :**
+- `frontend/js/auth-utils.js` : utilitaires partagés entre toutes les pages JS — `API_URL`, `getToken()`, `getAuthHeaders()`, `requireAuth()`, `handleUnauthorized()`, `loadNavAvatar()`. Ce fichier est charge avant chaque JS de page.
+
+**Fichiers JS mis a jour :**
+- `js/auth.js` : connexion (`POST /auth/connexion`) et inscription (`POST /auth/inscription`) avec stockage du JWT dans `localStorage`, validation mot de passe cote client (8 char, majuscule, chiffre), erreurs API affichees sous le formulaire, bouton Google -> "Bientot disponible", redirection vers `espace-personnel.html` apres succes.
+- `js/catalogue.js` : chargement dynamique depuis `GET /activites` avec filtres categorie (`beach`/`hike`), recherche textuelle (debounce 400ms, 3 caracteres minimum), tri, pagination "Voir plus". Filtres hors scope (Rhumeries, Restaurants, Activites, Evenements, Logements, Marche) affichent un message "Bientot disponible" dans la grille sans désactiver les boutons.
+- `js/detail.js` : chargement depuis `GET /activites/{id}`, remplissage du hero (badge, titre, location, coords GPS), fiche pratique sidebar (beach_details ou hike_details selon la categorie), section acces, breadcrumb dynamique, bouton "Ajouter a mon voyage" ouvre une modale listant les projets (`GET /projets`) puis appelle `POST /projets/{id}/activites`, bouton "Sauvegarder" -> "Bientot disponible".
+- `js/espace-personnel.js` : protection JWT (`requireAuth`), chargement du profil (`GET /utilisateurs/moi`) avec initiales dans l'avatar et la nav, chargement des projets (`GET /projets`), modale "Nouveau projet" avec `POST /projets`, stats hero dynamiques (nombre de projets, jours avant le depart), onglets "Activites sauvegardees" et "Parametres" -> "Bientot disponible", bandeau sur les activites sauvegardees statiques.
+- `js/detail-voyage.js` : protection JWT, chargement du projet (`GET /projets/{id}`), rendu dynamique des day-blocks groupes par `day_number` avec calcul de la date reelle (start_date + day_number - 1), barre de progression, sidebar recap, modale d'ajout d'activite (`GET /activites?search=...` + `POST /projets/{id}/activites`), bouton "Retirer" (`DELETE /projets/{id}/activites/{item_id}`), boutons "Partager"/"Exporter PDF"/"Modifier" -> "Bientot disponible", "Optimiser avec l'IA" -> `planning-ia.html?projet_id=...`.
+- `js/accueil.js` : progress bar, `GET /meteo` pour mettre a jour la carte "Temperature mer" dans la section live (les autres cartes restent statiques car les champs sea_temperature/sunshine_hours/rainfall_7d ne sont pas dans l'API v1).
+- `js/meteo.js` : `GET /meteo` pour mettre a jour le hero (temperature, description, emoji meteo, heure d'actualisation, vent et humidite). Les champs manquants (ressenti, UV, pression, visibilite) restent statiques depuis la maquette.
+- `js/planning-ia.js` : protection JWT, `GET /projets/{id}` si `?projet_id=` present dans l'URL pour afficher le nom du projet dans la context bar, bandeau "Assistant IA bientot disponible" en haut du chat, chips et zone de saisie en opacite reduite, boutons "Regenerer" et "Valider" -> "Bientot disponible".
+
+**Fichiers HTML mis a jour :**
+- Ajout de `<script src="js/auth-utils.js">` avant le JS de page sur les 8 pages HTML.
+
+### Decisions techniques
+
+- **auth-utils.js partage** : plutot que de dupliquer `API_URL` et `getAuthHeaders()` dans chaque JS, un fichier commun est charge en premier sur chaque page. Les pages protegees appellent `requireAuth()` au demarrage.
+- **Champ `address` en lieu de `commune`** : le modele `PointOfInterest` n'a pas de champ `commune`. On extrait la premiere partie du champ `address` (ex: "Le Precheur, Martinique" -> "Le Precheur") via `extractCommune()`.
+- **Champs meteo absents** : l'API Open-Meteo via le service backend ne retourne pas `sea_temperature`, `sunshine_hours`, `rainfall_7d`. Conformement a la spec, les valeurs statiques de la maquette sont conservees pour ces champs.
+- **`TravelProjectItem` sans champ `time`** : le modele n'a pas de champ horaire. Les activity-cards affichent "-" pour l'heure, en attendant une evolution v2.
+- **`TravelProject` sans `travelers_count` ni `status`** : le modele n'a pas ces champs. Le statut est calcule dynamiquement depuis les dates (En cours / Planifie / Termine / Brouillon). Le nombre de voyageurs affiche "-" en sidebar.
+- **Maquette conservee pixel-perfect** : aucune modification des fichiers HTML ni CSS. Toutes les donnees dynamiques sont injectees via JavaScript dans les elements existants.
+
+### Perimetre non connecte en v1 (conforme a la spec)
+
+- Sargasses : statiques sur accueil.html, meteo.html et detail-voyage.html
+- Comparateur de vols : statique sur accueil.html
+- Previsions 7 jours sur meteo.html : statiques (l'API ne retourne pas de tableau de previsions)
+- Plages recommandees sur meteo.html : statiques
+- Activites sauvegardees : bandeau "Bientot disponible" sur espace-personnel.html
+- Chat IA sur planning-ia.html : messages statiques de la maquette, bandeau "bientot disponible"
