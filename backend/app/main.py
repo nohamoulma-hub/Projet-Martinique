@@ -1,7 +1,10 @@
 # Point d'entrée de l'API : crée l'application FastAPI et assemble les routeurs.
 # C'est ce fichier qu'uvicorn lance (uvicorn app.main:app).
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
 from app.routers import activites, auth, health, meteo, projets, utilisateurs
@@ -29,3 +32,8 @@ app.include_router(auth.router)
 app.include_router(utilisateurs.router)
 app.include_router(projets.router)
 app.include_router(meteo.router)
+
+# Sert le frontend statique depuis /site pour éviter les conflits avec les routes API
+frontend_path = Path(__file__).parent.parent.parent / "frontend"
+if frontend_path.exists():
+    app.mount("/site", StaticFiles(directory=str(frontend_path), html=True), name="frontend")

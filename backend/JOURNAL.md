@@ -208,3 +208,23 @@ Historique chronologique des actions effectuées et des décisions prises, pour 
 - Plages recommandees sur meteo.html : statiques
 - Activites sauvegardees : bandeau "Bientot disponible" sur espace-personnel.html
 - Chat IA sur planning-ia.html : messages statiques de la maquette, bandeau "bientot disponible"
+
+## 2026-08-12 - Retours utilisateur apres test v1 : evolutions prevues pour v2
+
+Suite au premier test complet du site v1, les points suivants ont ete identifies pour la prochaine iteration :
+
+### Navigation et etat de connexion
+- **Renommage "Mon voyage" en "Mes projets"** : le bouton CTA rouge "Mon voyage" devient un onglet "Mes projets" au meme style que les autres liens de nav (Catalogue / Meteo / Planning IA). Ce changement s'applique sur toutes les pages publiques : accueil.html, catalogue.html, meteo.html, detail.html.
+- **Bulle de connexion sur toutes les pages** : quand un utilisateur est connecte, ajouter la bulle d'initiales (nav-avatar) a droite des liens de nav sur toutes les pages (y compris accueil, catalogue, meteo, detail). Elle s'affiche en plus des liens, pas a la place.
+- **Menu deroulant sur la bulle** : un clic sur la bulle ouvre un petit menu deroulant avec deux options : "Mon espace personnel" (lien vers espace-personnel.html) et "Se deconnecter" (supprime le JWT du localStorage et redirige vers accueil.html).
+- **Bouton "Se connecter" conditionnel** : sur accueil.html, masquer ce bouton dans le hero si un JWT valide est present dans localStorage.
+- **Logo cliquable** : sur toutes les pages, le logo doit pointer vers accueil.html (certaines pages ont deja href="#").
+
+### Page detail.html
+- **Confirmation "Ajouter a mon voyage"** : remplacer le message de confirmation textuel par une animation discrete a droite du bouton (icone checkmark dans le theme du site). L'indicateur reste visible tant que l'activite est dans un projet de l'utilisateur (verifier via GET /projets au chargement de la page).
+- **Bouton retour vers le catalogue** : ajouter un lien "Retour au catalogue" dans la banniere hero (meme style que le lien "Retour au catalogue" dans espace-personnel.html), permettant de revenir a la liste via history.back() ou parametres URL.
+- **Differentiation visuelle plage / randonnee** : les fiches plage et randonnee doivent avoir une couleur d'accent differente dans le hero et la sidebar (ex: bleu pour les plages, vert pour les randonnees, coherent avec le design system Madras).
+- **Bloc "Alerte sargasses"** : n'afficher ce bloc que pour les activites de type plage (beach), pas pour les randonnees (hike).
+
+### Animations
+- **Animation d'arrivee** : appliquer la meme animation d'entree de page qu'accueil.html sur catalogue.html et meteo.html.

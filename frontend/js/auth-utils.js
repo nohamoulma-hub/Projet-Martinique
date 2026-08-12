@@ -1,6 +1,6 @@
 // Utilitaires partagés : URL de base, token JWT, headers d'authentification.
 
-const API_URL = 'http://localhost:8000';
+const API_URL = '';
 
 // Retourne le token JWT stocké dans localStorage, ou null si absent.
 function getToken() {
