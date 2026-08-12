@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     # URL de connexion à la base. SQLite pour l'instant (fichier local) ;
     # passera à une URL PostgreSQL plus tard sans changer le reste du code.
     database_url: str = "sqlite:///./martinique.db"
+    # Clé secrète pour signer les tokens JWT : doit rester dans .env, jamais dans le code.
+    jwt_secret_key: str = "changeme"
+    jwt_expire_hours: int = 24
 
     @property
     def cors_origins_list(self) -> list[str]:
