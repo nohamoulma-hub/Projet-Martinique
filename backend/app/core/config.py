@@ -1,9 +1,12 @@
 # Configuration centralisée de l'app, lue depuis les variables d'environnement (.env).
 # Évite de coder en dur des valeurs (clés API, URL de BDD...) qui changent selon l'environnement.
-from pydantic_settings import BaseSettings
+from pydantic import computed_field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env")
+
     app_name: str = "Martinique API"
     environment: str = "development"
     # Chaîne brute issue de .env (CORS_ORIGINS=a,b,c) ; cors_origins_list la transforme en liste.
@@ -15,12 +18,10 @@ class Settings(BaseSettings):
     jwt_secret_key: str = "changeme"
     jwt_expire_hours: int = 24
 
+    @computed_field
     @property
     def cors_origins_list(self) -> list[str]:
         return [origin.strip() for origin in self.cors_origins.split(",")]
-
-    class Config:
-        env_file = ".env"
 
 
 # Instance unique importée partout dans l'app (ex: app/main.py) pour accéder à la config.
