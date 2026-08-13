@@ -357,3 +357,51 @@
     .gallery-item:first-child { grid-row: span 1; }
     .nearby-grid { grid-template-columns: 1fr; }
   }
+
+  /* Lien retour au catalogue injecte sous le breadcrumb */
+  .back-to-catalogue {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--doux);
+    text-decoration: none;
+    transition: color .2s;
+    cursor: pointer; background: none; border: none; font-family: inherit; padding: 0;
+  }
+  .back-to-catalogue::before { content: '←'; }
+  .back-to-catalogue:hover { color: var(--rouge); }
+
+  /* Checkmark "deja dans un projet" a cote du bouton Ajouter */
+  .checkmark-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--sable); color: var(--vert);
+    font-size: 16px; font-weight: 700;
+    border: 2px solid var(--vert);
+    cursor: pointer; flex-shrink: 0;
+    position: relative; transition: background .2s;
+  }
+  .checkmark-btn:hover { background: rgba(29,122,78,0.12); }
+
+  /* Bulle listant les projets qui contiennent l'activite */
+  .checkmark-bubble {
+    position: fixed;
+    background: #0D1F2D;
+    border: 1px solid rgba(240,180,41,0.2);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    padding: 12px 16px;
+    z-index: 9999;
+    min-width: 180px;
+    display: none;
+  }
+  .checkmark-bubble.open { display: block; }
+  .checkmark-bubble p {
+    font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+    color: rgba(255,255,255,0.4); margin-bottom: 8px;
+  }
+  .checkmark-bubble ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+  .checkmark-bubble li { font-size: 13px; color: rgba(255,255,255,0.85); }
+
+  /* Zone bouton + checkmark */
+  .cta-voyage-row {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 0;
+  }
