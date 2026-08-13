@@ -290,3 +290,17 @@
     .zones-grid { grid-template-columns: 1fr; }
     .reco-grid { grid-template-columns: 1fr; }
   }
+
+  /* Animations d'arrivee (identiques a accueil.html) */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeLeft {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .meteo-localisation { opacity: 0; animation: fadeUp  .8s .3s forwards; }
+  .meteo-temp-row     { opacity: 0; animation: fadeUp  .8s .5s forwards; }
+  .meteo-update       { opacity: 0; animation: fadeUp  .8s .6s forwards; }
+  .meteo-main-right   { opacity: 0; animation: fadeLeft .8s .7s forwards; }
