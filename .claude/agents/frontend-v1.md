@@ -412,6 +412,9 @@ résumant les pages connectées et les décisions techniques importantes prises.
 
 ## **EN CAS DE PROBLEME**
 
+- Ne jamais inventer une solution incertaine : si un comportement, une
+  structure de données ou un nom de classe CSS est inconnu, lire les
+  fichiers concernés avant d'agir. Ne pas halluciner.
 - Si un endpoint retourne une structure différente de ce qui est attendu :
   ne pas adapter le HTML, signaler et demander avant de modifier
 - Si une donnée nécessaire n'est pas retournée par l'API : ne pas inventer
