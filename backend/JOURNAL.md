@@ -228,3 +228,36 @@ Suite au premier test complet du site v1, les points suivants ont ete identifies
 
 ### Animations
 - **Animation d'arrivee** : appliquer la meme animation d'entree de page qu'accueil.html sur catalogue.html et meteo.html.
+
+## 2026-08-13 - Mission agent Frontend v2 : navigation unifiee, detail.html et animations
+
+### Ce qui a ete construit
+
+**Fichier JS modifie (fondation) :**
+- `frontend/js/auth-utils.js` : ajout de `updateNav()`, `injectAvatarBubble()`, `injectAvatarStyles()`, `fetchInitials()`. La fonction `updateNav()` est la fonction centrale appelee au DOMContentLoaded sur toutes les pages publiques. Elle injecte le lien "Accueil" en premiere position de nav-links s'il est absent, remplace "Mon voyage" (nav-cta rouge) par "Mes projets" (lien normal) si l'utilisateur est connecte, et injecte la bulle d'initiales avec son menu deroulant (Mon espace personnel / Se deconnecter).
+
+**HTML modifies :**
+- `frontend/accueil.html` : logo nav et logo footer en `href="accueil.html"` (etaient `href="#"`).
+- `frontend/catalogue.html` : logo `href="accueil.html"`.
+- `frontend/meteo.html` : logo `href="accueil.html"`, lien breadcrumb Accueil `href="accueil.html"`.
+- `frontend/detail.html` : logo `href="accueil.html"`.
+
+**JS modifies :**
+- `frontend/js/accueil.js` : remplace `loadNavAvatar()` par `await updateNav()`, masque `.hero-actions .btn-primaire` si JWT present.
+- `frontend/js/catalogue.js` : appel `await updateNav()` en DOMContentLoaded.
+- `frontend/js/meteo.js` : appel `await updateNav()` en DOMContentLoaded.
+- `frontend/js/detail.js` : remplace `loadNavAvatar()` par `await updateNav()`, ajoute `injectBackButton()` (lien "Retour au catalogue" via history.back(), injecte entre breadcrumb et hero), `applyTypeAccent(category)` (badge hero et bordure fiche-header en bleu pour beach, vert pour hike), `handleAlerteCard(category)` (masque .alerte-card pour les randonnees), `checkAlreadyInProject(activiteId)` (appel GET /projets au chargement, compare items.activity_id avec l'activite courante), `showCheckmark(projectNames)` (injecte le bouton checkmark a cote du bouton "Ajouter", bulle listant les projets au clic). Apres un ajout reussi, showCheckmark remplace le message textuel.
+
+**CSS modifies :**
+- `frontend/css/catalogue.css` : ajout `@keyframes fadeUp` + animations (opacity 0 -> 1, translateY) sur `.page-eyebrow`, `.page-title`, `.page-subtitle`, `.search-bar`, avec delais echelonnes de 0.3s a 0.9s.
+- `frontend/css/meteo.css` : ajout `@keyframes fadeUp` et `@keyframes fadeLeft` + animations sur `.meteo-localisation`, `.meteo-temp-row`, `.meteo-update` (fadeUp), `.meteo-main-right` (fadeLeft).
+- `frontend/css/detail.css` : ajout styles pour `.back-to-catalogue`, `.checkmark-btn`, `.checkmark-bubble`, `.cta-voyage-row`.
+
+### Decisions techniques
+
+- **Menu deroulant en position fixed** : la nav a `overflow: hidden` sur toutes les pages. Plutot que de l'overrider (risque de casse visuelle), le dropdown est injecte dans `document.body` avec `position: fixed` et positionne via `getBoundingClientRect()` de la bulle. Meme approche pour la bulle de checkmark.
+- **Lien Accueil injecte par JS** : plutot que de modifier chaque HTML, `updateNav()` injecte le `<li>Accueil</li>` dynamiquement si absent. Cela centralise la logique en un seul endroit.
+- **Checkmark base sur GET /projets** : le backend retourne les items complets dans `TravelProjectRead.items` (champ `activity_id` sur chaque item). Un seul appel API suffit pour verifier si l'activite est dans n'importe quel projet.
+- **applyTypeAccent en styles inline** : la differentiation beach/hike est appliquee via JS (`element.style`) sans modifier le CSS statique, ce qui respecte la contrainte de la spec.
+- **Animations CSS pures** : les animations d'arrivee sont declarees en CSS (`opacity: 0; animation: fadeUp .8s Xs forwards;`), identiques aux keyframes d'accueil.css. Aucune librairie JS externe.
+- **12 commits** : un par fichier modifie, format conventional commits en anglais, sans tiret cadratin, sans Co-Authored-By.
