@@ -242,3 +242,13 @@
     .search-bar { flex-direction: column; }
     .catalogue-section { padding: 20px 4% 60px; }
   }
+
+  /* Animations d'arrivee (identiques a accueil.html) */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .page-eyebrow  { opacity: 0; animation: fadeUp .8s .3s forwards; }
+  .page-title    { opacity: 0; animation: fadeUp .8s .5s forwards; }
+  .page-subtitle { opacity: 0; animation: fadeUp .8s .7s forwards; }
+  .search-bar    { opacity: 0; animation: fadeUp .8s .9s forwards; }
