@@ -53,7 +53,12 @@ async function loadMeteoLive() {
 }
 
 // Initialisation
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   loadMeteoLive();
-  loadNavAvatar();
+  await updateNav();
+  // Si l'utilisateur est connecté, masquer le bouton "Se connecter" dans le hero
+  if (getToken()) {
+    const connectBtn = document.querySelector('.hero-actions .btn-primaire');
+    if (connectBtn) connectBtn.style.display = 'none';
+  }
 });
