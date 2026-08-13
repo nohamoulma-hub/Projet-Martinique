@@ -78,6 +78,7 @@ async function loadMeteo() {
 }
 
 // Initialisation
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  await updateNav();
   loadMeteo();
 });
