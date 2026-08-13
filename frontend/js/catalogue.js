@@ -254,8 +254,11 @@ function handleSort(select) {
 }
 
 // Initialisation après chargement du DOM
-document.addEventListener('DOMContentLoaded', () => {
-  // Chargement initial
+document.addEventListener('DOMContentLoaded', async () => {
+  // Navigation selon l'état de connexion
+  await updateNav();
+
+  // Chargement initial des activités
   loadActivites();
 
   // Barre de recherche : saisie (debounce 400ms) ou bouton
