@@ -24,7 +24,7 @@ const UNSUPPORTED_LABELS = ['Rhumeries', 'Restaurants', 'Activités', 'Événeme
 // Etat courant du catalogue
 let currentFilter = null;    // valeur de la categorie API
 let currentSearch = '';      // terme de recherche
-let currentPage = 1;
+let currentPageNum = 1;
 let currentSort = 'nom';
 let isLoading = false;
 
@@ -159,7 +159,7 @@ async function loadActivites(append = false) {
   const params = new URLSearchParams();
   if (currentFilter) params.set('categorie', currentFilter);
   if (currentSearch) params.set('search', currentSearch);
-  params.set('page', currentPage);
+  params.set('page', currentPageNum);
   params.set('sort', currentSort);
 
   try {
@@ -194,7 +194,7 @@ async function loadActivites(append = false) {
       btn.innerHTML = '<button id="load-more-btn" style="padding:12px 32px;background:var(--rouge);color:#fff;border:none;border-radius:8px;font-size:15px;cursor:pointer;">Voir plus</button>';
       grid.appendChild(btn);
       document.getElementById('load-more-btn').addEventListener('click', () => {
-        currentPage++;
+        currentPageNum++;
         loadActivites(true);
       });
     }
@@ -230,7 +230,7 @@ function setFilter(btn) {
   if (btn.textContent.includes('Plage')) currentFilter = 'beach';
   else if (btn.textContent.includes('Randon')) currentFilter = 'hike';
 
-  currentPage = 1;
+  currentPageNum = 1;
   currentSearch = document.querySelector('.search-input').value.trim();
   loadActivites();
 }
@@ -240,7 +240,7 @@ let searchTimer = null;
 function handleSearch() {
   const term = document.querySelector('.search-input').value.trim();
   currentSearch = term;
-  currentPage = 1;
+  currentPageNum = 1;
   loadActivites();
 }
 
@@ -249,7 +249,7 @@ function handleSort(select) {
   const val = select.value;
   if (val.includes('Popularité')) currentSort = 'popularite';
   else currentSort = 'nom';
-  currentPage = 1;
+  currentPageNum = 1;
   loadActivites();
 }
 
