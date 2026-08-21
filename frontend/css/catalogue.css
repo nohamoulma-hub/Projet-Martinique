@@ -229,6 +229,12 @@
   }
   .badge-beach  { background: rgba(26,122,158,.75); color: #B8ECF7; }
   .badge-hike   { background: rgba(45,106,63,.75);  color: #ADFFD7; }
+  .card-badge-placeholder {
+    position: absolute; bottom: 10px; left: 10px;
+    font-size: 10px; padding: 3px 9px; border-radius: 12px;
+    font-weight: 600; letter-spacing: .5px;
+    background: rgba(200,57,43,.85); color: #fff;
+  }
   .badge-rum    { background: rgba(139,69,19,.75);  color: #FFD9B0; }
   .badge-resto  { background: rgba(200,57,43,.75);  color: #FFD5D0; }
   .badge-act    { background: rgba(240,180,41,.75); color: #3A2800; }
