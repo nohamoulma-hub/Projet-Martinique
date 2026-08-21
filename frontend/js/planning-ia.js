@@ -124,6 +124,7 @@ function addIaBanner() {
 // Initialisation
 document.addEventListener('DOMContentLoaded', async () => {
   requireAuth();
+  await updateNav();
 
   const params = new URLSearchParams(window.location.search);
   const projetId = params.get('projet_id');
