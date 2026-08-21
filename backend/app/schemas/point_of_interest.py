@@ -33,6 +33,7 @@ class PointOfInterestBase(BaseModel):
     latitude: float
     longitude: float
     address: str | None = None
+    image_url: str | None = None
 
 
 # Ce qu'un client doit envoyer pour créer un point d'intérêt (POST).
