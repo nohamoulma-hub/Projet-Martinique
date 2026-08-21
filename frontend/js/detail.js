@@ -318,6 +318,16 @@ async function loadActivite(id) {
     // Titre de la page
     document.title = `${activite.name} : ${typeLabel} - Martinique`;
 
+    // Photo de fond du hero
+    if (activite.image_url) {
+      const hero = document.querySelector('.detail-hero');
+      if (hero) {
+        hero.style.backgroundImage = `url('${activite.image_url}')`;
+        hero.style.backgroundSize = 'cover';
+        hero.style.backgroundPosition = 'center';
+      }
+    }
+
     // Hero
     const heroBadge = document.querySelector('.hero-badge');
     if (heroBadge) heroBadge.textContent = typeLabel;
