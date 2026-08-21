@@ -115,11 +115,15 @@ function buildCard(item) {
   const badgeLabel = isBeach ? 'Plage' : isHike ? 'Randonnée' : item.category;
   const cardClass = isBeach ? 'cat-beach' : isHike ? 'cat-hike' : '';
 
+  const bgStyle = item.image_url
+    ? `background-image:url('${item.image_url}');background-size:cover;background-position:center;`
+    : '';
+
   return `
     <article class="card ${cardClass}">
       <div class="card-visual">
-        <div class="card-visual-bg"></div>
-        <div class="card-icon">${icon}</div>
+        <div class="card-visual-bg" style="${bgStyle}"></div>
+        <div class="card-icon">${item.image_url ? '' : icon}</div>
         <span class="card-badge ${badgeClass}">${badgeLabel}</span>
       </div>
       <div class="card-body">
