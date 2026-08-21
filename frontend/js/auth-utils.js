@@ -176,8 +176,8 @@ function currentPage() {
   return window.location.pathname.split('/').pop() || 'accueil.html';
 }
 
-// Reconstruit les liens de nav et les enveloppe dans un nav-right-group.
-// A appeler au DOMContentLoaded sur chaque page publique.
+// Reconstruit les liens de nav selon l'état de connexion.
+// nav-right-group est présent dans le HTML de chaque page : seul le contenu change.
 async function updateNav() {
   const token = getToken();
   const navLinks = document.querySelector('.nav-links');
@@ -194,16 +194,6 @@ async function updateNav() {
       <li><a href="planning-ia.html"${page === 'planning-ia.html' ? ' class="active"' : ''}>Planning IA</a></li>
       <li><a href="espace-personnel.html"${page === 'espace-personnel.html' ? ' class="active"' : ''}>Mes projets</a></li>
     `;
-
-    // Enveloppe nav-links dans un nav-right-group si ce n'est pas déjà le cas
-    if (!navLinks.closest('.nav-right-group')) {
-      const group = document.createElement('div');
-      group.className = 'nav-right-group';
-      navLinks.parentNode.insertBefore(group, navLinks);
-      group.appendChild(navLinks);
-    }
-
-    // Injecte les styles et la bulle dans le nav-right-group
     await injectAvatarBubble();
   } else {
     // Non connecté : menu complet avec "Mon voyage" en rouge
