@@ -115,6 +115,9 @@ function buildCard(item) {
   const badgeLabel = isBeach ? 'Plage' : isHike ? 'Randonnée' : item.category;
   const cardClass = isBeach ? 'cat-beach' : isHike ? 'cat-hike' : '';
 
+  const PLACEHOLDER_NAMES = ['Gorges de la Falaise', 'Cascade Couleuvre'];
+  const isPlaceholder = PLACEHOLDER_NAMES.includes(item.name);
+
   const bgStyle = item.image_url
     ? `background-image:url('${item.image_url}');background-size:cover;background-position:center;`
     : '';
@@ -125,6 +128,7 @@ function buildCard(item) {
         <div class="card-visual-bg" style="${bgStyle}"></div>
         <div class="card-icon">${item.image_url ? '' : icon}</div>
         <span class="card-badge ${badgeClass}">${badgeLabel}</span>
+        ${isPlaceholder ? '<span class="card-badge-placeholder">à modifier</span>' : ''}
       </div>
       <div class="card-body">
         <h2 class="card-name">${item.name}</h2>
