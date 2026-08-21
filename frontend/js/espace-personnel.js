@@ -303,8 +303,9 @@ function setupIACta() {
 }
 
 // Initialisation : vérifie l'authentification puis charge les données
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   requireAuth();
+  await updateNav();
   loadProfil();
   loadProjets();
   setupTabs();
