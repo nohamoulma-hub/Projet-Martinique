@@ -28,6 +28,7 @@ class PointOfInterest(Base):
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
     address = Column(String(150), nullable=True)
+    image_url = Column(String(500), nullable=True)
 
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
