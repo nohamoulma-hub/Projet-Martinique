@@ -64,7 +64,6 @@ function injectAvatarStyles() {
       font-weight: 700; font-size: 12px; flex-shrink: 0;
       cursor: pointer; user-select: none;
       letter-spacing: 0; text-transform: none;
-      margin-left: 20px;
     }
     .nav-dropdown {
       position: fixed;
@@ -162,37 +161,58 @@ async function injectAvatarBubble() {
   // Clic ailleurs sur la page : ferme le menu
   document.addEventListener('click', () => dropdown.classList.remove('open'));
 
-  // Insère la bulle à la fin de la nav
-  const nav = document.querySelector('nav');
-  if (nav) nav.appendChild(avatar);
+  // Insère la bulle dans le .nav-right-group existant ou directement dans nav
+  const group = document.querySelector('nav .nav-right-group');
+  if (group) {
+    group.appendChild(avatar);
+  } else {
+    const nav = document.querySelector('nav');
+    if (nav) nav.appendChild(avatar);
+  }
 }
 
-// Met à jour la navigation selon l'état de connexion de l'utilisateur.
+// Détecte le nom de la page courante pour marquer le lien actif.
+function currentPage() {
+  return window.location.pathname.split('/').pop() || 'accueil.html';
+}
+
+// Reconstruit les liens de nav et les enveloppe dans un nav-right-group.
 // A appeler au DOMContentLoaded sur chaque page publique.
 async function updateNav() {
   const token = getToken();
   const navLinks = document.querySelector('.nav-links');
   if (!navLinks) return;
 
-  // Ajoute le lien Accueil en premier s'il est absent
-  if (!navLinks.querySelector('a[href="accueil.html"]')) {
-    const li = document.createElement('li');
-    li.innerHTML = '<a href="accueil.html">Accueil</a>';
-    navLinks.insertBefore(li, navLinks.firstChild);
-  }
-
-  // Gestion du lien "Mon voyage" selon l'état de connexion
-  const ctaLink = navLinks.querySelector('.nav-cta');
+  const page = currentPage();
 
   if (token) {
-    // Connecté : "Mon voyage" devient "Mes projets" (style normal, pas rouge)
-    if (ctaLink) {
-      ctaLink.textContent = 'Mes projets';
-      ctaLink.classList.remove('nav-cta');
-      ctaLink.href = 'espace-personnel.html';
+    // Connecté : menu complet avec "Mes projets" à la place de "Mon voyage"
+    navLinks.innerHTML = `
+      <li><a href="accueil.html"${page === 'accueil.html' ? ' class="active"' : ''}>Accueil</a></li>
+      <li><a href="catalogue.html"${page === 'catalogue.html' ? ' class="active"' : ''}>Catalogue</a></li>
+      <li><a href="meteo.html"${page === 'meteo.html' ? ' class="active"' : ''}>Météo</a></li>
+      <li><a href="planning-ia.html"${page === 'planning-ia.html' ? ' class="active"' : ''}>Planning IA</a></li>
+      <li><a href="espace-personnel.html"${page === 'espace-personnel.html' ? ' class="active"' : ''}>Mes projets</a></li>
+    `;
+
+    // Enveloppe nav-links dans un nav-right-group si ce n'est pas déjà le cas
+    if (!navLinks.closest('.nav-right-group')) {
+      const group = document.createElement('div');
+      group.className = 'nav-right-group';
+      navLinks.parentNode.insertBefore(group, navLinks);
+      group.appendChild(navLinks);
     }
-    // Affiche la bulle d'initiales avec son menu déroulant
+
+    // Injecte les styles et la bulle dans le nav-right-group
     await injectAvatarBubble();
+  } else {
+    // Non connecté : menu complet avec "Mon voyage" en rouge
+    navLinks.innerHTML = `
+      <li><a href="accueil.html"${page === 'accueil.html' ? ' class="active"' : ''}>Accueil</a></li>
+      <li><a href="catalogue.html"${page === 'catalogue.html' ? ' class="active"' : ''}>Catalogue</a></li>
+      <li><a href="meteo.html"${page === 'meteo.html' ? ' class="active"' : ''}>Météo</a></li>
+      <li><a href="planning-ia.html"${page === 'planning-ia.html' ? ' class="active"' : ''}>Planning IA</a></li>
+      <li><a href="espace-personnel.html" class="nav-cta">Mon voyage</a></li>
+    `;
   }
-  // Non connecté : le lien "Mon voyage" garde son style .nav-cta (fond rouge)
 }
