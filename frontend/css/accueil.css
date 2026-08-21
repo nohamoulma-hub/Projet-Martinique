@@ -80,6 +80,7 @@
     }
     .logo-flower { vertical-align: middle; margin: 0 4px; }
 
+    .nav-right-group { display: flex; align-items: center; gap: 24px; }
     .nav-links {
       display: flex;
       gap: 32px;
