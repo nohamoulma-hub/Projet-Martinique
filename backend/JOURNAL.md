@@ -261,3 +261,36 @@ Suite au premier test complet du site v1, les points suivants ont ete identifies
 - **applyTypeAccent en styles inline** : la differentiation beach/hike est appliquee via JS (`element.style`) sans modifier le CSS statique, ce qui respecte la contrainte de la spec.
 - **Animations CSS pures** : les animations d'arrivee sont declarees en CSS (`opacity: 0; animation: fadeUp .8s Xs forwards;`), identiques aux keyframes d'accueil.css. Aucune librairie JS externe.
 - **12 commits** : un par fichier modifie, format conventional commits en anglais, sans tiret cadratin, sans Co-Authored-By.
+
+## 2026-08-21 - Unification de la nav bar sur toutes les pages
+
+Suite aux tests v1, la nav bar presentait plusieurs incohérences entre les pages : bulle d'initiales absente sur catalogue.html quand l'utilisateur etait connecte, decalage de layout sur meteo.html, menu non mis a jour sur planning-ia.html et espace-personnel.html.
+
+### Problemes identifies et corriges
+
+- **Conflit de variable globale dans catalogue.js** : `let currentPage = 1` (variable de pagination) masquait la fonction `currentPage()` importee depuis auth-utils.js dans la portee globale. Quand `updateNav()` appelait `currentPage()`, elle obtenait `1` (un nombre) et levait une TypeError silencieuse, empeechant la mise a jour de la nav et l'affichage de la bulle. Correction : renommage de toutes les occurrences en `currentPageNum` dans catalogue.js.
+- **Bulle d'initiales en dessous du menu sur meteo.html** : le conteneur `.nav-right-group` manquait de declarations CSS explicites (`flex-direction: row; flex-wrap: nowrap`). Sans ces proprietes, le navigateur appliquait un wrap qui poussait la bulle sur une deuxieme ligne. Correction : ajout de ces proprietes dans meteo.css et alignement sur la structure de accueil.css.
+- **Leger decalage vertical sur meteo.html (non connecte)** : `.nav-links` manquait de `align-items: center`. Corrige dans meteo.css.
+- **Menu non mis a jour sur planning-ia.html et espace-personnel.html** : `updateNav()` n'etait pas appele au DOMContentLoaded de ces deux pages. Elles affichaient des initiales "MD" codees en dur et seulement 3 liens. Correction : ajout de `await updateNav()` dans planning-ia.js et espace-personnel.js.
+
+### Structure HTML uniformisee
+
+Toutes les pages publiques (accueil, catalogue, meteo, detail, planning-ia, espace-personnel) suivent desormais la meme structure de nav :
+- `<div class="madras-bar" id="madrasBar">` en premier enfant de `<nav>` (avant le logo)
+- Logo multi-ligne avec `<span class="nav-sub">`
+- `<div class="nav-right-group">` englobant `<ul class="nav-links">`
+- La bulle `.nav-avatar` est injectee par JS dans `.nav-right-group` via `injectAvatarBubble()` quand l'utilisateur est connecte
+
+### Etat final de la nav par page
+
+| Page | Non connecte | Connecte |
+|---|---|---|
+| accueil.html | Accueil / Catalogue / Meteo / Planning IA / Mon voyage (rouge) | Accueil / Catalogue / Meteo / Planning IA / Mes projets + bulle |
+| catalogue.html | idem | idem |
+| meteo.html | idem | idem |
+| detail.html | idem | idem |
+| planning-ia.html | (page protegee, redirige) | Accueil / Catalogue / Meteo / Planning IA / Mes projets + bulle |
+| espace-personnel.html | (page protegee, redirige) | idem |
+| auth.html | Accueil / Catalogue / Meteo / Planning IA (pas de bulle, page de login) | s.o. |
+
+- **10 commits** pousses : catalogue.html, css/catalogue.css, js/catalogue.js, meteo.html, css/meteo.css, js/planning-ia.js, css/planning-ia.css, js/espace-personnel.js, css/espace-personnel.css, auth.html.
