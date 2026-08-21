@@ -50,8 +50,8 @@
   .nav-logo { font-family: var(--font-titre); font-size: 20px; color: var(--jaune); text-decoration: none; }
   .nav-logo span { color: rgba(240,180,41,0.45); font-size: 14px; font-weight: 400; font-style: italic; }
   .logo-flower { vertical-align: middle; margin: 0 4px; }
-  .nav-right-group { display: flex; align-items: center; gap: 24px; }
-  .nav-links { display: flex; gap: 28px; list-style: none; align-items: center; }
+  .nav-right-group { display: flex; flex-direction: row; flex-wrap: nowrap; align-items: center; gap: 24px; }
+  .nav-links { display: flex; flex-direction: row; flex-wrap: nowrap; gap: 32px; list-style: none; align-items: center; }
   .nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 12px; letter-spacing: .5px; text-transform: uppercase; transition: color .2s; }
   .nav-links a:hover, .nav-links a.active { color: var(--jaune); }
   .nav-cta {
