@@ -294,3 +294,36 @@ Toutes les pages publiques (accueil, catalogue, meteo, detail, planning-ia, espa
 | auth.html | Accueil / Catalogue / Meteo / Planning IA (pas de bulle, page de login) | s.o. |
 
 - **10 commits** pousses : catalogue.html, css/catalogue.css, js/catalogue.js, meteo.html, css/meteo.css, js/planning-ia.js, css/planning-ia.css, js/espace-personnel.js, css/espace-personnel.css, auth.html.
+
+## 2026-08-23 - Ajout de photos aux activites : galerie, lightbox et assets locaux
+
+### Ce qui a ete construit
+
+**Backend :**
+- `app/models/poi_image.py` : nouveau modele `PoiImage` (table `poi_images`) avec `poi_id` (FK vers `points_of_interest`, CASCADE delete), `url` (String 500) et `order` (Integer). Permet de stocker plusieurs photos par activite dans l'ordre souhaite.
+- Migration Alembic `93ca07e02899_add_poi_images_table.py` : creee par autogenerate et appliquee.
+- `app/schemas/point_of_interest.py` : ajout de `PoiImageRead` (id, url, order) et du champ `images: list[PoiImageRead] = []` dans `PointOfInterestDetail`.
+- `app/routers/activites.py` : `GET /activites/{id}` charge desormais les `PoiImage` associees (triees par `order`) et les inclut dans la reponse.
+- `app/main.py` : ajout d'un mount `/assets` pointant vers `frontend/assets/` pour servir les photos locales via HTTP (distinct du mount `/site` qui sert le frontend complet).
+- `alembic/env.py` : ajout de `poi_image` dans les imports pour qu'Alembic detecte le modele lors des autogenerations futures.
+
+**Donnees :**
+- Nouvelle activite **Anse Couleuvre** creee en base (id=16, category=beach, tourist_score=2, plage sauvage accessible depuis Le Precheur, coordonnees GPS 14.8465 N / 61.2283 O).
+- 10 photos ajoutees en table `poi_images` : 2 pour Anse Noire, 4 pour Anse Dufour, 4 pour Anse Couleuvre.
+- `image_url` mis a jour pour Anse Noire (`anse_noir_1.jpeg`) et Cascade Couleuvre (photo personnelle, chemin local).
+
+**Assets :**
+- Dossier `frontend/assets/images/` cree avec sous-dossiers par lieu : `anse_noir/`, `anse_dufour/`, `anse_couleuvre/`, `Cascade Couloeuvre.JPG` a la racine.
+
+**Frontend :**
+- `js/detail.js` : ajout de `fillGallery(images)` qui remplace les placeholders emoji de `.gallery-grid` par les vraies photos (background-image), et de `openLightbox(urls, startIndex)` qui gere la vue agrandie au clic.
+- `js/catalogue.js` : retrait de `Cascade Couleuvre` du tableau `PLACEHOLDER_NAMES` (photo reelle disponible).
+- `css/detail.css` : ajout de `border-radius: 6px` sur `.gallery-item`, animation `translateY(-3px)` + `scale(1.06)` sur la photo au survol, et styles complets pour le lightbox (overlay, animation d'ouverture via `cubic-bezier(.34,1.56,.64,1)`, boutons de navigation prev/next, compteur, fermeture Echap/clic exterieur).
+
+### Decisions techniques
+
+- **Table separee `poi_images`** plutot qu'un champ JSON sur `PointOfInterest` : garantit l'integrite referentielle, permet de trier les photos et d'en ajouter/supprimer individuellement sans modifier le modele principal.
+- **Mount `/assets` distinct de `/site`** : permet aux URLs stockees en base (`/assets/images/...`) d'etre resolues directement sans prefixe `/site/`, independamment de la page depuis laquelle elles sont appelees.
+- **Lightbox pure JS/CSS** sans librairie externe : coherent avec la stack vanilla du projet, pas de dependance supplementaire.
+- **Animation d'ouverture** : `cubic-bezier(.34,1.56,.64,1)` donne un leger effet de rebond (overshoot) discret, plus vivant qu'une courbe lineaire ou ease-in-out classique.
+- **4 commits** pousses : backend (modele + migration + assets mount), schema + router, assets photos, frontend (galerie + lightbox).
