@@ -266,8 +266,30 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Navigation selon l'état de connexion
   await updateNav();
 
-  // Chargement initial des activités
-  loadActivites();
+  // Applique le filtre depuis l'URL (?filtre=plages, randonnees, etc.) si présent
+  const filtreParam = new URLSearchParams(window.location.search).get('filtre');
+  if (filtreParam) {
+    const map = {
+      plages: 'Plage',
+      randonnees: 'Randon',
+      rhumeries: 'Rhumerie',
+      restaurants: 'Restau',
+      activites: 'Activit',
+      logements: 'Logement',
+    };
+    const keyword = map[filtreParam.toLowerCase()];
+    if (keyword) {
+      const btn = [...document.querySelectorAll('.filter-btn')]
+        .find(b => b.textContent.includes(keyword));
+      if (btn) { setFilter(btn); }
+      else { loadActivites(); }
+    } else {
+      loadActivites();
+    }
+  } else {
+    // Chargement initial des activités
+    loadActivites();
+  }
 
   // Barre de recherche : saisie (debounce 400ms) ou bouton
   const searchInput = document.querySelector('.search-input');
