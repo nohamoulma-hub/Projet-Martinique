@@ -51,7 +51,17 @@ class PointOfInterestRead(PointOfInterestBase):
     model_config = ConfigDict(from_attributes=True)
 
 
+class PoiImageRead(BaseModel):
+    """Une photo de la galerie d'un point d'intérêt."""
+    id: int
+    url: str
+    order: int
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class PointOfInterestDetail(PointOfInterestRead):
     """Détail complet : inclut les informations spécifiques à la catégorie."""
     beach_details: BeachDetailsRead | None = None
     hike_details: HikeDetailsRead | None = None
+    images: list[PoiImageRead] = []
