@@ -36,4 +36,7 @@ app.include_router(meteo.router)
 # Sert le frontend statique depuis /site pour éviter les conflits avec les routes API
 frontend_path = Path(__file__).parent.parent.parent / "frontend"
 if frontend_path.exists():
+    assets_path = frontend_path / "assets"
+    if assets_path.exists():
+        app.mount("/assets", StaticFiles(directory=str(assets_path)), name="assets")
     app.mount("/site", StaticFiles(directory=str(frontend_path), html=True), name="frontend")

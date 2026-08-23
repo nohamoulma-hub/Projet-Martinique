@@ -17,6 +17,7 @@ from app.models import (  # noqa: F401
     hike_details,
     travel_project,
     travel_project_item,
+    poi_image,
 )
 
 # Objet central d'Alembic : donne accès au contenu de alembic.ini
