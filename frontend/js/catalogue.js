@@ -115,7 +115,7 @@ function buildCard(item) {
   const badgeLabel = isBeach ? 'Plage' : isHike ? 'Randonnée' : item.category;
   const cardClass = isBeach ? 'cat-beach' : isHike ? 'cat-hike' : '';
 
-  const PLACEHOLDER_NAMES = ['Gorges de la Falaise', 'Cascade Couleuvre'];
+  const PLACEHOLDER_NAMES = ['Gorges de la Falaise'];
   const isPlaceholder = PLACEHOLDER_NAMES.includes(item.name);
 
   const bgStyle = item.image_url

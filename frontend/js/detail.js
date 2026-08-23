@@ -137,6 +137,98 @@ function fillFicheCard(activite) {
   }
 }
 
+// Ouvre le lightbox sur une image donnée parmi la liste
+function openLightbox(urls, startIndex) {
+  let current = startIndex;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'lightbox-overlay';
+
+  const inner = document.createElement('div');
+  inner.className = 'lightbox-inner';
+
+  const img = document.createElement('img');
+  img.className = 'lightbox-img';
+  img.src = urls[current];
+
+  const close = document.createElement('button');
+  close.className = 'lightbox-close';
+  close.innerHTML = '✕';
+
+  const counter = document.createElement('div');
+  counter.className = 'lightbox-counter';
+
+  function updateView() {
+    img.src = urls[current];
+    counter.textContent = urls.length > 1 ? `${current + 1} / ${urls.length}` : '';
+  }
+
+  inner.appendChild(img);
+  overlay.appendChild(inner);
+  overlay.appendChild(close);
+
+  if (urls.length > 1) {
+    const prev = document.createElement('button');
+    prev.className = 'lightbox-nav lightbox-prev';
+    prev.innerHTML = '‹';
+    prev.addEventListener('click', (e) => {
+      e.stopPropagation();
+      current = (current - 1 + urls.length) % urls.length;
+      updateView();
+    });
+
+    const next = document.createElement('button');
+    next.className = 'lightbox-nav lightbox-next';
+    next.innerHTML = '›';
+    next.addEventListener('click', (e) => {
+      e.stopPropagation();
+      current = (current + 1) % urls.length;
+      updateView();
+    });
+
+    overlay.appendChild(prev);
+    overlay.appendChild(next);
+    overlay.appendChild(counter);
+  }
+
+  document.body.appendChild(overlay);
+
+  // Déclenche l'animation d'ouverture après insertion dans le DOM
+  requestAnimationFrame(() => overlay.classList.add('open'));
+
+  function closeLightbox() {
+    overlay.classList.remove('open');
+    overlay.addEventListener('transitionend', () => overlay.remove(), { once: true });
+  }
+
+  close.addEventListener('click', closeLightbox);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeLightbox(); });
+  document.addEventListener('keydown', function onKey(e) {
+    if (e.key === 'Escape') { closeLightbox(); document.removeEventListener('keydown', onKey); }
+    if (e.key === 'ArrowLeft' && urls.length > 1) { current = (current - 1 + urls.length) % urls.length; updateView(); }
+    if (e.key === 'ArrowRight' && urls.length > 1) { current = (current + 1) % urls.length; updateView(); }
+  });
+
+  updateView();
+}
+
+// Rempli la galerie photos avec les images de l'API (ou laisse les placeholders si vide)
+function fillGallery(images) {
+  const grid = document.querySelector('.gallery-grid');
+  if (!grid || images.length === 0) return;
+
+  const urls = images.map(img => img.url);
+
+  grid.innerHTML = images.map((img, i) => `
+    <div class="gallery-item" data-index="${i}">
+      <div class="gallery-item-bg" style="background-image:url('${img.url}');background-size:cover;background-position:center;"></div>
+    </div>`).join('');
+
+  grid.querySelectorAll('.gallery-item').forEach(item => {
+    item.addEventListener('click', () => openLightbox(urls, parseInt(item.dataset.index)));
+  });
+}
+
 // Rempli la section accès avec les infos disponibles (address / amenities)
 function fillAccessGrid(activite) {
   const grid = document.querySelector('.access-grid');
@@ -366,6 +458,9 @@ async function loadActivite(id) {
     if (coords) {
       coords.textContent = `${activite.latitude.toFixed(4)}° N, ${Math.abs(activite.longitude).toFixed(4)}° O`;
     }
+
+    // Galerie photos
+    fillGallery(activite.images || []);
 
     // Section accès
     fillAccessGrid(activite);
