@@ -1,4 +1,6 @@
 # Ces fichiers servent au build de l'image, pas au site servi.
+# nginx.conf n'est volontairement PAS exclu : le Dockerfile doit pouvoir le copier
+# dans /etc/nginx/conf.d/. Son exposition en HTTP est bloquée par la règle deny
+# de nginx.conf lui-même, ce qui couvre aussi le montage de volume au runtime.
 Dockerfile
 .dockerignore
-nginx.conf
