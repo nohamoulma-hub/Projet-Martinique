@@ -1,0 +1,4 @@
+# Ces fichiers servent au build de l'image, pas au site servi.
+Dockerfile
+.dockerignore
+nginx.conf
