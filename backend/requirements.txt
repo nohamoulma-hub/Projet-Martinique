@@ -4,6 +4,7 @@ uvicorn[standard]==0.30.6 # serveur qui exécute l'app FastAPI
 pydantic-settings==2.5.2  # lecture des variables d'environnement dans app/core/config.py
 python-dotenv==1.0.1      # charge le fichier .env
 sqlalchemy==2.0.35        # ORM : permet de définir les tables comme des classes Python
+psycopg2-binary==2.9.13   # driver PostgreSQL (inutile si DATABASE_URL pointe vers SQLite)
 alembic==1.13.3           # gère les migrations (évolutions du schéma de la base dans le temps)
 python-jose[cryptography]==3.5.0  # génération et vérification des tokens JWT
 bcrypt==5.0.0             # hachage sécurisé des mots de passe (utilisé directement, sans passlib)
