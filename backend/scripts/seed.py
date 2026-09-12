@@ -160,6 +160,24 @@ BEACHES = [
             "amenities": "Parking, restaurants, clubs de plongée, location de jet-ski, navettes vers Fort-de-France",
         },
     },
+    {
+        "poi": {
+            "name": "Anse Couleuvre",
+            "category": Category.BEACH,
+            "description": (
+                "Crique sauvage nichée dans la forêt tropicale du nord de la Martinique, "
+                "accessible uniquement à pied depuis Le Prêcheur. Eaux transparentes, "
+                "sable noir et ambiance préservée. Le sentier qui y mène longe la Cascade Couleuvre."
+            ),
+            "latitude": 14.8465,
+            "longitude": -61.2283,
+            "address": "Le Prêcheur, Martinique",
+        },
+        "details": {
+            "tourist_score": 2,
+            "amenities": "Aucun équipement - plage sauvage",
+        },
+    },
 ]
 
 # Données des randonnées : vraies randonnées de Martinique
