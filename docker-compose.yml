@@ -19,7 +19,12 @@ services:
     volumes:
       # Volume nommé : les données survivent à la destruction du conteneur.
       # C'est ce qui permet de reconstruire l'image sans perdre la base.
-      - pgdata:/var/lib/postgresql/data
+      #
+      # Le montage se fait sur /var/lib/postgresql et non /var/lib/postgresql/data :
+      # depuis PostgreSQL 18, l'image place les données dans un sous-dossier versionné
+      # (18/docker) pour permettre un pg_upgrade --link sans franchir de point de montage.
+      # L'ancienne convention fait échouer le démarrage avec un message explicite.
+      - pgdata:/var/lib/postgresql
     healthcheck:
       # PostgreSQL accepte des connexions quelques secondes après le démarrage du
       # conteneur. Sans ce test, le backend tenterait de migrer trop tôt et échouerait.
