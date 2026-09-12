@@ -1,0 +1,5 @@
+# Secrets utilisés par docker-compose (mot de passe BDD, clé JWT).
+.env
+
+# Fichiers système macOS
+.DS_Store
