@@ -16,17 +16,41 @@ Site web touristique dédié à la Martinique, conçu pour aider les voyageurs �
 
 ## Lancer le projet
 
-```bash
-# Activer l'environnement virtuel
-source backend/venv/bin/activate
+### Avec Docker (recommandé)
 
-# Lancer le serveur
+Trois conteneurs : `martinique-frontend` (nginx), `martinique-backend` (FastAPI) et `martinique-db` (PostgreSQL).
+
+```bash
+# Créer le fichier de secrets à partir du modèle, puis l'adapter
+cp .env.example .env
+
+# Construire et démarrer les trois conteneurs
+docker compose up --build
+```
+
+Le site est accessible sur `http://localhost:8080`  
+La documentation API (Swagger) sur `http://localhost:8080/docs`
+
+Au premier démarrage, la base est vide. Pour la peupler :
+
+```bash
+docker compose exec backend python scripts/seed.py
+docker compose exec backend python scripts/update_images.py
+docker compose exec backend python scripts/seed_gallery.py
+```
+
+Les migrations Alembic sont appliquées automatiquement à chaque démarrage du backend.
+
+### Sans Docker (backend seul, sur SQLite)
+
+```bash
+source backend/venv/bin/activate
 cd backend
+# Basculer DATABASE_URL sur sqlite:///./martinique.db dans backend/.env
 uvicorn app.main:app --reload --port 8000
 ```
 
-Le frontend est accessible sur `http://localhost:8000/site/accueil.html`  
-La documentation API (Swagger) est sur `http://localhost:8000/docs`
+Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
 
 ---
 
@@ -99,10 +123,17 @@ La documentation API (Swagger) est sur `http://localhost:8000/docs`
 
 ### Technique
 
+- [ ] **Regrouper les routes API sous un préfixe `/api/`.** Actuellement nginx doit lister
+      chaque préfixe (`/activites`, `/auth`, `/utilisateurs`, `/projets`, `/meteo`, `/health`,
+      `/docs`) dans une regex de `frontend/nginx.conf`. Un préfixe unique permettrait une seule
+      règle de proxy, et éviterait tout risque de collision entre une route API et un fichier
+      statique. Demande de modifier les routeurs FastAPI et les appels `fetch()` du frontend.
+- [ ] Faire tourner le conteneur backend avec un utilisateur non-root (bonne pratique de
+      sécurité, laissée de côté pour éviter les problèmes de permissions sur les volumes montés)
 - [ ] Alertes sargasses en temps réel (API Sargassum Watch System / USF identifiée)
 - [ ] Assistant IA de planning (interface prête, logique à connecter)
 - [ ] Comparateur de billets d'avion (Paris -> Fort-de-France)
-- [ ] Migration SQLite -> PostgreSQL pour la mise en production
+- [x] Migration SQLite -> PostgreSQL (validée sur PostgreSQL 18.6 : migrations, enums, données, API, tests)
 - [ ] Déploiement (hébergement à définir)
 
 ---
@@ -111,7 +142,10 @@ La documentation API (Swagger) est sur `http://localhost:8000/docs`
 
 ```
 Projet-Martinique/
+├── docker-compose.yml     # orchestration des 3 conteneurs
+├── .env.example           # modèle des secrets (mot de passe BDD, clé JWT)
 ├── backend/
+│   ├── Dockerfile         # image FastAPI (python:3.14-slim)
 │   ├── alembic/           # migrations de base de données
 │   ├── app/
 │   │   ├── core/          # config et connexion BDD
@@ -119,13 +153,30 @@ Projet-Martinique/
 │   │   ├── routers/       # endpoints FastAPI
 │   │   ├── schemas/       # schémas Pydantic
 │   │   └── services/      # logique métier et APIs externes
-│   ├── scripts/           # scripts de peuplement de la base
+│   ├── scripts/           # peuplement de la base et optimisation des photos
 │   ├── tests/             # 29 tests pytest
-│   ├── JOURNAL.md         # historique chronologique des décisions
-│   └── martinique.db      # base SQLite (dev)
+│   └── JOURNAL.md         # historique chronologique des décisions
 └── frontend/
+    ├── Dockerfile         # image nginx (nginx:alpine)
+    ├── nginx.conf         # sert le statique et relaie l'API vers le backend
     ├── assets/images/     # photos locales par lieu
     ├── css/               # un fichier CSS par page
     ├── js/                # un fichier JS par page
     └── *.html             # 8 pages
 ```
+
+## Architecture des conteneurs
+
+```
+Navigateur → localhost:8080 → martinique-frontend (nginx)
+                                ├── /, /css/, /js/, /assets/  → fichiers statiques
+                                └── /activites, /auth, ...     → martinique-backend:8000
+                                                                   └── martinique-db:5432
+```
+
+nginx sert le site **et** relaie les appels API, donc tout passe par une seule origine.
+C'est ce qui permet de garder `API_URL = ''` dans le JavaScript et de n'avoir aucune
+configuration CORS à gérer.
+
+Les données PostgreSQL vivent dans un volume Docker nommé (`pgdata`), ce qui permet de
+détruire et reconstruire les conteneurs sans perdre la base.
