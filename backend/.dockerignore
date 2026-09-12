@@ -1,0 +1,9 @@
+# Exclut du contexte de build tout ce qui est local, lourd ou secret.
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# L'environnement virtuel local est propre à la machine hôte : les dépendances
+# sont réinstallées dans l'image via requirements.txt.
+*.db
+.env
