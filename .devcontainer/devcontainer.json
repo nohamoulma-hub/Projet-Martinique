@@ -1,0 +1,27 @@
+{
+  "name": "Projet Martinique",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+
+  "features": {
+    // Docker-in-Docker : installe un daemon Docker complet DANS le conteneur.
+    // Indispensable ici : avec un simple socket monté (Docker-out-of-Docker), les
+    // bind mounts de docker-compose.yml seraient résolus sur le disque de l'hôte,
+    // où le projet cloné dans ce conteneur n'existe pas.
+    // Cette feature ajoute automatiquement --privileged, requis par le daemon imbriqué.
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "dockerDashComposeVersion": "v2"
+    },
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+
+  // Les conteneurs de l'application publient leurs ports dans CE conteneur.
+  // Sans ce transfert, le navigateur du Mac ne pourrait pas les joindre.
+  "forwardPorts": [8080, 8000],
+  "portsAttributes": {
+    "8080": { "label": "Site (nginx)", "onAutoForward": "notify" },
+    "8000": { "label": "API (FastAPI)", "onAutoForward": "silent" }
+  },
+
+  "remoteUser": "vscode"
+}
