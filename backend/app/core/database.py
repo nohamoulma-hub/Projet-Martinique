@@ -5,13 +5,15 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 from app.core.config import settings
 
-# L'engine gère la connexion physique à la base (le fichier SQLite ici).
-# check_same_thread=False : nécessaire avec SQLite car FastAPI peut traiter une requête
-# dans un thread différent de celui qui a ouvert la connexion.
-engine = create_engine(
-    settings.database_url,
-    connect_args={"check_same_thread": False},
-)
+# L'engine gère la connexion physique à la base.
+# check_same_thread=False est propre à SQLite (FastAPI peut traiter une requête dans un
+# thread différent de celui qui a ouvert la connexion) et fait échouer les autres drivers,
+# d'où le passage conditionnel selon le dialecte.
+connect_args = {}
+if settings.database_url.startswith("sqlite"):
+    connect_args["check_same_thread"] = False
+
+engine = create_engine(settings.database_url, connect_args=connect_args)
 
 # Chaque requête HTTP aura sa propre "session" : c'est l'objet utilisé pour lire/écrire
 # des lignes en base (SELECT, INSERT, UPDATE...) avant de valider (commit) ou annuler (rollback).
