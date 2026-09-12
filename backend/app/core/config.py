@@ -11,8 +11,9 @@ class Settings(BaseSettings):
     environment: str = "development"
     # Chaîne brute issue de .env (CORS_ORIGINS=a,b,c) ; cors_origins_list la transforme en liste.
     cors_origins: str = "http://localhost:5500"
-    # URL de connexion à la base. SQLite pour l'instant (fichier local) ;
-    # passera à une URL PostgreSQL plus tard sans changer le reste du code.
+    # URL de connexion à la base. PostgreSQL en dev (via docker-compose) et en production,
+    # SQLite en secours si aucun DATABASE_URL n'est fourni. Le code applicatif est identique
+    # dans les deux cas : seul app/core/database.py adapte les options de connexion.
     database_url: str = "sqlite:///./martinique.db"
     # Clé secrète pour signer les tokens JWT : doit rester dans .env, jamais dans le code.
     jwt_secret_key: str = "changeme"
