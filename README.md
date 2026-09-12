@@ -41,6 +41,73 @@ docker compose exec backend python scripts/seed_gallery.py
 
 Les migrations Alembic sont appliquées automatiquement à chaque démarrage du backend.
 
+### Environnement de développement : conteneur avec Docker-in-Docker
+
+Le développement se fait dans un conteneur qui contient lui-même Docker, ce qui permet d'y
+lancer les trois conteneurs de l'application. Il y a donc **deux daemons Docker distincts** :
+
+```
+Mac (daemon 1)
+└── conteneur de dev (--privileged)
+      └── daemon 2 (Docker-in-Docker)
+            ├── martinique-db
+            ├── martinique-backend
+            └── martinique-frontend
+```
+
+Depuis l'intérieur du conteneur de dev, `docker` s'adresse **toujours au daemon 2**. Les
+commandes visant le conteneur de dev lui-même sont à lancer depuis un terminal du Mac.
+
+#### Créer le conteneur de dev
+
+Le plus simple est VS Code : `Cmd+Shift+P` puis **Dev Containers: Reopen in Container**, qui
+applique `.devcontainer/devcontainer.json` et installe Docker automatiquement.
+
+En ligne de commande depuis le Mac :
+
+```bash
+docker run -d --privileged --name martinique-dev \
+  -p 8080:8080 -p 8000:8000 \
+  -v martinique-docker:/var/lib/docker \
+  mcr.microsoft.com/devcontainers/base:ubuntu-24.04 sleep infinity
+```
+
+`--privileged` est obligatoire pour le daemon imbriqué et **ne s'ajoute pas à chaud**. Le
+transfert des ports 8080 et 8000 est indispensable, sinon les conteneurs de l'application
+tournent sans être joignables depuis le navigateur du Mac.
+
+#### Installer Docker dedans (inutile via VS Code)
+
+```bash
+curl -fsSL https://get.docker.com | sudo sh
+sudo usermod -aG docker vscode
+sudo service docker start
+newgrp docker
+```
+
+#### À chaque nouvelle session dans le conteneur
+
+Il n'y a pas de systemd, donc le daemon ne redémarre pas seul :
+
+```bash
+sudo service docker start   # si "Cannot connect to the Docker daemon"
+newgrp docker               # si "permission denied ... docker.sock"
+```
+
+`newgrp` ne vaut que pour le shell courant et conserve le même prompt : vérifier avec
+`id -nG`, qui doit contenir `docker`.
+
+### Dépannage
+
+| Symptôme | Cause |
+|---|---|
+| `permission denied ... docker.sock` | `newgrp docker` non fait dans ce shell |
+| `Cannot connect to the Docker daemon` | Daemon arrêté : `sudo service docker start` |
+| `no configuration file provided` | Pas dans le dossier du projet |
+| `container martinique-db is unhealthy` | Volume dans un état invalide : `docker compose down -v` |
+| 502 après un redémarrage du backend | Devrait être couvert par le `resolver` de nginx.conf |
+| Page affichée sans CSS sous Safari | `Cmd+Shift+R` active le mode Lecteur. Le rechargement forcé est `Cmd+Option+R` |
+
 ### Sans Docker (backend seul, sur SQLite)
 
 ```bash
