@@ -327,3 +327,145 @@ Toutes les pages publiques (accueil, catalogue, meteo, detail, planning-ia, espa
 - **Lightbox pure JS/CSS** sans librairie externe : coherent avec la stack vanilla du projet, pas de dependance supplementaire.
 - **Animation d'ouverture** : `cubic-bezier(.34,1.56,.64,1)` donne un leger effet de rebond (overshoot) discret, plus vivant qu'une courbe lineaire ou ease-in-out classique.
 - **4 commits** pousses : backend (modele + migration + assets mount), schema + router, assets photos, frontend (galerie + lightbox).
+
+## 2026-09-12 - Donnees reproductibles, migration PostgreSQL et conteneurisation
+
+Session longue couvrant trois chantiers lies : rendre les donnees reproductibles, migrer vers
+PostgreSQL, puis decouper le projet en trois conteneurs Docker.
+
+### 1. Rendre les donnees reproductibles (prealable indispensable)
+
+**Probleme identifie** : `backend/martinique.db` est exclu par `.gitignore` (`*.db`). Or tout le
+travail recent sur les photos (creation d'Anse Couleuvre, 16 `image_url`, 10 photos de galerie)
+avait ete fait en commandes Python ponctuelles, donc n'existait que dans ce fichier local. Toute
+migration vers une base vide l'aurait perdu.
+
+- `scripts/seed.py` : ajout d'Anse Couleuvre a la liste `BEACHES` (16 activites au total).
+- `scripts/update_images.py` : `IMAGES` mis a jour avec les chemins locaux reels (les anciennes
+  URLs Wikimedia du 21 aout etaient perimees). Anse Noire, Anse Dufour, Anse Couleuvre et
+  Cascade Couleuvre pointent desormais vers `/assets/`.
+- `scripts/seed_gallery.py` (nouveau) : peuple `poi_images` pour les 3 activites photographiees.
+  Idempotent (supprime les photos existantes de l'activite avant reinsertion).
+- **Verification** : chaine complete rejouee sur une base SQLite vierge, puis comparaison
+  valeur par valeur avec la base de reference. Identique sur les 4 tables.
+
+**Bug corrige au passage** : la vignette du catalogue d'Anse Dufour affichait encore la photo
+Wikimedia alors que sa galerie contenait 4 photos personnelles. La couverture (`image_url`) et
+la galerie (`poi_images`) sont deux champs independants : ajouter des photos a la galerie ne
+change pas la couverture, ni le bandeau hero de la page de detail.
+
+### 2. Optimisation des photos
+
+`scripts/optimize_images.py` (nouveau, necessite Pillow ajoute a `requirements.txt`) :
+redimensionne a 1600 px sur le cote long, qualite JPEG 85.
+
+- Resultat : **12 Mo -> 3,8 Mo (67 % de gain)**. `cascade_couleuvre.JPG` passait 6 Mo en
+  4032 px pour une vignette affichee en 400 px.
+- **Idempotent** : une photo deja sous la limite est laissee intacte, donc pas de degradation
+  en cas de relance.
+- **Rotation EXIF gravee dans les pixels** via `ImageOps.exif_transpose()` : les photos de
+  telephone stockent leur orientation en metadonnee, qui serait perdue au reenregistrement.
+
+### 3. Migration PostgreSQL
+
+**Verifiee de bout en bout** sur un PostgreSQL 18.6 reel installe temporairement dans le
+conteneur de dev, avant toute mise en conteneur.
+
+- Les 3 migrations Alembic passent **sans modification** : `sa.Enum(...)` est agnostique du
+  dialecte, donc PostgreSQL cree de vrais types ENUM (`category`, `agerange`, `itemstatus`)
+  la ou SQLite utilisait du VARCHAR. Aucun `batch_alter_table` a corriger.
+- La colonne `order` de `poi_images` (mot reserve SQL) est echappee automatiquement par
+  SQLAlchemy, aucune intervention necessaire.
+- Donnees identiques a la reference SQLite sur les 4 tables. API, inscription, bcrypt, JWT et
+  les 29 tests : tous verts.
+
+**Seul bug rencontre** : `app/core/database.py` passait `connect_args={"check_same_thread": False}`
+a tous les drivers. Ce parametre est propre a SQLite et psycopg2 le rejette avec `invalid dsn`.
+Il est desormais conditionnel au dialecte. A noter que **les migrations Alembic passaient malgre
+ce bug**, car `alembic/env.py` cree son propre engine : seul le code applicatif echouait. C'est
+typiquement le genre de piege qu'un test reel revele et qu'une relecture de code manque.
+
+`psycopg2-binary==2.9.13` ajoute a `requirements.txt` (les wheels existent pour Python 3.14).
+
+### 4. Conteneurisation : trois conteneurs
+
+**Motivation de l'utilisateur** : isoler les parties du projet pour qu'une mauvaise manipulation
+ne casse pas l'ensemble.
+
+**Point important clarifie** : le multi-conteneurs n'est **pas** plus performant. Un appel
+backend vers la base passe par le reseau au lieu d'un acces fichier local, et 3 conteneurs
+consomment plus de RAM qu'un seul. Les vrais benefices sont l'isolation, la persistance des
+donnees via volume nomme, la reproductibilite et la proximite avec la production.
+
+**Architecture retenue (option C sur 3 evaluees) : nginx en reverse proxy.**
+
+```
+Navigateur -> localhost:8080 -> martinique-frontend (nginx)
+                                 |- /, /css/, /js/, /assets/ -> fichiers statiques
+                                 `- /activites, /auth, ...    -> martinique-backend:8000
+                                                                  `- martinique-db:5432
+```
+
+Les deux alternatives ecartees :
+- **nginx avec appels API directs** : aurait impose de passer `API_URL` de `''` a
+  `http://localhost:8000` et de configurer CORS pour de vrai.
+- **FastAPI continue de servir le frontend** : aucun changement de code, mais garde frontend et
+  backend couples, ce qui va a l'encontre de la motivation initiale.
+
+L'option C n'exige **aucun changement de code** : tout passant par une seule origine, le
+`API_URL = ''` actuel et les `fetch('/activites')` fonctionnent tels quels, et il n'y a aucun
+CORS a gerer.
+
+**Fichiers crees** : `docker-compose.yml`, `.env.example` et `.gitignore` a la racine,
+`backend/Dockerfile`, `backend/.dockerignore`, `frontend/Dockerfile`,
+`frontend/.dockerignore`, `frontend/nginx.conf`, `.devcontainer/devcontainer.json`.
+
+### Decisions techniques de la conteneurisation
+
+- **`python:3.14-slim` et non `alpine`** : Alpine utilise musl libc, ce qui obligerait a
+  recompiler `bcrypt`, `psycopg2` et `Pillow` depuis les sources (build long et fragile).
+- **Migrations au demarrage** : le backend lance `alembic upgrade head` avant uvicorn, avec
+  `depends_on: condition: service_healthy` sur la base. Sans le healthcheck, la migration
+  partirait avant que PostgreSQL accepte les connexions.
+- **Volume nomme `pgdata`** : les donnees survivent a la destruction des conteneurs.
+- **Peuplement non automatise** : les 3 scripts de seed restent manuels
+  (`docker compose exec backend python scripts/seed.py`), pour ne pas ecraser des donnees
+  reelles a chaque demarrage.
+- **Docker-in-Docker et non Docker-out-of-Docker** pour le conteneur de dev : avec un simple
+  socket monte, les bind mounts de `docker-compose.yml` seraient resolus sur le disque de
+  l'hote, ou le projet clone dans le conteneur n'existe pas. DinD donne au daemon la meme
+  vision du disque que les fichiers.
+
+### Trois bugs rencontres au lancement, tous corriges
+
+1. **`nginx.conf` exclu du contexte de build.** Il figurait dans `frontend/.dockerignore` pour
+   ne pas etre servi comme fichier statique, mais le `Dockerfile` doit pouvoir le copier vers
+   `/etc/nginx/conf.d/`. L'exclusion etait de toute facon inutile, puisque le montage de volume
+   de compose ramene le fichier au runtime. Son exposition HTTP est bloquee par une regle
+   `deny` dans nginx.conf.
+2. **Chemin du volume PostgreSQL.** Depuis la version 18, l'image place les donnees dans un
+   sous-dossier versionne : il faut monter sur `/var/lib/postgresql` et non
+   `/var/lib/postgresql/data`. L'ancienne convention fait echouer le demarrage avec un message
+   explicite. A necessite un `docker compose down -v` pour supprimer le volume invalide.
+3. **Resolution DNS de nginx.** nginx resout les noms d'upstream **une seule fois au demarrage**.
+   Un `docker compose restart backend` aurait provoque des 502 jusqu'au redemarrage de nginx.
+   Corrige avec `resolver 127.0.0.11` (DNS interne de Docker) et un `proxy_pass` via variable,
+   ce qui force une nouvelle resolution toutes les 10 secondes.
+
+### Tache reportee explicitement
+
+**Regrouper les routes API sous un prefixe `/api/`.** nginx doit actuellement lister chaque
+prefixe (`/activites`, `/auth`, `/utilisateurs`, `/projets`, `/meteo`, `/health`, `/docs`) dans
+une regex. Un prefixe unique permettrait une seule regle de proxy et supprimerait tout risque de
+collision entre une route API et un fichier statique. Demande de modifier les routeurs FastAPI
+et les appels `fetch()` du frontend, d'ou le report. Notee dans le README.
+
+Egalement notee : faire tourner le conteneur backend avec un utilisateur non-root, laisse de
+cote pour eviter les problemes de permissions sur les volumes montes.
+
+### Diagnostic non lie : page non stylee sous Safari
+
+Beaucoup de temps passe sur un faux bug. La page s'affichait sans CSS apres `Cmd+Shift+R`.
+Cause : **dans Safari, `Cmd+Shift+R` active le mode Lecteur**, qui retire volontairement tout
+le CSS. Le rechargement force est `Cmd+Option+R`. Le serveur n'a jamais ete en cause, ce que
+l'onglet Reseau confirmait (seul le document HTML etait demande, aucun CSS ni JS).
