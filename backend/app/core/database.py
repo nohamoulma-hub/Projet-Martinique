@@ -13,7 +13,12 @@ connect_args = {}
 if settings.database_url.startswith("sqlite"):
     connect_args["check_same_thread"] = False
 
-engine = create_engine(settings.database_url, connect_args=connect_args)
+# pool_pre_ping teste chaque connexion avant de la reutiliser. Sans lui, le pool garde
+# des connexions mortes quand le conteneur db redemarre, et le backend doit etre relance
+# a la main pour se reconnecter.
+engine = create_engine(
+    settings.database_url, connect_args=connect_args, pool_pre_ping=True
+)
 
 # Chaque requête HTTP aura sa propre "session" : c'est l'objet utilisé pour lire/écrire
 # des lignes en base (SELECT, INSERT, UPDATE...) avant de valider (commit) ou annuler (rollback).
