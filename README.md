@@ -197,6 +197,21 @@ Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
       statique. Demande de modifier les routeurs FastAPI et les appels `fetch()` du frontend.
 - [ ] Faire tourner le conteneur backend avec un utilisateur non-root (bonne pratique de
       sécurité, laissée de côté pour éviter les problèmes de permissions sur les volumes montés)
+- [ ] **Ajouter `pool_pre_ping=True` à l'engine SQLAlchemy** (`app/core/database.py`).
+      Sans lui, le pool garde des connexions mortes quand le conteneur `db` redémarre, et
+      le backend doit être relancé à la main pour se reconnecter.
+- [ ] **Compléter la structure HTML de 7 pages.** `auth`, `catalogue`, `detail`,
+      `detail-voyage`, `espace-personnel`, `meteo` et `planning-ia` n'ont ni `<!DOCTYPE html>`,
+      ni `<html>`, ni `<head>` : ce sont des fragments. Les navigateurs les acceptent mais
+      basculent en mode quirks, ce qui peut expliquer des écarts de rendu avec `accueil.html`.
+      La balise `<meta charset="UTF-8">` y a été ajoutée, le reste de la structure non.
+- [ ] **Déclarer `Cache-Control` dans nginx pour les `.html`, `.css` et `.js`.** Seuls
+      `ETag` et `Last-Modified` sont envoyés, donc le navigateur applique sa propre heuristique
+      et peut servir des fichiers périmés après une modification. Les images de `/assets/`
+      gardent leur cache long, elles ne changent pas.
+- [ ] **Restreindre l'exposition du port PostgreSQL avant tout déploiement.** Le service `db`
+      publie `127.0.0.1:5432` pour permettre l'inspection avec un client graphique. C'est sans
+      risque en local, mais à retirer ou à protéger en production.
 - [ ] Alertes sargasses en temps réel (API Sargassum Watch System / USF identifiée)
 - [ ] Assistant IA de planning (interface prête, logique à connecter)
 - [ ] Comparateur de billets d'avion (Paris -> Fort-de-France)
