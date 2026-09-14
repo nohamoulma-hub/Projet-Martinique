@@ -67,7 +67,7 @@ Projet-Martinique/
 ## **ENVIRONNEMENT DE DÉVELOPPEMENT**
 
 - Backend accessible sur : `http://localhost:8000`
-- Documentation API (Swagger) : `http://localhost:8000/docs`
+- Documentation API (Swagger) : `http://localhost:8080/api/docs`
 - Site web (nginx) : `http://localhost:8080`
 - Base de données : `localhost:5432`, base `martinique`, utilisateur `martinique`
 - Tout tourne en conteneur, il n'y a plus d'environnement virtuel à activer.
@@ -139,7 +139,10 @@ Toutes les pages utilisent le design system "Madras". Ne pas s'en écarter.
 ## **COMMUNICATION FRONTEND / BACKEND**
 
 - Le frontend appelle le backend via `fetch()` en JavaScript
-- URL de base de l'API en développement : `http://localhost:8000`
+- URL de base de l'API : `/api` (toutes les routes vivent sous ce préfixe).
+  Le frontend passe par nginx sur la même origine, donc `API_URL = '/api'` suffit
+  et aucune configuration CORS n'est nécessaire. Cette constante est définie une
+  seule fois dans `frontend/js/auth-utils.js`.
 - Format des erreurs retournées par l'API : `{"detail": "message d'erreur en français"}`
 - Pour les routes protégées, le frontend envoie le token JWT dans le header :
   `Authorization: Bearer <token>`
