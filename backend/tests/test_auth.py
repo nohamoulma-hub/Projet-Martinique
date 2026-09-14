@@ -3,7 +3,7 @@
 
 def _register(client, email="test@example.com", password="motdepasse123"):
     """Inscrit un utilisateur et retourne le token."""
-    response = client.post("/auth/inscription", json={
+    response = client.post("/api/auth/inscription", json={
         "first_name": "Marie",
         "last_name": "Dupont",
         "email": email,
@@ -33,7 +33,7 @@ def test_inscription_email_deja_utilise(client):
 def test_connexion_success(client):
     """POST /auth/connexion avec les bons identifiants retourne un token JWT."""
     _register(client, email="login@test.com", password="secret123")
-    response = client.post("/auth/connexion", json={
+    response = client.post("/api/auth/connexion", json={
         "email": "login@test.com",
         "password": "secret123",
     })
@@ -46,7 +46,7 @@ def test_connexion_success(client):
 def test_connexion_mauvais_mot_de_passe(client):
     """POST /auth/connexion avec un mauvais mot de passe retourne 401."""
     _register(client, email="mdp@test.com", password="correct")
-    response = client.post("/auth/connexion", json={
+    response = client.post("/api/auth/connexion", json={
         "email": "mdp@test.com",
         "password": "faux",
     })
@@ -56,7 +56,7 @@ def test_connexion_mauvais_mot_de_passe(client):
 
 def test_connexion_email_inconnu(client):
     """POST /auth/connexion avec un email inconnu retourne 401."""
-    response = client.post("/auth/connexion", json={
+    response = client.post("/api/auth/connexion", json={
         "email": "inconnu@test.com",
         "password": "motdepasse",
     })
@@ -68,7 +68,7 @@ def test_get_profil_connecte(client):
     reg_response = _register(client, email="profil@test.com")
     token = reg_response.json()["access_token"]
 
-    response = client.get("/utilisateurs/moi", headers={"Authorization": f"Bearer {token}"})
+    response = client.get("/api/utilisateurs/moi", headers={"Authorization": f"Bearer {token}"})
     assert response.status_code == 200
     data = response.json()
     assert data["email"] == "profil@test.com"
@@ -78,14 +78,14 @@ def test_get_profil_connecte(client):
 
 def test_get_profil_non_connecte(client):
     """GET /utilisateurs/moi sans token retourne 403."""
-    response = client.get("/utilisateurs/moi")
+    response = client.get("/api/utilisateurs/moi")
     # HTTPBearer retourne 403 si aucun header n'est fourni
     assert response.status_code in (401, 403)
 
 
 def test_get_profil_token_invalide(client):
     """GET /utilisateurs/moi avec un token invalide retourne 401."""
-    response = client.get("/utilisateurs/moi", headers={"Authorization": "Bearer token_invalide"})
+    response = client.get("/api/utilisateurs/moi", headers={"Authorization": "Bearer token_invalide"})
     assert response.status_code == 401
 
 
@@ -95,7 +95,7 @@ def test_update_profil(client):
     token = reg_response.json()["access_token"]
     headers = {"Authorization": f"Bearer {token}"}
 
-    response = client.put("/utilisateurs/moi", json={"first_name": "Claire"}, headers=headers)
+    response = client.put("/api/utilisateurs/moi", json={"first_name": "Claire"}, headers=headers)
     assert response.status_code == 200
     assert response.json()["first_name"] == "Claire"
     # Les autres champs restent inchangés
