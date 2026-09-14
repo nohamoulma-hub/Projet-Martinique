@@ -29,7 +29,7 @@ docker compose up --build
 ```
 
 Le site est accessible sur `http://localhost:8080`  
-La documentation API (Swagger) sur `http://localhost:8080/docs`
+La documentation API (Swagger) sur `http://localhost:8080/api/docs`
 
 Au premier démarrage, la base est vide. Pour la peupler :
 
@@ -129,12 +129,12 @@ Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
 - Modèle `PoiImage` pour les galeries photos (table `poi_images`)
 - 18 routes API :
   - `GET /health`
-  - `GET /activites` (pagination, filtres catégorie/recherche/tri)
-  - `GET /activites/{id}` (détail + beach_details ou hike_details + galerie photos)
-  - `POST /auth/inscription` et `POST /auth/connexion` (JWT)
-  - `GET /utilisateurs/moi` et `PUT /utilisateurs/moi` (protégées)
-  - `GET/POST/PUT/DELETE /projets` et `POST/DELETE /projets/{id}/activites` (protégées)
-  - `GET /meteo` (données en direct via Open-Meteo, coordonnées Fort-de-France)
+  - `GET /api/activites` (pagination, filtres catégorie/recherche/tri)
+  - `GET /api/activites/{id}` (détail + beach_details ou hike_details + galerie photos)
+  - `POST /api/auth/inscription` et `POST /api/auth/connexion` (JWT)
+  - `GET /api/utilisateurs/moi` et `PUT /api/utilisateurs/moi` (protégées)
+  - `GET/POST/PUT/DELETE /api/projets` et `POST/DELETE /api/projets/{id}/activites` (protégées)
+  - `GET /api/meteo` (données en direct via Open-Meteo, coordonnées Fort-de-France)
 - Authentification JWT avec hachage bcrypt
 - 29 tests (pytest + httpx), tous verts
 - Fichiers statiques servis via FastAPI : `/site` pour le frontend, `/assets` pour les photos locales
@@ -190,25 +190,25 @@ Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
 
 ### Technique
 
-- [ ] **Regrouper les routes API sous un préfixe `/api/`.** Actuellement nginx doit lister
-      chaque préfixe (`/activites`, `/auth`, `/utilisateurs`, `/projets`, `/meteo`, `/health`,
-      `/docs`) dans une regex de `frontend/nginx.conf`. Un préfixe unique permettrait une seule
-      règle de proxy, et éviterait tout risque de collision entre une route API et un fichier
-      statique. Demande de modifier les routeurs FastAPI et les appels `fetch()` du frontend.
-- [ ] Faire tourner le conteneur backend avec un utilisateur non-root (bonne pratique de
-      sécurité, laissée de côté pour éviter les problèmes de permissions sur les volumes montés)
-- [ ] **Ajouter `pool_pre_ping=True` à l'engine SQLAlchemy** (`app/core/database.py`).
-      Sans lui, le pool garde des connexions mortes quand le conteneur `db` redémarre, et
-      le backend doit être relancé à la main pour se reconnecter.
-- [ ] **Compléter la structure HTML de 7 pages.** `auth`, `catalogue`, `detail`,
-      `detail-voyage`, `espace-personnel`, `meteo` et `planning-ia` n'ont ni `<!DOCTYPE html>`,
-      ni `<html>`, ni `<head>` : ce sont des fragments. Les navigateurs les acceptent mais
-      basculent en mode quirks, ce qui peut expliquer des écarts de rendu avec `accueil.html`.
-      La balise `<meta charset="UTF-8">` y a été ajoutée, le reste de la structure non.
-- [ ] **Déclarer `Cache-Control` dans nginx pour les `.html`, `.css` et `.js`.** Seuls
-      `ETag` et `Last-Modified` sont envoyés, donc le navigateur applique sa propre heuristique
-      et peut servir des fichiers périmés après une modification. Les images de `/assets/`
-      gardent leur cache long, elles ne changent pas.
+- [x] **Regrouper les routes API sous un préfixe `/api/`.** Fait. Les 6 routeurs sont montés
+      sous `/api` dans `app/main.py`, Swagger est sur `/api/docs`, et `frontend/nginx.conf` n'a
+      plus qu'une seule règle de proxy (`location /api/`) au lieu d'une regex de neuf préfixes.
+      Côté frontend, la constante `API_URL` de `js/auth-utils.js` a suffi : tous les `fetch()`
+      passent par elle. Les 40 URL des tests ont été préfixées, les 29 tests restent au vert.
+- [x] Faire tourner le conteneur backend avec un utilisateur non-root. Fait. L'utilisateur
+      `appuser` est créé avec l'UID 1000, qui correspond au propriétaire des fichiers sur l'hôte :
+      c'est cette correspondance qui règle le problème de permissions sur le bind mount.
+- [x] **Ajouter `pool_pre_ping=True` à l'engine SQLAlchemy** (`app/core/database.py`). Fait
+      et vérifié : après un redémarrage du seul conteneur `db`, l'API répond sans qu'il faille
+      relancer le backend.
+- [x] **Compléter la structure HTML de 7 pages.** Fait. `auth`, `catalogue`, `detail`,
+      `detail-voyage`, `espace-personnel`, `meteo` et `planning-ia` ont désormais `<!DOCTYPE html>`,
+      `<html lang="fr">`, `<head>` et `<body>`, donc plus de mode quirks. La balise
+      `<meta name="viewport">` y a été ajoutée au passage : elle manquait partout, ce qui
+      empêchait ces pages d'être réellement responsive sur mobile.
+- [x] **Déclarer `Cache-Control` dans nginx.** Fait. `no-cache` sur tout le statique, ce qui
+      force la revalidation sans interdire le cache. Les images de `/assets/` gardent leur cache
+      long de 30 jours.
 - [ ] **Restreindre l'exposition du port PostgreSQL avant tout déploiement.** Le service `db`
       publie `127.0.0.1:5432` pour permettre l'inspection avec un client graphique. C'est sans
       risque en local, mais à retirer ou à protéger en production.
@@ -252,7 +252,7 @@ Projet-Martinique/
 ```
 Navigateur → localhost:8080 → martinique-frontend (nginx)
                                 ├── /, /css/, /js/, /assets/  → fichiers statiques
-                                └── /activites, /auth, ...     → martinique-backend:8000
+                                └── /api/...                   → martinique-backend:8000
                                                                    └── martinique-db:5432
 ```
 
