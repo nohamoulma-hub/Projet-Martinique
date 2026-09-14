@@ -25,6 +25,13 @@ services:
       # (18/docker) pour permettre un pg_upgrade --link sans franchir de point de montage.
       # L'ancienne convention fait échouer le démarrage avec un message explicite.
       - pgdata:/var/lib/postgresql
+    ports:
+      # Exposé pour inspecter la base avec un client graphique (extension PostgreSQL
+      # de VSCode, DBeaver...). L'application n'en a pas besoin : backend et db se
+      # joignent par le réseau interne de Docker.
+      # Lié à 127.0.0.1 et non 0.0.0.0 : la base reste injoignable depuis l'extérieur
+      # de la machine, seul un client local peut s'y connecter.
+      - "127.0.0.1:5432:5432"
     healthcheck:
       # PostgreSQL accepte des connexions quelques secondes après le démarrage du
       # conteneur. Sans ce test, le backend tenterait de migrer trop tôt et échouerait.
