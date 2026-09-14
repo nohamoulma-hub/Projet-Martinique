@@ -1,6 +1,8 @@
 // Utilitaires partagés : URL de base, token JWT, headers d'authentification.
 
-const API_URL = '';
+// Toutes les routes de l'API vivent sous /api. Cette constante est utilisee par tous
+// les fetch du site : ce seul endroit suffit a changer l'adresse de base.
+const API_URL = '/api';
 
 // Retourne le token JWT stocké dans localStorage, ou null si absent.
 function getToken() {
