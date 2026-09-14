@@ -588,3 +588,26 @@ ce qui peut expliquer des differences de rendu. Non corrige, hors du perimetre d
 **Tache de fond toujours ouverte.** Regrouper les routes API sous `/api/` reste la vraie
 solution : l'ancrage de la regex contourne la collision, il ne la supprime pas. Le probleme se
 reposera a chaque nouveau routeur dont le nom ressemble a une page.
+
+### Suite : remise a jour de la documentation
+
+La section **Etat actuel** du `CLAUDE.md` decrivait encore le projet avant les missions v1
+(« 1 route active », « routers, schemas et services v1 a creer », « aucune connexion a l'API »).
+Probleme reel et non cosmetique : c'est le fichier lu par tout agent intervenant sur le projet,
+qui risquait donc de recreer l'existant.
+
+Trois sections corrigees :
+
+1. **Stack technique.** SQLite remplace par PostgreSQL 18, ajout de Docker Compose et nginx.
+2. **Etat actuel.** Chiffres verifies sur le projet : 7 modeles, 6 routers pour 11 routes,
+   5 schemas, 2 services, 3 migrations, 29 tests au vert, 9 pages toutes connectees a l'API.
+   Seul manque reel signale : aucune donnee pour restaurants, rhumeries, logements, evenements.
+3. **Environnement de developpement.** Le venv et `uvicorn` en local remplaces par les
+   commandes `docker compose`, avec la mise en garde sur `down -v`.
+
+Quatre points de dette technique ajoutes au README, decouverts pendant cette session :
+`pool_pre_ping`, structure HTML incomplete de 7 pages, absence de `Cache-Control`, et retrait
+de l'exposition du port PostgreSQL avant deploiement.
+
+Decision : la dette technique est documentee mais non traitee, a la demande de l'utilisateur,
+qui prefere la resorber au fil de l'avancement du projet.
