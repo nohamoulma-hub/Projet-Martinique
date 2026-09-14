@@ -550,3 +550,41 @@ qu'il vit dans le volume et non dans la variable d'environnement.
 **A retenir.** Changer `POSTGRES_PASSWORD` dans le `.env` ne suffit jamais sur une base deja
 initialisee. Il faut soit un `ALTER ROLE`, soit repartir d'un volume vide (`docker compose
 down -v`, qui detruit les donnees et impose de rejouer `python scripts/seed.py`).
+
+### Suite : deux bugs d'affichage du site
+
+Signales apres ouverture du site sur `http://localhost:8080`.
+
+**1. Accents mal affiches (`Ã®` au lieu de `î`).** Deux causes cumulees. nginx envoyait
+`Content-Type: text/html` sans charset, et 7 des 9 pages n'avaient aucune balise
+`<meta charset>` (seules `accueil.html` et `maquette.html` en avaient, d'ou une page d'accueil
+correcte et un catalogue casse). Sans indication, le navigateur retombe sur un encodage ancien.
+Corrige des deux cotes : directive `charset utf-8` dans nginx.conf (l'en-tete HTTP fait autorite
+et regle les 9 pages d'un coup) et ajout de la balise dans les 7 fichiers, necessaire hors
+Docker (Live Server, ouverture directe).
+
+**2. Pages `meteo.html` et `auth.html` inaccessibles.** C'est la collision que la tache reportee
+du 2026-09-12 annoncait. La regex de proxy n'avait pas de delimiteur de fin :
+
+    location ~ ^/(health|activites|auth|...|meteo|...)
+
+`/meteo.html` commence par `/meteo`, donc nginx relayait la requete au backend, qui repondait
+`{"detail":"Not Found"}`. Effet de bord non evident : `planning-ia.html` se chargeait (HTTP 200)
+mais inclut `auth-utils.js`, qui redirige vers `auth.html` sans token. La page paraissait donc
+inaccessible elle aussi, alors que le vrai coupable etait `auth.html`.
+
+Corrige en ancrant la regex avec `(/|$)` : `/meteo` et `/meteo/...` partent au backend,
+`/meteo.html` reste un fichier statique.
+
+**Verifications.** Les 9 pages repondent en 200 avec `charset=utf-8`. Les routes API passent
+toujours au backend : `/meteo` renvoie la meteo reelle, `/activites` les donnees, `/docs`
+Swagger, et `/auth/connexion` un 405 (route POST atteinte par un GET), ce qui prouve que le
+proxy fonctionne toujours.
+
+**Remarque non traitee.** Les 7 pages concernees n'ont ni `<!DOCTYPE html>`, ni `<html>`, ni
+`<head>` : ce sont des fragments. Les navigateurs les acceptent mais basculent en mode quirks,
+ce qui peut expliquer des differences de rendu. Non corrige, hors du perimetre demande.
+
+**Tache de fond toujours ouverte.** Regrouper les routes API sous `/api/` reste la vraie
+solution : l'ancrage de la regex contourne la collision, il ne la supprime pas. Le probleme se
+reposera a chaque nouveau routeur dont le nom ressemble a une page.
