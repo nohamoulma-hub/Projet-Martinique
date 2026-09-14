@@ -9,10 +9,18 @@ from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
 from app.routers import activites, auth, health, meteo, projets, utilisateurs
 
+# Toutes les routes API vivent sous /api. Un prefixe unique evite toute collision avec
+# un fichier statique du site (une route /meteo et une page meteo.html, par exemple) et
+# permet a nginx de n'avoir qu'une seule regle de proxy.
+API_PREFIX = "/api"
+
 app = FastAPI(
     title=settings.app_name,
-    description="API du site touristique Martinique — catalogue d'activités, météo, projets de voyage.",
+    description="API du site touristique Martinique : catalogue d'activités, météo, projets de voyage.",
     version="1.0.0",
+    docs_url=f"{API_PREFIX}/docs",
+    redoc_url=f"{API_PREFIX}/redoc",
+    openapi_url=f"{API_PREFIX}/openapi.json",
 )
 
 # CORS : autorise le frontend (servi depuis une autre origine/port) à appeler cette API.
@@ -25,13 +33,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Enregistrement de tous les routeurs v1
-app.include_router(health.router)
-app.include_router(activites.router)
-app.include_router(auth.router)
-app.include_router(utilisateurs.router)
-app.include_router(projets.router)
-app.include_router(meteo.router)
+# Enregistrement de tous les routeurs v1, tous sous le prefixe /api
+for routeur in (health, activites, auth, utilisateurs, projets, meteo):
+    app.include_router(routeur.router, prefix=API_PREFIX)
 
 # Sert le frontend statique depuis /site pour éviter les conflits avec les routes API
 frontend_path = Path(__file__).parent.parent.parent / "frontend"
