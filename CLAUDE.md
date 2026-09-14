@@ -20,7 +20,9 @@ interface pensée pour une navigation simple et fluide.
 - Backend   : Python + FastAPI
 - ORM       : SQLAlchemy
 - Migrations: Alembic
-- Base de données : SQLite (développement) -> PostgreSQL (production)
+- Base de données : PostgreSQL 18 (développement et production)
+- Conteneurisation : Docker Compose, 3 services (`db`, `backend`, `frontend`)
+- Serveur web : nginx, sert le statique et relaie l'API
 
 ## **STRUCTURE DES DOSSIERS**
 
@@ -46,28 +48,39 @@ Projet-Martinique/
 ## **ÉTAT ACTUEL**
 
 ### Backend
-- ✅ 6 modèles SQLAlchemy créés : `User`, `PointOfInterest`, `BeachDetails`,
+- ✅ 7 modèles SQLAlchemy : `User`, `PointOfInterest`, `PoiImage`, `BeachDetails`,
   `HikeDetails`, `TravelProject`, `TravelProjectItem`
-- ✅ Base de données SQLite initialisée, toutes les tables créées via Alembic
-- ✅ 1 schéma Pydantic : `PointOfInterest`
-- ✅ 1 route active : `GET /health`
-- ❌ Routers, schemas et services v1 à créer
-- ❌ Données de test à insérer
+- ✅ PostgreSQL 18 en conteneur, 3 migrations Alembic appliquées
+- ✅ 5 schémas Pydantic : `auth`, `meteo`, `point_of_interest`, `travel_project`, `user`
+- ✅ 6 routers, soit 11 routes : catalogue, détail d'activité, inscription, connexion,
+  profil, projets de voyage avec ajout et retrait d'activités, météo, health
+- ✅ 2 services : `auth_service` (JWT, bcrypt), `meteo_service` (API externe)
+- ✅ 29 tests pytest, tous au vert
+- ✅ Données de démonstration : 16 points d'intérêt, insérés par `scripts/seed.py`
+- ❌ Aucune donnée pour les catégories restaurants, rhumeries, logements, événements
 
 ### Frontend
-- ✅ 8 maquettes HTML avec CSS et JS séparés
-- ❌ Aucune connexion à l'API (données statiques)
+- ✅ 9 pages HTML avec CSS et JS séparés
+- ✅ Toutes connectées à l'API via `fetch()`
+- ✅ Routes protégées : token JWT stocké côté client, géré par `js/auth-utils.js`
 
 ## **ENVIRONNEMENT DE DÉVELOPPEMENT**
 
 - Backend accessible sur : `http://localhost:8000`
 - Documentation API (Swagger) : `http://localhost:8000/docs`
-- Activer l'environnement virtuel avant toute commande backend :
-  `source backend/venv/bin/activate` (Linux/Mac) ou `backend\venv\Scripts\activate` (Windows)
-- Commande pour lancer le backend : `uvicorn app.main:app --reload --port 8000`
-  (à exécuter depuis le dossier `backend/`)
+- Site web (nginx) : `http://localhost:8080`
+- Base de données : `localhost:5432`, base `martinique`, utilisateur `martinique`
+- Tout tourne en conteneur, il n'y a plus d'environnement virtuel à activer.
+  Lancer la stack depuis la racine du projet : `docker compose up -d`
+- Les commandes backend passent par le conteneur :
+  `docker compose exec backend <commande>`
 - Framework de tests : **pytest** + **httpx**
-- Commande pour lancer les tests : `pytest` (depuis le dossier `backend/`)
+- Commande pour lancer les tests : `docker compose exec backend pytest`
+- Migrations : `docker compose exec backend alembic upgrade head`
+  (déjà jouées automatiquement au démarrage du backend)
+- Peuplement : `docker compose exec backend python scripts/seed.py`
+- ⚠️ `docker compose down -v` détruit le volume et donc toutes les données.
+  `docker compose down` sans le `-v` est sans danger.
 
 ## **DESIGN SYSTEM FRONTEND**
 
