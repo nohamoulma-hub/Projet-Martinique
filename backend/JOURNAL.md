@@ -469,3 +469,84 @@ Beaucoup de temps passe sur un faux bug. La page s'affichait sans CSS apres `Cmd
 Cause : **dans Safari, `Cmd+Shift+R` active le mode Lecteur**, qui retire volontairement tout
 le CSS. Le rechargement force est `Cmd+Option+R`. Le serveur n'a jamais ete en cause, ce que
 l'onglet Reseau confirmait (seul le document HTML etait demande, aucun CSS ni JS).
+
+---
+
+## 2026-09-14 - Exposition du port PostgreSQL pour inspection graphique
+
+### Besoin
+
+Depuis la migration vers PostgreSQL, la base n'est plus un fichier visible dans le projet
+(l'ancien `backend/martinique.db`). Elle vit dans le volume nomme `projet-martinique_pgdata`,
+hors du depot. Besoin d'un acces visuel via l'extension PostgreSQL de VSCode
+(`ms-ossdata.vscode-pgsql`), deja installee dans le dev container.
+
+### Modification
+
+Ajout d'un mapping de port au service `db` dans `docker-compose.yml` :
+
+    ports:
+      - "127.0.0.1:5432:5432"
+
+Seul fichier touche. Aucun changement de modele, de schema ni de migration.
+
+### Decisions techniques
+
+1. **Liaison sur `127.0.0.1` et non `0.0.0.0`.** La base reste injoignable depuis l'exterieur
+   de la machine. Le port n'est ouvert que pour un client local, ce qui suffit a l'extension
+   VSCode : elle s'execute cote serveur distant, donc dans le dev container, et partage le
+   meme `localhost` que les conteneurs de l'application.
+2. **Le mapping n'est pas necessaire au fonctionnement de l'application.** backend et db se
+   joignent par le reseau interne de Docker via le nom de service `db`. Ce port est un confort
+   de developpement uniquement, ce que le commentaire dans le compose precise.
+3. **Pas d'ajout a `forwardPorts` du devcontainer.** Utile seulement pour brancher un client
+   installe sur le Mac (DBeaver, pgAdmin). Non demande, donc non fait.
+
+### Verifications apres recreation du conteneur
+
+Le conteneur `db` a ete recree (`docker compose up -d db backend`). Donnees intactes, comme
+attendu : le volume nomme survit a la destruction du conteneur.
+
+- `points_of_interest` : 16 lignes, `poi_images` : 10 lignes, `users` : 0
+- `alembic_version` toujours a `93ca07e02899` (head), aucune migration rejouee
+- Connexion TCP authentifiee sur `127.0.0.1:5432` testee avec succes depuis un client psql
+- `GET /health` repond `{"status":"ok"}`
+
+### Point de vigilance
+
+Le backend a du etre redemarre explicitement apres la recreation de `db`. Son engine SQLAlchemy
+est cree sans `pool_pre_ping` (`app/core/database.py`), donc son pool conservait des connexions
+mortes vers l'ancien conteneur. Ajouter `pool_pre_ping=True` rendrait le backend resilient a un
+redemarrage de la base. Non fait ici : hors du perimetre demande.
+
+### Suite : desynchronisation du mot de passe PostgreSQL
+
+Symptome : `password authentication failed for user "martinique"` depuis l'extension VSCode,
+alors que le mot de passe saisi etait bien celui du `.env`.
+
+**Cause.** `POSTGRES_PASSWORD` n'est lu qu'une seule fois, au premier demarrage, quand l'image
+cree la base avec `initdb` (ici le 2026-09-12). Le mot de passe est alors ecrit dans le volume.
+Aux demarrages suivants, l'image voit un volume deja initialise, saute `initdb` et ignore la
+variable. Modifier le `.env` ne changeait donc rien en base : le mot de passe reel restait
+`changeme` tandis que le `.env` avait ete passe a une autre valeur.
+
+**Consequence non evidente.** Le backend construit son `DATABASE_URL` a partir de cette meme
+variable. Il fonctionnait encore car demarre avec l'ancienne valeur, mais son prochain
+redemarrage aurait echoue a se connecter. Le probleme ne se limitait donc pas a l'outil
+d'inspection.
+
+**Correction.** Alignement du mot de passe reel sur celui du `.env` :
+
+    ALTER ROLE martinique WITH PASSWORD '<valeur du .env>';
+
+puis `docker compose up -d backend`, qui a recree les deux conteneurs (le hash de configuration
+du service `db` change avec la variable resolue).
+
+**Verifications.** Nouveau mot de passe accepte, ancien (`changeme`) refuse, `points_of_interest`
+toujours a 16 lignes et `poi_images` a 10, `GET /health` et `GET /activites` repondent avec les
+donnees. La recreation du conteneur `db` n'a pas reinitialise le mot de passe, ce qui confirme
+qu'il vit dans le volume et non dans la variable d'environnement.
+
+**A retenir.** Changer `POSTGRES_PASSWORD` dans le `.env` ne suffit jamais sur une base deja
+initialisee. Il faut soit un `ALTER ROLE`, soit repartir d'un volume vide (`docker compose
+down -v`, qui detruit les donnees et impose de rejouer `python scripts/seed.py`).
