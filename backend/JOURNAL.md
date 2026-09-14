@@ -611,3 +611,69 @@ de l'exposition du port PostgreSQL avant deploiement.
 
 Decision : la dette technique est documentee mais non traitee, a la demande de l'utilisateur,
 qui prefere la resorber au fil de l'avancement du projet.
+
+---
+
+## 2026-09-14 (suite) - Resorption de la dette technique
+
+Cinq points traites d'affilee, du moins risque au plus risque, avec les 29 tests joues a
+chaque etape.
+
+### 1. `pool_pre_ping=True` sur l'engine SQLAlchemy
+
+`app/core/database.py`. Sans lui, le pool conservait des connexions mortes apres un
+redemarrage du conteneur `db`, et le backend devait etre relance a la main.
+Verifie concretement : apres `docker compose restart db`, l'API a repondu 200 sans que le
+backend soit touche.
+
+### 2. `Cache-Control` dans nginx
+
+`add_header Cache-Control "no-cache"` dans le bloc `location /`. `no-cache` n'interdit pas
+le cache, il force la revalidation : avec `ETag` et `Last-Modified` deja presents, une
+requete inchangee repond 304. Les images de `/assets/` gardent leur `expires 30d`.
+
+### 3. Structure HTML des 7 pages fragments
+
+`auth`, `catalogue`, `detail`, `detail-voyage`, `espace-personnel`, `meteo`, `planning-ia`
+n'avaient ni `<!DOCTYPE html>`, ni `<html>`, ni `<head>`, ni `<body>` : les navigateurs
+basculaient en mode quirks.
+
+**Trouvaille au passage :** aucune de ces 7 pages n'avait de `<meta name="viewport">`. Elles
+n'etaient donc pas reellement responsive sur mobile, alors que le CLAUDE.md l'exige. La balise
+a ete ajoutee en meme temps. Controle apres coup : exactement +8 lignes par fichier, soit les
+8 balises ajoutees, donc aucun contenu perdu.
+
+### 4. Regroupement des routes sous `/api` (tache reportee depuis le 2026-09-12)
+
+La plus structurante. Quatre endroits touches :
+
+- `app/main.py` : constante `API_PREFIX = "/api"`, les 6 routeurs montes dans une boucle,
+  et `docs_url` / `redoc_url` / `openapi_url` deplaces sous `/api` pour rester couverts par
+  la meme regle nginx.
+- `frontend/js/auth-utils.js` : `API_URL` passe de `''` a `'/api'`. Un seul endroit a suffi,
+  tous les `fetch()` du site passent par cette constante et toutes les pages concernees
+  chargent ce fichier.
+- `frontend/nginx.conf` : la regex de neuf prefixes remplacee par `location /api/`.
+- `backend/tests/` : 40 URL prefixees.
+
+La collision entre une route API et un fichier statique est maintenant structurellement
+impossible, et non plus contournee par l'ancrage `(/|$)` pose le matin meme.
+
+### 5. Conteneur backend en utilisateur non-root
+
+Ce point avait ete reporte le 2026-09-12 par crainte des permissions sur les volumes montes.
+La solution tient dans le choix de l'UID : `appuser` est cree avec l'**UID 1000**, celui du
+proprietaire des fichiers sur l'hote. La correspondance des UID rend le bind mount accessible
+en lecture et en ecriture. `USER appuser` est place apres les installations pip, qui demandent
+root. Verifie : `id` renvoie `uid=1000(appuser)`, l'ecriture dans `/app` fonctionne, alembic
+tourne au demarrage et les 29 tests passent.
+
+### Verifications finales
+
+Routes API toutes sous `/api` (11 routes), anciens chemins en 404 comme attendu, 9 pages
+statiques en 200, donnees reellement servies (activites et meteo), 29 tests au vert.
+
+### Reste ouvert
+
+Retirer ou proteger l'exposition du port PostgreSQL avant tout deploiement. Seul point de
+dette technique encore ouvert.
