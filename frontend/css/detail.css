@@ -465,3 +465,25 @@
   .cta-voyage-row {
     display: flex; align-items: center; gap: 10px; margin-bottom: 0;
   }
+
+
+/* Regles auparavant construites en JavaScript via style.cssText : invisibles
+   depuis ce fichier et appliquees seulement apres le premier rendu. */
+.cta-message {
+  font-size: 13px;
+  color: var(--bleu, #1A5C8A);
+  margin-top: 6px;
+  text-align: center;
+}
+
+/* Fond assombri des modales, injectees par le JS. */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
