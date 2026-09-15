@@ -350,3 +350,25 @@
   .meteo-temp-row     { opacity: 0; animation: fadeUp  .8s .5s forwards; }
   .meteo-update       { opacity: 0; animation: fadeUp  .8s .6s forwards; }
   .meteo-main-right   { opacity: 0; animation: fadeLeft .8s .7s forwards; }
+
+
+/* Anti-scintillement au chargement.
+   Le HTML contient du contenu de maquette, remplace par les vraies donnees des que
+   l'API repond. Sans ce masquage, il s'affiche une fraction de seconde.
+   visibility plutot que display : la place reste reservee, donc aucun saut de mise en page.
+   La classe est posee sur <body> des le premier octet et retiree par le JS. */
+body.chargement .meteo-temp,
+body.chargement .meteo-icon,
+body.chargement .meteo-condition,
+body.chargement .meteo-update {
+  visibility: hidden;
+}
+
+body.chargement .meteo-temp-row { position: relative; }
+body.chargement .meteo-temp-row::after {
+  content: "Releve en cours...";
+  visibility: visible;
+  position: absolute; inset: 0;
+  display: flex; align-items: center;
+  color: var(--doux, #6B5B45); font-size: 14px;
+}
