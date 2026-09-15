@@ -44,7 +44,7 @@ function showError(id, message) {
   if (!el) {
     el = document.createElement('p');
     el.id = id;
-    el.style.cssText = 'color:#C8392B;font-size:14px;margin-top:8px;text-align:center;';
+    el.className = 'form-message form-message-erreur';
   }
   el.textContent = message;
   return el;
@@ -191,8 +191,9 @@ document.addEventListener('DOMContentLoaded', () => {
       let msg = btn.nextElementSibling;
       if (!msg || !msg.classList.contains('google-soon')) {
         msg = document.createElement('p');
-        msg.className = 'google-soon';
-        msg.style.cssText = 'color:var(--bleu,#1A5C8A);font-size:13px;margin-top:6px;text-align:center;';
+        // google-soon sert de marqueur pour retrouver l'element, form-message
+        // porte l'apparence : ecraser le premier recreerait un message a chaque clic.
+        msg.className = 'google-soon form-message form-message-info';
         msg.textContent = 'Connexion Google bientôt disponible.';
         btn.parentNode.insertBefore(msg, btn.nextSibling);
       }
