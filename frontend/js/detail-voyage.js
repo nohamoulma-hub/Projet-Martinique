@@ -97,8 +97,8 @@ function showComingSoonBtn(btn) {
   let msg = btn.nextElementSibling;
   if (!msg || !msg.classList.contains('soon-inline')) {
     msg = document.createElement('span');
-    msg.className = 'soon-inline';
-    msg.style.cssText = 'font-size:11px;color:#888;margin-left:6px;';
+    // soon-inline est le marqueur de recherche, badge-bientot l'apparence.
+    msg.className = 'soon-inline badge-bientot';
     msg.textContent = 'Bientôt';
     btn.parentNode.insertBefore(msg, btn.nextSibling);
     setTimeout(() => msg.remove(), 2000);
@@ -324,9 +324,7 @@ function openAddActiviteModal(dayNumber) {
 
   const modal = document.createElement('div');
   modal.id = 'modal-add-act';
-  modal.style.cssText = `
-    position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;
-    display:flex;align-items:center;justify-content:center;padding:20px;`;
+  modal.className = 'modal-overlay';
 
   modal.innerHTML = `
     <div style="background:#fff;border-radius:16px;padding:28px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.25);">
