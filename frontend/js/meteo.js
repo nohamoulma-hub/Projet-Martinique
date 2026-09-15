@@ -34,7 +34,7 @@ function currentTime() {
 async function loadMeteo() {
   try {
     const res = await fetch(`${API_URL}/meteo`);
-    if (!res.ok) return; // En cas d'erreur : les données statiques de la maquette sont conservées
+    if (!res.ok) throw new Error('meteo indisponible');
 
     const data = await res.json();
 
@@ -73,7 +73,18 @@ async function loadMeteo() {
     // UV, pression, visibilité : pas dans l'API, on laisse les valeurs statiques
 
   } catch (_) {
-    // Pas de réseau : les données statiques de la maquette sont conservées
+    // Les valeurs du HTML sont celles de la maquette (28 degres, partiellement
+    // nuageux). Les laisser afficherait une meteo inventee, credible et fausse.
+    const tempEl = document.querySelector('.meteo-temp');
+    if (tempEl) tempEl.textContent = '--';
+    const condEl = document.querySelector('.meteo-condition');
+    if (condEl) condEl.textContent = 'Releve indisponible';
+    const iconEl = document.querySelector('.meteo-icon');
+    if (iconEl) iconEl.textContent = '';
+    const updateEl = document.querySelector('.meteo-update');
+    if (updateEl) updateEl.textContent = 'Impossible de joindre le service meteo.';
+  } finally {
+    document.body.classList.remove('chargement');
   }
 }
 
