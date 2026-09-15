@@ -22,9 +22,28 @@ function requireAuth() {
   }
 }
 
+// Initiales mises en cache a la connexion. Elles evitent d'attendre un aller-retour
+// avec l'API pour afficher deux lettres, ce qui faisait apparaitre la bulle en retard.
+function getInitialesCache() {
+  try { return localStorage.getItem('user_initials'); } catch (_) { return null; }
+}
+
+function setInitialesCache(initiales) {
+  try { localStorage.setItem('user_initials', initiales); } catch (_) {}
+}
+
+// Efface tout ce qui identifie l'utilisateur. A appeler a chaque deconnexion,
+// sinon les initiales du compte precedent resteraient affichees.
+function clearSession() {
+  try {
+    localStorage.removeItem('jwt_token');
+    localStorage.removeItem('user_initials');
+  } catch (_) {}
+}
+
 // Gère une réponse 401 : supprime le token et redirige vers la connexion.
 function handleUnauthorized() {
-  localStorage.removeItem('jwt_token');
+  clearSession();
   window.location.href = 'auth.html';
 }
 
@@ -114,21 +133,18 @@ async function fetchInitials() {
   }
 }
 
-// Injecte la bulle d'initiales dans la nav avec son menu déroulant.
-async function injectAvatarBubble() {
+// Construit la bulle et son menu deroulant a partir d'initiales deja connues.
+// Synchrone : c'est ce qui permet d'afficher la bulle sans attendre le reseau.
+function construireBulle(initiales) {
   injectAvatarStyles();
 
   // Supprime une bulle existante pour éviter les doublons
   document.querySelector('nav .nav-avatar')?.remove();
   document.querySelector('.nav-dropdown')?.remove();
 
-  const initials = await fetchInitials();
-  if (initials === null) return;
-
-  // Bulle d'initiales
   const avatar = document.createElement('div');
   avatar.className = 'nav-avatar';
-  avatar.textContent = initials;
+  avatar.textContent = initiales;
 
   // Menu déroulant injecté dans le body pour ignorer overflow:hidden de la nav
   const dropdown = document.createElement('div');
@@ -154,9 +170,9 @@ async function injectAvatarBubble() {
     dropdown.classList.toggle('open');
   });
 
-  // Déconnexion : supprime le JWT et redirige vers l'accueil
+  // Déconnexion : efface la session complete, initiales comprises
   document.getElementById('nav-logout-btn').addEventListener('click', () => {
-    localStorage.removeItem('jwt_token');
+    clearSession();
     window.location.href = 'accueil.html';
   });
 
@@ -171,6 +187,21 @@ async function injectAvatarBubble() {
     const nav = document.querySelector('nav');
     if (nav) nav.appendChild(avatar);
   }
+}
+
+// Affiche la bulle immediatement depuis le cache, puis verifie aupres de l'API.
+// Volontairement non async : rien ici ne doit retarder l'affichage de la nav.
+function injectAvatarBubble() {
+  const cache = getInitialesCache();
+  if (cache) construireBulle(cache);
+
+  // Rafraichissement en arriere-plan : corrige le cache si le nom a change et
+  // construit la bulle si le cache etait vide (session ouverte avant cette version).
+  fetchInitials().then(frais => {
+    if (frais === null || frais === cache) return;
+    setInitialesCache(frais);
+    construireBulle(frais);
+  });
 }
 
 // Détecte le nom de la page courante pour marquer le lien actif.
@@ -196,7 +227,7 @@ async function updateNav() {
       <li><a href="planning-ia.html"${page === 'planning-ia.html' ? ' class="active"' : ''}>Planning IA</a></li>
       <li><a href="espace-personnel.html"${page === 'espace-personnel.html' ? ' class="active"' : ''}>Mes projets</a></li>
     `;
-    await injectAvatarBubble();
+    injectAvatarBubble();
   } else {
     // Non connecté : menu complet avec "Mon voyage" en rouge
     navLinks.innerHTML = `
