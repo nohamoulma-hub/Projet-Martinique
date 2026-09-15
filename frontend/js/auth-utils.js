@@ -67,55 +67,6 @@ function loadNavAvatar() {
   });
 }
 
-// Injecte les styles CSS pour la bulle avatar et le menu déroulant.
-function injectAvatarStyles() {
-  if (document.getElementById('nav-avatar-style')) return;
-  const style = document.createElement('style');
-  style.id = 'nav-avatar-style';
-  style.textContent = `
-    nav .nav-avatar {
-      position: relative;
-      width: 32px; height: 32px; border-radius: 50%;
-      background: var(--jaune, #F0B429); color: var(--nuit, #0D1F2D);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 12px; flex-shrink: 0;
-      cursor: pointer; user-select: none;
-      letter-spacing: 0; text-transform: none;
-    }
-    .nav-dropdown {
-      position: fixed;
-      min-width: 190px;
-      background: #0D1F2D;
-      border: 1px solid rgba(240,180,41,0.2);
-      border-radius: 8px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-      z-index: 9999;
-      overflow: hidden;
-      display: none;
-    }
-    .nav-dropdown.open { display: block; }
-    .nav-dropdown a,
-    .nav-dropdown button {
-      display: block; width: 100%;
-      padding: 12px 16px;
-      color: rgba(255,255,255,0.85);
-      text-decoration: none;
-      font-size: 13px; font-family: inherit;
-      background: none; border: none;
-      text-align: left; cursor: pointer;
-      transition: background .15s, color .15s;
-      box-sizing: border-box;
-    }
-    .nav-dropdown a:hover,
-    .nav-dropdown button:hover {
-      background: rgba(240,180,41,0.1);
-      color: #F0B429;
-    }
-    .dropdown-sep { height: 1px; background: rgba(255,255,255,0.06); }
-  `;
-  document.head.appendChild(style);
-}
-
 // Récupère les initiales de l'utilisateur via l'API.
 async function fetchInitials() {
   try {
@@ -132,8 +83,6 @@ async function fetchInitials() {
 // Construit la bulle et son menu deroulant a partir d'initiales deja connues.
 // Synchrone : c'est ce qui permet d'afficher la bulle sans attendre le reseau.
 function construireBulle(initiales) {
-  injectAvatarStyles();
-
   // Supprime une bulle existante pour éviter les doublons
   document.querySelector('nav .nav-avatar')?.remove();
   document.querySelector('.nav-dropdown')?.remove();
