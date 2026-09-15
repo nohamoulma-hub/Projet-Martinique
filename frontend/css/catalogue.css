@@ -314,3 +314,12 @@ body.chargement .catalogue-grid::after {
   display: flex; align-items: center; justify-content: center;
   color: var(--doux, #6B5B45); font-size: 14px;
 }
+
+
+/* Regles auparavant construites en JavaScript via style.cssText : invisibles
+   depuis ce fichier et appliquees seulement apres le premier rendu. */
+.load-more-wrap {
+  grid-column: 1 / -1;
+  text-align: center;
+  margin-top: 24px;
+}
