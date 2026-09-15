@@ -20,6 +20,12 @@
     /* Le bouton "Mon voyage" ne s'adresse qu'aux visiteurs non connectes.
        En ligne dans le head : une feuille externe ne garantirait pas d'etre
        appliquee avant le premier rendu. */
+    /* Les deux variantes du dernier lien sont livrees dans le HTML : le CSS choisit
+       laquelle afficher des le premier rendu. Avant, updateNav reconstruisait toute
+       la liste apres coup, en y ajoutant le lien "Accueil" absent du HTML : le menu
+       passait de 3 ou 4 entrees a 5 et se decalait, d'ou l'a-coup a chaque page. */
+    html.connecte .nav-anonyme { display: none; }
+    html.deconnecte .nav-connecte { display: none; }
     html.connecte .nav-cta { display: none; }
   </style>
 </head>
@@ -40,10 +46,12 @@
     </a>
     <div class="nav-right-group">
       <ul class="nav-links">
-        <li><a href="#rubriques">Catalogue</a></li>
-        <li><a href="#live">Météo</a></li>
-        <li><a href="#prep">Planning IA</a></li>
-        <li><a href="#" class="nav-cta">Mon voyage</a></li>
+        <li><a href="accueil.html" class="active">Accueil</a></li>
+        <li><a href="catalogue.html">Catalogue</a></li>
+        <li><a href="meteo.html">Météo</a></li>
+        <li><a href="planning-ia.html">Planning IA</a></li>
+        <li class="nav-connecte"><a href="espace-personnel.html">Mes projets</a></li>
+        <li class="nav-anonyme"><a href="espace-personnel.html" class="nav-cta">Mon voyage</a></li>
       </ul>
     </div>
   </nav>
