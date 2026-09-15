@@ -493,8 +493,9 @@ function showInlineMessage(btn, msg) {
   let el = btn.nextElementSibling;
   if (!el || !el.classList.contains('inline-msg')) {
     el = document.createElement('p');
-    el.className = 'inline-msg';
-    el.style.cssText = 'font-size:13px;color:var(--bleu,#1A5C8A);margin-top:6px;text-align:center;';
+    // inline-msg sert de marqueur pour retrouver l'element au prochain appel,
+    // cta-message porte l'apparence : les deux sont necessaires.
+    el.className = 'inline-msg cta-message';
     btn.parentNode.insertBefore(el, btn.nextSibling);
   }
   el.textContent = msg;
@@ -524,9 +525,7 @@ async function openProjetModal(activiteId) {
 
   const modal = document.createElement('div');
   modal.id = 'modal-voyage';
-  modal.style.cssText = `
-    position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;
-    display:flex;align-items:center;justify-content:center;padding:20px;`;
+  modal.className = 'modal-overlay';
 
   modal.innerHTML = `
     <div style="background:#fff;border-radius:16px;padding:28px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.25);">
