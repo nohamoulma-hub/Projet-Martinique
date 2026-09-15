@@ -200,38 +200,12 @@ function injectAvatarBubble() {
   });
 }
 
-// Détecte le nom de la page courante pour marquer le lien actif.
-function currentPage() {
-  return window.location.pathname.split('/').pop() || 'accueil.html';
-}
-
-// Reconstruit les liens de nav selon l'état de connexion.
-// nav-right-group est présent dans le HTML de chaque page : seul le contenu change.
+// Complete la nav apres le chargement. Les liens eux-memes ne sont plus reconstruits :
+// les deux variantes sont livrees dans le HTML et le CSS du head en masque une avant
+// le premier rendu. Reconstruire la liste ici ajoutait le lien "Accueil", absent du
+// HTML, ce qui decalait tout le menu apres coup a chaque changement de page.
+// Il ne reste donc que la bulle de profil, qui ne peut pas etre livree statiquement
+// puisqu'elle depend des initiales de l'utilisateur.
 async function updateNav() {
-  const token = getToken();
-  const navLinks = document.querySelector('.nav-links');
-  if (!navLinks) return;
-
-  const page = currentPage();
-
-  if (token) {
-    // Connecté : menu complet avec "Mes projets" à la place de "Mon voyage"
-    navLinks.innerHTML = `
-      <li><a href="accueil.html"${page === 'accueil.html' ? ' class="active"' : ''}>Accueil</a></li>
-      <li><a href="catalogue.html"${page === 'catalogue.html' ? ' class="active"' : ''}>Catalogue</a></li>
-      <li><a href="meteo.html"${page === 'meteo.html' ? ' class="active"' : ''}>Météo</a></li>
-      <li><a href="planning-ia.html"${page === 'planning-ia.html' ? ' class="active"' : ''}>Planning IA</a></li>
-      <li><a href="espace-personnel.html"${page === 'espace-personnel.html' ? ' class="active"' : ''}>Mes projets</a></li>
-    `;
-    injectAvatarBubble();
-  } else {
-    // Non connecté : menu complet avec "Mon voyage" en rouge
-    navLinks.innerHTML = `
-      <li><a href="accueil.html"${page === 'accueil.html' ? ' class="active"' : ''}>Accueil</a></li>
-      <li><a href="catalogue.html"${page === 'catalogue.html' ? ' class="active"' : ''}>Catalogue</a></li>
-      <li><a href="meteo.html"${page === 'meteo.html' ? ' class="active"' : ''}>Météo</a></li>
-      <li><a href="planning-ia.html"${page === 'planning-ia.html' ? ' class="active"' : ''}>Planning IA</a></li>
-      <li><a href="espace-personnel.html" class="nav-cta">Mon voyage</a></li>
-    `;
-  }
+  if (getToken()) injectAvatarBubble();
 }
