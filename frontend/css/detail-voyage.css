@@ -358,3 +358,24 @@ body.chargement .page-body > div:first-child::after {
   display: flex; align-items: center; justify-content: center;
   color: var(--doux, #6B5B45); font-size: 14px;
 }
+
+
+/* Regles auparavant construites en JavaScript via style.cssText : invisibles
+   depuis ce fichier et appliquees seulement apres le premier rendu. */
+.badge-bientot {
+  font-size: 11px;
+  color: #888;
+  margin-left: 6px;
+}
+
+/* Fond assombri des modales, injectees par le JS. */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
