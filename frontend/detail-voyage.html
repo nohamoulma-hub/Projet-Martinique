@@ -5,6 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Martinique en famille : mon projet de voyage</title>
   <link rel="stylesheet" href="css/detail-voyage.css">
+  <!-- Etat de connexion pose AVANT le premier rendu. Le token est dans localStorage,
+       donc lisible sans reseau : inutile d'attendre le JS de bas de page, qui ne
+       s'execute qu'apres le premier affichage et laissait apparaitre la nav
+       "non connecte" pendant une seconde. -->
+  <script>
+    (function () {
+      var etat = 'deconnecte';
+      try { if (localStorage.getItem('jwt_token')) etat = 'connecte'; } catch (e) {}
+      document.documentElement.classList.add(etat);
+    })();
+  </script>
+  <style>
+    /* Le bouton "Mon voyage" ne s'adresse qu'aux visiteurs non connectes.
+       En ligne dans le head : une feuille externe ne garantirait pas d'etre
+       appliquee avant le premier rendu. */
+    html.connecte .nav-cta { display: none; }
+  </style>
 </head>
 <body class="chargement">
 
