@@ -349,3 +349,46 @@
     .saved-grid  { grid-template-columns: repeat(2, 1fr); }
     .hero-stats-row { display: none; }
   }
+
+
+/* Anti-scintillement au chargement.
+   Les cartes de voyage et les statistiques du HTML sont des exemples de maquette,
+   remplaces par les vraies donnees des que l'API repond. Sans ce masquage, ils
+   s'affichent une fraction de seconde et donnent l'impression de faux contenu.
+   visibility plutot que display : la place reste reservee, donc aucun saut de mise en page. */
+body.chargement .voyage-grid,
+body.chargement .saved-grid,
+body.chargement .hstat-val,
+body.chargement .user-text h1,
+body.chargement .user-since,
+body.chargement .user-avatar-lg,
+body.chargement .nav-avatar {
+  visibility: hidden;
+}
+
+/* Un pseudo-element peut rendre la visibilite a lui seul, ce qui evite de laisser
+   la zone totalement vide pendant l'attente. */
+body.chargement .voyage-grid { position: relative; min-height: 120px; }
+body.chargement .voyage-grid::after {
+  content: "Chargement de vos voyages...";
+  visibility: visible;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--doux);
+  font-size: 14px;
+}
+
+/* Message affiche quand l'API ne repond pas, a la place des donnees d'exemple. */
+.voyage-erreur {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--rayon);
+  color: var(--doux);
+  font-size: 14px;
+}
