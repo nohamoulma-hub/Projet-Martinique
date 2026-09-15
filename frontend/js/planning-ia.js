@@ -99,8 +99,8 @@ function setupFooterButtons() {
       let tip = btn.nextElementSibling;
       if (!tip || !tip.classList.contains('btn-soon')) {
         tip = document.createElement('span');
-        tip.className = 'btn-soon';
-        tip.style.cssText = 'display:block;font-size:12px;color:#888;margin-top:4px;text-align:center;';
+        // btn-soon est le marqueur de recherche, tip-bientot l'apparence.
+        tip.className = 'btn-soon tip-bientot';
         btn.parentNode.insertBefore(tip, btn.nextSibling);
       }
       tip.textContent = 'Bientôt disponible';
@@ -114,9 +114,7 @@ function addIaBanner() {
   const chatPanel = document.querySelector('.chat-panel');
   if (!chatPanel) return;
   const banner = document.createElement('div');
-  banner.style.cssText = `
-    background:#F5EDD8;color:#0D1F2D;font-size:13px;padding:10px 16px;
-    text-align:center;border-bottom:1px solid #e0d8c8;`;
+  banner.className = 'ia-banner';
   banner.textContent = 'Assistant IA bientôt disponible — les réponses sont simulées.';
   chatPanel.insertBefore(banner, chatPanel.firstChild);
 }
