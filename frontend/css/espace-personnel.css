@@ -392,3 +392,38 @@ body.chargement .voyage-grid::after {
   color: var(--doux);
   font-size: 14px;
 }
+
+
+/* Regles auparavant construites en JavaScript via style.cssText : invisibles
+   depuis ce fichier et appliquees seulement apres le premier rendu. */
+.overlay-bientot {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, .75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  z-index: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+}
+.tab-soon-msg {
+  text-align: center;
+  padding: 48px 20px;
+  color: #888;
+  font-size: 16px;
+}
+
+/* Fond assombri des modales, injectees par le JS. */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
