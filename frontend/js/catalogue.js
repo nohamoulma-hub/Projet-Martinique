@@ -152,6 +152,9 @@ function showComingSoon(label) {
       <p style="color:#666;margin-top:8px;">Cette catégorie arrive bientôt.</p>
     </div>`;
   document.querySelector('.results-count').innerHTML = '<strong>Bientôt disponible</strong>';
+  // Ce chemin n'appelle pas loadActivites (cas ?filtre=rhumeries au chargement).
+  // Sans cette ligne, le marqueur ne serait jamais leve et la page resterait masquee.
+  document.body.classList.remove('chargement');
 }
 
 // Charge et affiche les activités depuis l'API
@@ -212,6 +215,9 @@ async function loadActivites(append = false) {
     }
   } finally {
     isLoading = false;
+    // Le premier chargement leve le marqueur, quel que soit le resultat.
+    // append vaut true pour "Voir plus" : le contenu est deja visible a ce moment.
+    if (!append) document.body.classList.remove('chargement');
   }
 }
 
