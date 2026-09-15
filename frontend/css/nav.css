@@ -67,3 +67,27 @@ nav .nav-avatar {
 }
 
 .dropdown-sep { height: 1px; background: rgba(255, 255, 255, 0.06); }
+
+
+/* --- Choix de la variante de menu selon l'etat de connexion ---
+ *
+ * Les classes .connecte / .deconnecte sont posees sur <html> par
+ * js/etat-connexion.js, charge dans le <head>. Une feuille liee dans le <head>
+ * bloque le rendu, donc ces regles s'appliquent bien au premier affichage.
+ *
+ * Les deux variantes du dernier lien sont livrees dans le HTML de chaque page.
+ * Auparavant updateNav reconstruisait toute la liste apres coup, en y ajoutant le
+ * lien "Accueil" absent du HTML : le menu passait de 3 ou 4 entrees a 5 et se
+ * decalait lateralement, d'ou l'a-coup a chaque changement de page. */
+
+html.connecte .nav-anonyme { display: none; }
+html.deconnecte .nav-connecte { display: none; }
+
+/* Le bouton "Mon voyage" ne s'adresse qu'aux visiteurs non connectes. */
+html.connecte .nav-cta { display: none; }
+
+/* La bulle livree dans le HTML est un gabarit vide : elle reserve sa place mais
+   reste invisible tant que le JS n'y a pas mis les vraies initiales. Elle
+   contenait "MD", les initiales de la maquette, visibles a chaque chargement. */
+.nav-avatar:empty { visibility: hidden; }
+html.deconnecte .nav-avatar { display: none; }
