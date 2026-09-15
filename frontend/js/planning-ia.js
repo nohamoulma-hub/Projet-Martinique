@@ -133,5 +133,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   addIaBanner();
   applyIaDisabledStyle();
   setupFooterButtons();
-  loadNavAvatar();
+  // Pas de loadNavAvatar ici : updateNav construit deja la bulle sur cette page,
+  // l'appeler aussi doublait la requete vers /api/utilisateurs/moi.
 });
