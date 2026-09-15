@@ -294,3 +294,23 @@
   .page-title    { opacity: 0; animation: fadeUp .8s .5s forwards; }
   .page-subtitle { opacity: 0; animation: fadeUp .8s .7s forwards; }
   .search-bar    { opacity: 0; animation: fadeUp .8s .9s forwards; }
+
+
+/* Anti-scintillement au chargement.
+   Le HTML contient du contenu de maquette, remplace par les vraies donnees des que
+   l'API repond. Sans ce masquage, il s'affiche une fraction de seconde.
+   visibility plutot que display : la place reste reservee, donc aucun saut de mise en page.
+   La classe est posee sur <body> des le premier octet et retiree par le JS. */
+body.chargement .catalogue-grid,
+body.chargement .results-count {
+  visibility: hidden;
+}
+
+body.chargement .catalogue-grid { position: relative; min-height: 160px; }
+body.chargement .catalogue-grid::after {
+  content: "Chargement des activites...";
+  visibility: visible;
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--doux, #6B5B45); font-size: 14px;
+}
