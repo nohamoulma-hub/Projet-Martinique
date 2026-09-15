@@ -21,6 +21,11 @@
        En ligne dans le head : une feuille externe ne garantirait pas d'etre
        appliquee avant le premier rendu. */
     html.connecte .nav-cta { display: none; }
+    /* La bulle livree dans le HTML est un gabarit vide : elle reserve sa place mais
+       reste invisible tant que le JS n'y a pas mis les vraies initiales. Elle
+       contenait "MD", les initiales de la maquette, visibles a chaque chargement. */
+    .nav-avatar:empty { visibility: hidden; }
+    html.deconnecte .nav-avatar { display: none; }
   </style>
 </head>
 <body>
@@ -35,7 +40,7 @@
       <li><a href="meteo.html">Météo</a></li>
       <li><a href="planning-ia.html" class="active">Planning IA</a></li>
     </ul>
-    <div class="nav-avatar">MD</div>
+    <div class="nav-avatar"></div>
   </div>
 </nav>
 
