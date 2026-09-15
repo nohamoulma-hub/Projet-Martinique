@@ -430,6 +430,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   const params = new URLSearchParams(window.location.search);
   projetId = params.get('id');
 
+  // finally englobant : cette fonction a plusieurs sorties anticipees (id absent,
+  // 401, reponse en erreur). Sans lui, la page resterait masquee sur ces chemins.
+  try {
+
   if (!projetId) {
     document.querySelector('.projet-title').textContent = 'Projet introuvable';
     return;
@@ -449,5 +453,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     await renderProjet(projet);
   } catch (_) {
     document.querySelector('.projet-title').textContent = 'Impossible de charger le projet.';
+  }
+
+  } finally {
+    document.body.classList.remove('chargement');
   }
 });
