@@ -73,7 +73,14 @@ async function loadProfil() {
     if (since) since.textContent = `Membre depuis ${formatDateFr(user.created_at)}`;
 
   } catch (_) {
-    // En cas d'erreur réseau, on garde les valeurs statiques de la maquette
+    // Les valeurs du HTML sont celles de la maquette ("Marie Dupont"). Les laisser
+    // afficherait un faux nom d'utilisateur, ce qui est pire qu'une absence de nom.
+    const h1 = document.querySelector('.user-text h1');
+    if (h1) h1.textContent = 'Mon espace';
+    const since = document.querySelector('.user-since');
+    if (since) since.textContent = '';
+    const avatarLg = document.querySelector('.user-avatar-lg');
+    if (avatarLg) avatarLg.textContent = '';
   }
 }
 
@@ -173,7 +180,17 @@ async function loadProjets() {
     }
 
   } catch (_) {
-    // En cas d'erreur, on laisse les données statiques de la maquette
+    // Sans cette reprise, les cartes d'exemple de la maquette resteraient affichees
+    // et seraient prises pour de vrais voyages.
+    const grid = document.querySelector('.voyage-grid');
+    if (grid) {
+      const newCard = grid.querySelector('.voyage-new-card');
+      grid.innerHTML = '';
+      grid.insertAdjacentHTML('beforeend',
+        '<p class="voyage-erreur">Impossible de charger vos voyages. Vérifiez votre connexion, puis rechargez la page.</p>');
+      if (newCard) grid.appendChild(newCard);
+    }
+    document.querySelectorAll('.hstat-val').forEach(el => { el.textContent = '-'; });
   }
 }
 
@@ -306,8 +323,12 @@ function setupIACta() {
 document.addEventListener('DOMContentLoaded', async () => {
   requireAuth();
   await updateNav();
-  loadProfil();
-  loadProjets();
+
+  // allSettled et non all : un echec du profil ne doit pas empecher la levee du
+  // marqueur, sinon la page resterait masquee indefiniment.
+  await Promise.allSettled([loadProfil(), loadProjets()]);
+  document.body.classList.remove('chargement');
+
   setupTabs();
   setupIACta();
 
