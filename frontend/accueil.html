@@ -6,29 +6,7 @@
   <title>Martinique — L'Île aux Fleurs</title>
   <link rel="stylesheet" href="css/accueil.css">
   <link rel="stylesheet" href="css/nav.css">
-  <!-- Etat de connexion pose AVANT le premier rendu. Le token est dans localStorage,
-       donc lisible sans reseau : inutile d'attendre le JS de bas de page, qui ne
-       s'execute qu'apres le premier affichage et laissait apparaitre la nav
-       "non connecte" pendant une seconde. -->
-  <script>
-    (function () {
-      var etat = 'deconnecte';
-      try { if (localStorage.getItem('jwt_token')) etat = 'connecte'; } catch (e) {}
-      document.documentElement.classList.add(etat);
-    })();
-  </script>
-  <style>
-    /* Le bouton "Mon voyage" ne s'adresse qu'aux visiteurs non connectes.
-       En ligne dans le head : une feuille externe ne garantirait pas d'etre
-       appliquee avant le premier rendu. */
-    /* Les deux variantes du dernier lien sont livrees dans le HTML : le CSS choisit
-       laquelle afficher des le premier rendu. Avant, updateNav reconstruisait toute
-       la liste apres coup, en y ajoutant le lien "Accueil" absent du HTML : le menu
-       passait de 3 ou 4 entrees a 5 et se decalait, d'ou l'a-coup a chaque page. */
-    html.connecte .nav-anonyme { display: none; }
-    html.deconnecte .nav-connecte { display: none; }
-    html.connecte .nav-cta { display: none; }
-  </style>
+  <script src="js/etat-connexion.js"></script>
 </head>
 <body>
 
