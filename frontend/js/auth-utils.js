@@ -47,28 +47,24 @@ function handleUnauthorized() {
   window.location.href = 'auth.html';
 }
 
-// Affiche les initiales de l'utilisateur dans .nav-avatar si connecté.
-async function loadNavAvatar() {
-  const token = getToken();
-  if (!token) return;
-  try {
-    const res = await fetch(`${API_URL}/utilisateurs/moi`, {
-      headers: getAuthHeaders(),
-    });
-    if (res.status === 401) {
-      handleUnauthorized();
-      return;
-    }
-    if (!res.ok) return;
-    const user = await res.json();
-    const avatar = document.querySelector('.nav-avatar');
-    if (avatar) {
-      const initials = (user.first_name[0] + user.last_name[0]).toUpperCase();
-      avatar.textContent = initials;
-    }
-  } catch (_) {
-    // Pas de réseau : on laisse les initiales statiques de la maquette
-  }
+// Remplit la bulle .nav-avatar deja presente dans le HTML. Utilisee par les pages
+// qui n'appellent pas updateNav (detail-voyage). Le cache evite d'attendre le reseau :
+// la requete ne sert qu'a corriger les initiales si le nom a change.
+// Volontairement non async : rien ici ne doit retarder l'affichage.
+function loadNavAvatar() {
+  if (!getToken()) return;
+  const avatar = document.querySelector('.nav-avatar');
+  if (!avatar) return;
+
+  const cache = getInitialesCache();
+  if (cache) avatar.textContent = cache;
+
+  fetchInitials().then(frais => {
+    if (frais === null || frais === cache) return;
+    setInitialesCache(frais);
+    const el = document.querySelector('.nav-avatar');
+    if (el) el.textContent = frais;
+  });
 }
 
 // Injecte les styles CSS pour la bulle avatar et le menu déroulant.
