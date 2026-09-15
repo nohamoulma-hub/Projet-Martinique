@@ -154,10 +154,7 @@ async function loadProjets() {
     if (savedGrid) {
       savedGrid.style.position = 'relative';
       const overlay = document.createElement('div');
-      overlay.style.cssText = `
-        position:absolute;inset:0;background:rgba(255,255,255,.75);
-        display:flex;align-items:center;justify-content:center;
-        border-radius:12px;z-index:1;font-size:14px;font-weight:600;color:#666;`;
+      overlay.className = 'overlay-bientot';
       overlay.textContent = 'Bientôt disponible';
       savedGrid.appendChild(overlay);
     }
@@ -208,7 +205,7 @@ function setupTabs() {
         if (!msg) {
           msg = document.createElement('div');
           msg.id = 'tab-soon-msg';
-          msg.style.cssText = 'text-align:center;padding:48px 20px;color:#888;font-size:16px;';
+          msg.className = 'tab-soon-msg';
           msg.textContent = 'Cette section sera disponible prochainement.';
           document.querySelector('.page-body').prepend(msg);
         }
@@ -230,9 +227,7 @@ function openNouveauProjetModal() {
 
   const modal = document.createElement('div');
   modal.id = 'modal-nouveau-projet';
-  modal.style.cssText = `
-    position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;
-    display:flex;align-items:center;justify-content:center;padding:20px;`;
+  modal.className = 'modal-overlay';
 
   modal.innerHTML = `
     <div style="background:#fff;border-radius:16px;padding:28px;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.25);">
