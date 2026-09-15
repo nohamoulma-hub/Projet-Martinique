@@ -311,3 +311,18 @@
     .auth-card { padding: 28px 20px; }
     .form-row { flex-direction: column; gap: 20px; }
   }
+
+
+/* Regles auparavant construites en JavaScript via style.cssText : invisibles
+   depuis ce fichier et appliquees seulement apres le premier rendu. */
+.form-message {
+  font-size: 14px;
+  margin-top: 8px;
+  text-align: center;
+}
+.form-message-erreur { color: var(--rouge, #C8392B); }
+.form-message-info {
+  color: var(--bleu, #1A5C8A);
+  font-size: 13px;
+  margin-top: 6px;
+}
