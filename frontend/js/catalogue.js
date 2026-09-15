@@ -201,7 +201,7 @@ async function loadActivites(append = false) {
 
     if (data.has_more) {
       const btn = document.createElement('div');
-      btn.style.cssText = 'grid-column:1/-1;text-align:center;margin-top:24px;';
+      btn.className = 'load-more-wrap';
       btn.innerHTML = '<button id="load-more-btn" style="padding:12px 32px;background:var(--rouge);color:#fff;border:none;border-radius:8px;font-size:15px;cursor:pointer;">Voir plus</button>';
       grid.appendChild(btn);
       document.getElementById('load-more-btn').addEventListener('click', () => {
