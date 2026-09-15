@@ -677,3 +677,32 @@ statiques en 200, donnees reellement servies (activites et meteo), 29 tests au v
 
 Retirer ou proteger l'exposition du port PostgreSQL avant tout deploiement. Seul point de
 dette technique encore ouvert.
+
+---
+
+## 2026-09-15 - Memo des scripts et decouverte d'un script casse
+
+Ajout de `backend/scripts/SCRIPTS.md`, memo des quatre scripts du projet avec leurs commandes
+Docker, leur comportement en cas de relance, et la sequence de reconstruction complete apres un
+`down -v`. Chaque commande documentee a ete executee avant d'etre ecrite.
+
+### Decouverte : `optimize_images.py` ne fonctionne plus sous Docker
+
+Le script calcule son chemin en remontant de trois dossiers depuis sa propre position. Sur
+l'hote, `backend/scripts/` remonte jusqu'a la racine du projet et trouve `frontend/`. Dans le
+conteneur, le script est en `/app/scripts/`, donc trois crans plus haut donnent `/frontend`,
+qui n'existe pas : seul `./backend` est monte dans le conteneur backend.
+
+**Le plus genant est le mode d'echec :** le script affiche `Dossier introuvable` puis se termine
+avec un **code de sortie 0**, comme s'il avait reussi. Rien n'est optimise et rien ne le
+signale.
+
+Contournement documente et verifie : un conteneur jetable bati sur l'image du backend, qui
+contient deja Pillow, avec le dossier des images monte la ou le script l'attend.
+
+Correction de fond non faite, deux options restent ouvertes : monter `frontend/` dans le
+conteneur backend, ou rendre le chemin configurable. Dans les deux cas il faudra un vrai code
+de sortie en erreur quand le dossier est introuvable.
+
+**Etat des photos :** 12 fichiers, 3,7 Mo, aucune au-dessus de 1600 px. Rien a optimiser
+actuellement.
