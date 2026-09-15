@@ -336,3 +336,25 @@
     .projet-hero { padding: 28px 20px 24px; }
     .projet-actions { flex-wrap: wrap; }
   }
+
+
+/* Anti-scintillement au chargement.
+   Le HTML contient du contenu de maquette, remplace par les vraies donnees des que
+   l'API repond. Sans ce masquage, il s'affiche une fraction de seconde.
+   visibility plutot que display : la place reste reservee, donc aucun saut de mise en page.
+   La classe est posee sur <body> des le premier octet et retiree par le JS. */
+body.chargement .projet-title,
+body.chargement .projet-dates,
+body.chargement .projet-status,
+body.chargement .page-body > div:first-child {
+  visibility: hidden;
+}
+
+body.chargement .page-body > div:first-child { position: relative; min-height: 160px; }
+body.chargement .page-body > div:first-child::after {
+  content: "Chargement du projet...";
+  visibility: visible;
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--doux, #6B5B45); font-size: 14px;
+}
