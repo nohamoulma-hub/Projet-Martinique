@@ -97,6 +97,13 @@ async function handleConnexion() {
       return;
     }
     localStorage.setItem('jwt_token', data.access_token);
+
+    // Les initiales sont recuperees une seule fois, ici, et mises en cache. Sans cela
+    // chaque page devait interroger l'API avant d'afficher la bulle de profil, qui
+    // apparaissait donc en retard. L'echec n'est pas bloquant : la nav se rattrapera.
+    const initiales = await fetchInitials();
+    if (initiales) setInitialesCache(initiales);
+
     window.location.href = 'espace-personnel.html';
   } catch (_) {
     document.getElementById('error-connexion').textContent = 'Impossible de joindre le serveur.';
@@ -153,6 +160,10 @@ async function handleInscription() {
       return;
     }
     localStorage.setItem('jwt_token', data.access_token);
+
+    // Ici le nom vient du formulaire : aucune requete supplementaire n'est utile.
+    setInitialesCache((first_name[0] + last_name[0]).toUpperCase());
+
     window.location.href = 'espace-personnel.html';
   } catch (_) {
     document.getElementById('error-inscription').textContent = 'Impossible de joindre le serveur.';
