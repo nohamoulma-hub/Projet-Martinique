@@ -36,6 +36,7 @@ LIBELLES_CHAMPS = {
     "name": "nom",
     "start_date": "date de début",
     "end_date": "date de fin",
+    "rayon": "rayon de recherche",
 }
 
 # Prefixe que Pydantic ajoute aux ValueError levees par nos validateurs.
