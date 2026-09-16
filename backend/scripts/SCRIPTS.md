@@ -18,6 +18,7 @@ La stack doit être démarrée (`docker compose up -d`) pour que `exec` fonction
 | `seed_gallery.py` | Remplit la galerie photos des pages de détail | base | oui, remplace les photos existantes |
 | `optimize_images.py` | Allège les photos trop lourdes | fichiers | oui, mais **cassé sous Docker**, voir plus bas |
 | `verifier_photos.py` | Teste toutes les URL de photos distantes | rien | oui |
+| `reset_password.py` | Réinitialise le mot de passe d'un compte | base | oui |
 
 Aucun de ces scripts ne crée de compte utilisateur. Après un `docker compose down -v`, il faut
 se réinscrire à la main depuis la page `auth.html`.
@@ -109,6 +110,35 @@ mort. Le script espace déjà ses requêtes et retente, mais relance-le plus tar
 
 L'attribution des auteurs, exigée par les licences CC BY et CC BY-SA, est tenue dans
 `CREDITS_PHOTOS.md`, à côté de ce fichier.
+
+---
+
+## reset_password.py
+
+Fixe un nouveau mot de passe sur un compte, en cas d'oubli.
+
+```bash
+# Sans argument : liste les comptes, pour retrouver le bon email
+docker compose exec -it backend python scripts/reset_password.py
+
+# Avec l'email : demande le nouveau mot de passe, deux fois
+docker compose exec -it backend python scripts/reset_password.py ton.email@exemple.fr
+```
+
+**Le `-it` est indispensable** : le script demande le mot de passe au clavier. Sans lui, il ne
+peut pas le lire.
+
+Le mot de passe ne s'affiche pas pendant la saisie, et n'apparaît ni dans l'historique du
+terminal ni dans les arguments du processus. Il doit respecter les mêmes règles qu'à
+l'inscription : 8 caractères minimum, une majuscule, un chiffre. Après trois saisies
+invalides, le script abandonne sans rien modifier.
+
+Une fois écrit, le mot de passe est relu en base et vérifié avec la même fonction que la
+route de connexion.
+
+**C'est un outil de développement, pas une fonctionnalité.** Il contourne toute
+authentification : sa seule protection est l'accès au conteneur. Le site n'a pas encore de
+fonction « mot de passe oublié », qui demanderait l'envoi d'un email. Voir le README.
 
 ---
 
