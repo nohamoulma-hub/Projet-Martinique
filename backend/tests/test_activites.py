@@ -122,14 +122,20 @@ def test_list_activites_search(client, db_session):
 
 
 def test_list_activites_pagination(client, db_session):
-    """GET /activites retourne maximum 20 résultats par page."""
-    for i in range(5):
-        _create_beach(db_session, f"Plage {i}")
+    """GET /activites retourne maximum 18 résultats par page."""
+    for i in range(19):
+        _create_beach(db_session, f"Plage {i:02d}")
 
     response = client.get("/api/activites?page=1")
     assert response.status_code == 200
     data = response.json()
-    assert data["total"] == 5
+    assert data["total"] == 19
+    assert len(data["items"]) == 18
+    assert data["has_more"] is True
+
+    # La page 2 contient le reste et signale la fin
+    data = client.get("/api/activites?page=2").json()
+    assert len(data["items"]) == 1
     assert data["has_more"] is False
 
 
