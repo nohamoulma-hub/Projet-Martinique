@@ -35,15 +35,6 @@ function formatDuration(minutes) {
   return m > 0 ? `${h}h${m.toString().padStart(2, '0')}` : `${h}h`;
 }
 
-// Génère les dots HTML pour le score de fréquentation (petit format)
-function buildDotsSmall(score) {
-  let html = '';
-  for (let i = 1; i <= 5; i++) {
-    html += `<div class="dot-sm ${i <= score ? 'filled' : ''}"></div>`;
-  }
-  return html;
-}
-
 // Génère les dots inline pour la fiche pratique
 function buildDotsRow(score) {
   let html = '';
@@ -51,30 +42,6 @@ function buildDotsRow(score) {
     html += `<div class="dot-r ${i <= score ? 'on' : ''}"></div>`;
   }
   return html;
-}
-
-// Rempli la pastille de frequentation du hero (plages et rhumeries)
-function fillFrequentationPill(score) {
-  const pill = document.querySelector('.stat-pill');
-  if (!pill) return;
-  const dotsContainer = pill.querySelector('.score-dots-sm');
-  const valEl = pill.querySelector('.stat-pill-value');
-  // Score inconnu : on le dit plutot que de laisser la valeur de maquette
-  const connu = score !== null && score !== undefined;
-  if (dotsContainer) dotsContainer.innerHTML = buildDotsSmall(connu ? score : 0);
-  if (valEl) valEl.textContent = connu ? scoreLabel(score) : 'Non renseigné';
-}
-
-// Rempli la pastille du hero pour une randonnée : la difficulté remplace la fréquentation
-function fillHikeHeroStats(hike_details) {
-  const pill = document.querySelector('.stat-pill');
-  if (!pill) return;
-  const labelEl = pill.querySelector('.stat-pill-label');
-  if (labelEl) labelEl.textContent = 'Difficulté';
-  const dotsContainer = pill.querySelector('.score-dots-sm');
-  if (dotsContainer) dotsContainer.remove();
-  const valEl = pill.querySelector('.stat-pill-value');
-  if (valEl) valEl.textContent = (hike_details && hike_details.difficulty) || 'Non renseigné';
 }
 
 // Libelles francais des categories. Trois fonctions de la page en calculaient chacune
@@ -516,16 +483,6 @@ async function loadActivite(id) {
 
     const heroLocation = document.querySelector('.hero-location');
     if (heroLocation) heroLocation.textContent = commune;
-
-    // Stat pills selon le type
-    if (activite.category === 'beach') {
-      fillFrequentationPill(activite.beach_details ? activite.beach_details.tourist_score : null);
-    } else if (activite.category === 'rum_distillery') {
-      const rd = activite.rum_distillery_details;
-      fillFrequentationPill(rd ? rd.tourist_score : null);
-    } else if (activite.category === 'hike') {
-      fillHikeHeroStats(activite.hike_details);
-    }
 
     // Breadcrumb et lien retour
     fillBreadcrumb(activite);
