@@ -905,3 +905,44 @@ d'email, donc une nouvelle dependance : notee dans le README comme prerequis a l
 Le backend n'impose aucune regle sur les mots de passe : seul le formulaire le fait. Un appel
 direct a l'API peut donc creer un compte avec un mot de passe d'un caractere. Non corrige,
 signale a l'utilisateur.
+
+---
+
+## 2026-09-16 (suite) - Suppression du compte en double et failles de mot de passe
+
+### Compte en double supprime
+
+Compte 1, `noham.oumla@gmail.com` (inversion de lettres dans le nom), cree le 14 septembre.
+Conserve : compte 2, `noham.oulma@gmail.com`.
+
+Precautions prises avant la suppression :
+
+- verification qu'aucun des deux comptes n'avait de projet de voyage, donc aucune donnee
+  associee perdue ;
+- seule reference a `users` : `travel_projects.user_id`, sans cascade ;
+- sauvegarde de la ligne en `INSERT` avant suppression ;
+- suppression dans une transaction qui verifie qu'une seule ligne part et que le compte a
+  garder est toujours present, sinon annulation.
+
+### Deux failles verifiees et notees, non corrigees
+
+Consignees dans le README a la demande de l'utilisateur, pour une correction ulterieure.
+Chacune a ete **reproduite par appel direct a l'API** avec des comptes jetables, tous supprimes.
+
+1. **Aucune regle de mot de passe cote backend.** Un mot de passe vide ou d'un caractere est
+   accepte a l'inscription (201), et le compte permet ensuite de se connecter (200). Les regles
+   n'existent que dans le formulaire, donc se contournent sans effort.
+
+2. **Erreur 500 au-dela de 72 octets**, a l'inscription et a la connexion. `bcrypt` 5.0 leve
+   `ValueError` au lieu de tronquer comme ses versions precedentes, et rien ne l'intercepte.
+   La route de connexion etant publique, l'erreur est declenchable sans compte.
+
+### Erreur corrigee dans ma propre note
+
+J'avais d'abord ecrit que bcrypt « ignore tout au-dela de 72 octets ». C'etait le comportement
+historique, plus celui de la version installee. La verification a revele la seconde faille, et
+la note a ete rectifiee.
+
+Mon script `reset_password.py`, ecrit plus tot dans la journee, avait le meme defaut : il
+plantait sur un mot de passe trop long. Corrige, avec une mesure en octets et non en caracteres,
+une lettre accentuee en occupant deux.
