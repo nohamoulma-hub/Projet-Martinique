@@ -946,3 +946,60 @@ la note a ete rectifiee.
 Mon script `reset_password.py`, ecrit plus tot dans la journee, avait le meme defaut : il
 plantait sur un mot de passe trop long. Corrige, avec une mesure en octets et non en caracteres,
 une lettre accentuee en occupant deux.
+
+---
+
+## 2026-09-16 (suite) - Correction des failles de mot de passe
+
+### Ce qui est corrige
+
+1. **Regles de mot de passe cote serveur.** `UserCreate` impose 8 caracteres, une majuscule et
+   un chiffre. Un mot de passe vide ou d'un caractere etait accepte.
+2. **Erreur 500 au-dela de 72 octets**, a l'inscription et a la connexion publique.
+3. **Format des erreurs de validation**, sur toutes les routes.
+
+### Decisions techniques
+
+**Une seule source de regles.** `erreur_mot_de_passe()` et `erreur_longueur_bcrypt()` vivent
+dans `app/core/security.py`. Le schema d'inscription et `scripts/reset_password.py` les
+importent ; le script avait jusque-la sa propre copie des regles.
+
+**Mesure en octets.** `Field(max_length=72)` compterait des caracteres et laisserait passer
+40 lettres accentuees, soit 80 octets. Le controle porte sur `len(password.encode("utf-8"))`.
+
+**Memes classes de caracteres que le formulaire.** Une premiere version utilisait
+`str.isupper()` et `str.isdigit()`. Or `isupper()` accepte « É » et `isdigit()` accepte « ² »,
+que les regex `/[A-Z]/` et `/[0-9]/` du formulaire refusent : l'API aurait valide des mots de
+passe que le formulaire rejette. Corrige avant commit.
+
+**La connexion ne controle que la longueur.** Imposer la complexite a `LoginRequest`
+empecherait un compte cree avant la correction de se connecter avec son vrai mot de passe. Un
+test le garantit.
+
+**Double protection sur la longueur.** Le schema refuse en 422, et `verify_password` renvoie
+`False` au lieu de laisser bcrypt lever. Un mot de passe trop long ne peut de toute facon
+correspondre a aucun hash, bcrypt ayant refuse de le hacher.
+
+**Gestionnaire global des erreurs de validation.** FastAPI renvoyait
+`{"detail": [ {...} ]}`, une liste en anglais. Le frontend lit `detail` comme une chaine
+partout : **toute erreur de validation du site s'affichait « [object Object] »**, pas seulement
+les nouvelles. Le gestionnaire renvoie la premiere erreur, traduite, conformement au CLAUDE.md.
+
+### Tests
+
+15 tests ajoutes, 48 au total. Donnees de test mises a jour : plusieurs inscrivaient des
+comptes sans majuscule, et encodaient donc la faille.
+
+**Un test serait reste vert a tort.** `test_connexion_mauvais_mot_de_passe` inscrivait un
+compte avec `correct`, desormais refuse. La connexion aurait echoue parce que le compte
+n'existait pas, et le test aurait continue de passer sans plus rien verifier. Scenario rejoue
+contre l'API pour le confirmer. Une assertion sur le succes de l'inscription y a ete ajoutee.
+
+**Verification par mutation.** Les regles ont ete desactivees temporairement : 11 tests
+echouent, ce qui confirme qu'ils detectent reellement les failles. Les 13 restes verts sont
+ceux qui ne dependent pas des regles. Fichiers restaures a l'identique ensuite.
+
+### Reste ouvert
+
+Ajouter la limite de 72 octets a `validatePassword()` cote formulaire. Non bloquant : le serveur
+refuse deja avec un message que le formulaire affiche correctement, grace au nouveau format.
