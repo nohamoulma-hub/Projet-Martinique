@@ -12,8 +12,9 @@ from app.schemas.point_of_interest import PointOfInterestDetail, PointOfInterest
 
 router = APIRouter(prefix="/activites", tags=["activites"])
 
-# Nombre maximum d'activités par page (spécification v1)
-PAGE_SIZE = 20
+# Nombre maximum d'activités par page. Multiple de 1, 2 et 3, les nombres de colonnes
+# possibles de la grille du catalogue : sinon la dernière ligne avant "Voir plus" est incomplète.
+PAGE_SIZE = 18
 
 
 @router.get("", response_model=dict, summary="Liste des activités")
