@@ -217,7 +217,7 @@ comptes utilisateurs.
 Ce ne sont pas des scripts, mais elles se cherchent aussi souvent.
 
 ```bash
-docker compose exec backend pytest                     # les 48 tests
+docker compose exec backend pytest                     # les 56 tests
 docker compose exec backend alembic upgrade head       # migrations (déjà jouées au démarrage)
 docker compose exec backend alembic revision --autogenerate -m "message"
 docker compose exec db psql -U martinique -d martinique # session SQL interactive
