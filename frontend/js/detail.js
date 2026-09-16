@@ -53,36 +53,28 @@ function buildDotsRow(score) {
   return html;
 }
 
-// Rempli les stat pills du hero pour une plage
-function fillBeachHeroStats(beach_details) {
-  const pills = document.querySelectorAll('.stat-pill');
-  if (!pills.length) return;
-  const score = beach_details ? beach_details.tourist_score : null;
-  // Pill 0 : Fréquentation
-  if (score !== null) {
-    const dotsContainer = pills[0].querySelector('.score-dots-sm');
-    if (dotsContainer) dotsContainer.innerHTML = buildDotsSmall(score);
-    const valEl = pills[0].querySelector('.stat-pill-value');
-    if (valEl) valEl.textContent = scoreLabel(score);
-  }
+// Rempli la pastille de frequentation du hero (plages et rhumeries)
+function fillFrequentationPill(score) {
+  const pill = document.querySelector('.stat-pill');
+  if (!pill) return;
+  const dotsContainer = pill.querySelector('.score-dots-sm');
+  const valEl = pill.querySelector('.stat-pill-value');
+  // Score inconnu : on le dit plutot que de laisser la valeur de maquette
+  const connu = score !== null && score !== undefined;
+  if (dotsContainer) dotsContainer.innerHTML = buildDotsSmall(connu ? score : 0);
+  if (valEl) valEl.textContent = connu ? scoreLabel(score) : 'Non renseigné';
 }
 
-// Rempli les stat pills du hero pour une randonnée
+// Rempli la pastille du hero pour une randonnée : la difficulté remplace la fréquentation
 function fillHikeHeroStats(hike_details) {
-  const pills = document.querySelectorAll('.stat-pill');
-  if (!pills.length || !hike_details) return;
-  if (pills[0]) {
-    const valEl = pills[0].querySelector('.stat-pill-value');
-    if (valEl) valEl.textContent = hike_details.difficulty || '-';
-  }
-  if (pills[1]) {
-    const valEl = pills[1].querySelector('.stat-pill-value');
-    if (valEl) valEl.textContent = hike_details.elevation_gain ? `D+ ${hike_details.elevation_gain} m` : '-';
-  }
-  if (pills[2]) {
-    const valEl = pills[2].querySelector('.stat-pill-value');
-    if (valEl) valEl.textContent = formatDuration(hike_details.duration) || '-';
-  }
+  const pill = document.querySelector('.stat-pill');
+  if (!pill) return;
+  const labelEl = pill.querySelector('.stat-pill-label');
+  if (labelEl) labelEl.textContent = 'Difficulté';
+  const dotsContainer = pill.querySelector('.score-dots-sm');
+  if (dotsContainer) dotsContainer.remove();
+  const valEl = pill.querySelector('.stat-pill-value');
+  if (valEl) valEl.textContent = (hike_details && hike_details.difficulty) || 'Non renseigné';
 }
 
 // Libelles francais des categories. Trois fonctions de la page en calculaient chacune
@@ -182,21 +174,10 @@ function fillFicheCard(activite) {
       ? `<span class="fiche-row-value">${echapper(formatHoraires(rd.opening_hours))}</span>`
       : vide;
 
-    const acces = rd.visit_access
-      ? `<span class="fiche-row-value">${echapper(rd.visit_access)}</span>`
-      : vide;
-
     // Lien tel: pour composer directement le numero depuis un telephone
     const telephone = rd.phone
       ? `<a class="fiche-row-value fiche-lien" href="tel:${echapper(rd.phone.replace(/\s/g, ''))}">${echapper(rd.phone)}</a>`
       : vide;
-
-    // pets_allowed vaut null quand l'information est inconnue, ce qui differe de false
-    const animaux = rd.pets_allowed === true
-      ? '<span class="fiche-row-value">Acceptés</span>'
-      : rd.pets_allowed === false
-        ? '<span class="fiche-row-value">Non acceptés</span>'
-        : vide;
 
     ficheBody.innerHTML = `
       <div class="fiche-row">
@@ -208,16 +189,8 @@ function fillFicheCard(activite) {
         ${horaires}
       </div>
       <div class="fiche-row">
-        <span class="fiche-row-label">Accès</span>
-        ${acces}
-      </div>
-      <div class="fiche-row">
         <span class="fiche-row-label">Téléphone</span>
         ${telephone}
-      </div>
-      <div class="fiche-row">
-        <span class="fiche-row-label">Animaux</span>
-        ${animaux}
       </div>`;
   } else if (activite.category === 'hike' && activite.hike_details) {
     const hd = activite.hike_details;
@@ -546,7 +519,10 @@ async function loadActivite(id) {
 
     // Stat pills selon le type
     if (activite.category === 'beach') {
-      fillBeachHeroStats(activite.beach_details);
+      fillFrequentationPill(activite.beach_details ? activite.beach_details.tourist_score : null);
+    } else if (activite.category === 'rum_distillery') {
+      const rd = activite.rum_distillery_details;
+      fillFrequentationPill(rd ? rd.tourist_score : null);
     } else if (activite.category === 'hike') {
       fillHikeHeroStats(activite.hike_details);
     }
