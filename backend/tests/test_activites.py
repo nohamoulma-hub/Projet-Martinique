@@ -221,3 +221,96 @@ def test_get_activite_detail_beach_has_no_rum_details(client, db_session):
     response = client.get(f"/api/activites/{poi.id}")
     assert response.status_code == 200
     assert response.json()["rum_distillery_details"] is None
+
+
+def _create_poi_at(db, name, latitude, longitude, category=Category.BEACH):
+    """Insère un point d'intérêt à des coordonnées précises, pour les tests de distance."""
+    poi = PointOfInterest(
+        name=name, category=category, description="Test",
+        latitude=latitude, longitude=longitude, address="Test, Martinique",
+    )
+    db.add(poi)
+    db.commit()
+    return poi
+
+
+def _peupler_autour_de_saint_pierre(db):
+    """Trois points à environ 3, 8 et 38 km de la mairie de Saint-Pierre."""
+    _create_poi_at(db, "Pres Carbet", 14.7121, -61.1832)
+    _create_poi_at(db, "Moyen Precheur", 14.8012, -61.2246, category=Category.HIKE)
+    _create_poi_at(db, "Loin Sainte-Anne", 14.4350, -60.8812)
+
+
+def test_distance_km_connue():
+    """La distance entre les mairies de Fort-de-France et Saint-Pierre est d'environ 18 km."""
+    from app.services.communes_service import COMMUNES, distance_km
+    d = distance_km(*COMMUNES["Fort-de-France"], *COMMUNES["Saint-Pierre"])
+    assert 17 < d < 19
+
+
+def test_list_communes(client):
+    """GET /activites/communes renvoie les 34 communes et n'est pas lu comme un id."""
+    response = client.get("/api/activites/communes")
+    assert response.status_code == 200
+    communes = response.json()
+    assert len(communes) == 34
+    assert "Saint-Pierre" in communes
+
+
+def test_filtre_commune_rayon(client, db_session):
+    """Seules les activités dans le rayon sont renvoyées, de la plus proche à la plus loin."""
+    _peupler_autour_de_saint_pierre(db_session)
+
+    data = client.get("/api/activites?commune=Saint-Pierre&rayon=5").json()
+    assert [i["name"] for i in data["items"]] == ["Pres Carbet"]
+    assert data["total"] == 1
+
+    data = client.get("/api/activites?commune=Saint-Pierre&rayon=15").json()
+    assert [i["name"] for i in data["items"]] == ["Pres Carbet", "Moyen Precheur"]
+    assert data["items"][0]["distance_km"] < data["items"][1]["distance_km"]
+
+    data = client.get("/api/activites?commune=Saint-Pierre&rayon=50").json()
+    assert data["total"] == 3
+
+
+def test_filtre_commune_combine_categorie(client, db_session):
+    """Le filtre de proximité se combine avec la catégorie."""
+    _peupler_autour_de_saint_pierre(db_session)
+
+    data = client.get("/api/activites?commune=Saint-Pierre&rayon=15&categorie=hike").json()
+    assert [i["name"] for i in data["items"]] == ["Moyen Precheur"]
+
+
+def test_filtre_commune_pagination(client, db_session):
+    """La pagination s'applique aussi aux résultats filtrés par distance."""
+    for i in range(19):
+        _create_poi_at(db_session, f"Point {i:02d}", 14.7431, -61.1751)
+
+    data = client.get("/api/activites?commune=Saint-Pierre&rayon=5").json()
+    assert len(data["items"]) == 18
+    assert data["has_more"] is True
+    data = client.get("/api/activites?commune=Saint-Pierre&rayon=5&page=2").json()
+    assert len(data["items"]) == 1
+    assert data["has_more"] is False
+
+
+def test_filtre_commune_inconnue(client):
+    """Une commune inconnue est refusée avec un message en français."""
+    response = client.get("/api/activites?commune=Paris")
+    assert response.status_code == 422
+    assert response.json()["detail"] == "La commune « Paris » est inconnue."
+
+
+def test_filtre_rayon_hors_bornes(client):
+    """Un rayon nul ou démesuré est refusé avec un message en français."""
+    for rayon in (0, 101):
+        response = client.get(f"/api/activites?commune=Saint-Pierre&rayon={rayon}")
+        assert response.status_code == 422
+        assert "rayon de recherche" in response.json()["detail"]
+
+
+def test_sans_commune_pas_de_distance(client, db_session):
+    """Sans commune, la liste reste inchangée et ne contient pas de distance."""
+    _create_beach(db_session, "Plage Sans Distance")
+    item = client.get("/api/activites").json()["items"][0]
+    assert "distance_km" not in item
