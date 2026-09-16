@@ -233,48 +233,24 @@ Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
 - [ ] Assistant IA de planning (interface prête, logique à connecter)
 - [ ] Comparateur de billets d'avion (Paris -> Fort-de-France)
 - [x] Migration SQLite -> PostgreSQL (validée sur PostgreSQL 18.6 : migrations, enums, données, API, tests)
-- [ ] **SECURITE : le backend n'impose aucune regle sur les mots de passe.** Vérifié le
-      2026-09-16 par appel direct à l'API :
-      - un mot de passe **vide** est accepté à l'inscription (HTTP 201) ;
-      - un mot de passe d'**un caractère** aussi, et le compte permet ensuite de se connecter
-        (HTTP 200).
+- [x] **SECURITE : règles de mot de passe côté serveur.** Corrigé le 2026-09-16. Le backend
+      acceptait un mot de passe vide ou d'un caractère, les règles n'existant que dans le
+      formulaire. `UserCreate` impose désormais 8 caractères, une majuscule et un chiffre, avec
+      les mêmes classes de caractères que le formulaire.
+- [x] **SECURITE : erreur 500 au-delà de 72 octets.** Corrigé le 2026-09-16. bcrypt 5 lève
+      `ValueError` au lieu de tronquer, ce qui renvoyait une 500 à l'inscription et sur la route
+      publique de connexion. La longueur est contrôlée en octets sur `UserCreate` et
+      `LoginRequest`, et `verify_password` renvoie `False` plutôt que de lever.
 
-      Les règles (8 caractères, une majuscule, un chiffre) n'existent que dans
-      `validatePassword()` de `frontend/js/auth.js`. Or une validation côté navigateur se
-      contourne trivialement : il suffit d'appeler l'API sans passer par le formulaire.
-
-      **Correction à faire dans `backend/app/schemas/user.py`, sur `UserCreate.password`**
-      (typé `str` sans contrainte) : `Field(min_length=8)` plus un validateur Pydantic pour la
-      majuscule et le chiffre, avec des messages d'erreur en français. Ajouter les tests
-      correspondants dans `tests/test_auth.py` (mot de passe vide, trop court, sans majuscule,
-      sans chiffre, et un cas valide).
-
-      Points à traiter en même temps :
-      - `UserUpdate` s'il permet de changer le mot de passe, sinon la faille se déplace ;
-      - `LoginRequest` n'a pas besoin des règles de complexité (on vérifie un mot de passe
-        existant), mais il lui faut **la même longueur maximale**, voir la faille suivante ;
-      - `scripts/reset_password.py` applique déjà les bonnes règles : à aligner sur la
-        validation backend une fois celle-ci en place, pour n'avoir qu'une source de vérité.
-
-      L'email, lui, est correctement validé (`EmailStr`, HTTP 422 sur une adresse invalide).
-- [ ] **SECURITE : un mot de passe de plus de 72 octets provoque une erreur 500.** Vérifié le
-      2026-09-16, à l'inscription **et à la connexion** : l'API répond
-      `Internal Server Error`, en anglais et hors du format `{"detail": ...}` exigé par le
-      CLAUDE.md.
-
-      Cause : **bcrypt 5.0** ne tronque plus silencieusement au-delà de 72 octets comme ses
-      versions précédentes, il lève `ValueError`. `hash_password` et `verify_password` dans
-      `backend/app/core/security.py` ne l'interceptent pas.
-
-      La route de connexion étant publique, **n'importe qui peut déclencher cette erreur**,
-      sans compte. Elle ne fait pas tomber le serveur, mais c'est une exception non gérée
-      exposée sur internet.
-
-      Correction : `Field(max_length=72)` ne suffit pas, car il compte des caractères et non
-      des octets (une lettre accentuée en occupe deux). Il faut un validateur Pydantic qui
-      mesure `len(password.encode("utf-8"))`, sur `UserCreate` **et** `LoginRequest`, et
-      renvoie une 422 avec un message en français. `scripts/reset_password.py` fait déjà ce
-      contrôle correctement, en octets.
+      Les règles vivent en un seul endroit, `backend/app/core/security.py`, utilisé par les
+      schémas et par `scripts/reset_password.py`.
+- [x] **Erreurs de validation au format du projet.** Corrigé le 2026-09-16. FastAPI renvoyait
+      une liste de messages en anglais : le frontend, qui lit `detail` comme une chaîne,
+      affichait « [object Object] ». Un gestionnaire global renvoie maintenant
+      `{"detail": "message en français"}` sur toutes les routes.
+- [ ] Ajouter la limite de 72 octets à `validatePassword()` dans `frontend/js/auth.js`. Non
+      bloquant : le serveur refuse déjà avec un message clair que le formulaire affiche. Ce
+      serait un confort de saisie, pour signaler l'erreur avant l'envoi.
 - [ ] **Fonction « mot de passe oublié ».** Aucune n'existe : un utilisateur qui oublie son
       mot de passe est bloqué. En développement, `backend/scripts/reset_password.py` dépanne,
       mais c'est un outil d'administration. La vraie fonctionnalité demande l'envoi d'un
