@@ -26,6 +26,19 @@ class HikeDetailsRead(BaseModel):
 
 
 # Champs communs à la création et à la lecture, pour éviter de les répéter.
+class RumDistilleryDetailsRead(BaseModel):
+    """Informations pratiques d'une rhumerie. Tous les champs sont facultatifs :
+    OpenStreetMap ne les documente pas pour toutes les distilleries."""
+    tourist_score: int | None = None
+    opening_hours: str | None = None
+    phone: str | None = None
+    website: str | None = None
+    visit_access: str | None = None
+    pets_allowed: bool | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class PointOfInterestBase(BaseModel):
     name: str
     category: Category
@@ -64,4 +77,5 @@ class PointOfInterestDetail(PointOfInterestRead):
     """Détail complet : inclut les informations spécifiques à la catégorie."""
     beach_details: BeachDetailsRead | None = None
     hike_details: HikeDetailsRead | None = None
+    rum_distillery_details: RumDistilleryDetailsRead | None = None
     images: list[PoiImageRead] = []
