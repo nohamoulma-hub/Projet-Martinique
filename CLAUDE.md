@@ -55,7 +55,7 @@ Projet-Martinique/
 - ✅ 6 routers, soit 11 routes : catalogue, détail d'activité, inscription, connexion,
   profil, projets de voyage avec ajout et retrait d'activités, météo, health
 - ✅ 2 services : `auth_service` (JWT, bcrypt), `meteo_service` (API externe)
-- ✅ 33 tests pytest, tous au vert
+- ✅ 48 tests pytest, tous au vert
 - ✅ Données de démonstration : 24 points d'intérêt (9 plages, 7 randonnées,
   8 rhumeries), insérés par `scripts/seed.py`
 - ❌ Aucune donnée pour les catégories restaurants, logements, événements
