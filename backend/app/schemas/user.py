@@ -1,8 +1,9 @@
 # Schémas Pydantic pour les utilisateurs : inscription, connexion, profil.
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
 
+from app.core.security import erreur_mot_de_passe
 from app.models.user import AgeRange
 
 
@@ -15,6 +16,17 @@ class UserCreate(BaseModel):
     # Champs optionnels : valeurs par défaut si non fournis à l'inscription
     nationality: str = "Non renseignée"
     age_range: AgeRange = AgeRange.R26_35
+
+    # Les regles n'existaient que dans le formulaire : un appel direct a l'API creait un
+    # compte avec un mot de passe vide ou d'un caractere, qui permettait ensuite de se
+    # connecter. La validation cote serveur est la seule qui protege reellement.
+    @field_validator("password")
+    @classmethod
+    def verifier_mot_de_passe(cls, value: str) -> str:
+        erreur = erreur_mot_de_passe(value)
+        if erreur:
+            raise ValueError(erreur)
+        return value
 
 
 class UserUpdate(BaseModel):
