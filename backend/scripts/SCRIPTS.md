@@ -130,7 +130,9 @@ peut pas le lire.
 
 Le mot de passe ne s'affiche pas pendant la saisie, et n'apparaît ni dans l'historique du
 terminal ni dans les arguments du processus. Il doit respecter les mêmes règles qu'à
-l'inscription : 8 caractères minimum, une majuscule, un chiffre. Après trois saisies
+l'inscription : 8 caractères minimum, 72 octets maximum, une majuscule, un chiffre. Ces règles
+sont importées de `app/core/security.py`, la même source que l'inscription : le script ne
+peut pas s'en écarter. Après trois saisies
 invalides, le script abandonne sans rien modifier.
 
 Une fois écrit, le mot de passe est relu en base et vérifié avec la même fonction que la
@@ -214,7 +216,7 @@ comptes utilisateurs.
 Ce ne sont pas des scripts, mais elles se cherchent aussi souvent.
 
 ```bash
-docker compose exec backend pytest                     # les 29 tests
+docker compose exec backend pytest                     # les 48 tests
 docker compose exec backend alembic upgrade head       # migrations (déjà jouées au démarrage)
 docker compose exec backend alembic revision --autogenerate -m "message"
 docker compose exec db psql -U martinique -d martinique # session SQL interactive
