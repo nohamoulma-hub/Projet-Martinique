@@ -14,6 +14,7 @@ from app.models import (  # noqa: F401
     user,
     point_of_interest,
     beach_details,
+    rum_distillery_details,
     hike_details,
     travel_project,
     travel_project_item,
