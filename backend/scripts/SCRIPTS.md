@@ -47,8 +47,9 @@ détails reçoit celle-ci. C'est ce qui a permis d'ajouter les informations prat
 rhumeries (horaires, téléphone, site web) après leur création, sans les recréer.
 
 Les horaires, téléphones et sites web des rhumeries proviennent d'OpenStreetMap. La
-fréquentation, les conditions d'accès et l'accueil des animaux n'y sont documentés pour aucune
-distillerie : ces champs valent `None` dans le script et attendent une saisie manuelle.
+fréquentation n'y est documentée pour aucune distillerie : elle vaut `None` dans le script et
+attend une saisie manuelle. Les champs d'accès et d'animaux existent encore mais ne sont plus
+affichés sur la page de détail.
 
 ---
 
