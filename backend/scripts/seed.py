@@ -12,6 +12,7 @@ from app.core.database import SessionLocal
 from app.models.beach_details import BeachDetails
 from app.models.hike_details import HikeDetails
 from app.models.point_of_interest import Category, PointOfInterest
+from app.models.rum_distillery_details import RumDistilleryDetails
 
 
 # Données des plages : vraies plages de Martinique avec coordonnées GPS réelles
@@ -351,6 +352,15 @@ RHUMERIES = [
             "address": "Le Carbet, Martinique",
             "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Chai_de_la_distillerie_Neisson.jpg/1280px-Chai_de_la_distillerie_Neisson.jpg",
         },
+        "details": {
+            "opening_hours": "Mo-Fr 08:00-17:00; Sa 08:30-12:00; Su 09:00-12:00",
+            "phone": "+33 596 78 03 70",
+            "website": "https://neisson.fr/",
+            # Non documentes dans OpenStreetMap : a renseigner a la main.
+            "tourist_score": None,
+            "visit_access": None,
+            "pets_allowed": None,
+        },
     },
     {
         "poi": {
@@ -366,6 +376,15 @@ RHUMERIES = [
             "address": "Sainte-Luce, Martinique",
             "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/34/Trois_Rivieres_facade_enseigne_moulin_2015.jpg/1280px-Trois_Rivieres_facade_enseigne_moulin_2015.jpg",
         },
+        "details": {
+            "opening_hours": "Mo-Su 09:00-17:00",
+            "phone": "+33 5 96 62 51 78",
+            "website": "https://plantationtroisrivieres.com/",
+            # Non documentes dans OpenStreetMap : a renseigner a la main.
+            "tourist_score": None,
+            "visit_access": None,
+            "pets_allowed": None,
+        },
     },
     {
         "poi": {
@@ -380,6 +399,15 @@ RHUMERIES = [
             "longitude": -60.9973,
             "address": "Sainte-Marie, Martinique",
             "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/Martinique-sainte-marie-rhumerie-saint-james.jpg/1280px-Martinique-sainte-marie-rhumerie-saint-james.jpg",
+        },
+        "details": {
+            "opening_hours": None,
+            "phone": "+33 5 96 69 30 02",
+            "website": "https://rhum-saintjames.com/",
+            # Non documentes dans OpenStreetMap : a renseigner a la main.
+            "tourist_score": None,
+            "visit_access": None,
+            "pets_allowed": None,
         },
     },
     {
@@ -397,6 +425,15 @@ RHUMERIES = [
             "address": "Macouba, Martinique",
             "image_url": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Rhumerie_JM.JPG",
         },
+        "details": {
+            "opening_hours": "Mo-Su 09:00-17:00",
+            "phone": "+596596789255",
+            "website": "https://www.rhum-jm.com/",
+            # Non documentes dans OpenStreetMap : a renseigner a la main.
+            "tourist_score": None,
+            "visit_access": None,
+            "pets_allowed": None,
+        },
     },
     {
         "poi": {
@@ -411,6 +448,15 @@ RHUMERIES = [
             "longitude": -60.9063,
             "address": "Rivière-Pilote, Martinique",
             "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/La_Mauny_001.jpg/1280px-La_Mauny_001.jpg",
+        },
+        "details": {
+            "opening_hours": None,
+            "phone": None,
+            "website": None,
+            # Non documentes dans OpenStreetMap : a renseigner a la main.
+            "tourist_score": None,
+            "visit_access": None,
+            "pets_allowed": None,
         },
     },
     {
@@ -429,6 +475,15 @@ RHUMERIES = [
             "address": "Le François, Martinique",
             "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a2/Les_chais_de_l%27habitation_Cl%C3%A9ment_en_Martinique.jpg/1280px-Les_chais_de_l%27habitation_Cl%C3%A9ment_en_Martinique.jpg",
         },
+        "details": {
+            "opening_hours": "Mo-Su 09:00-18:30",
+            "phone": None,
+            "website": "https://www.fondation-clement.org/",
+            # Non documentes dans OpenStreetMap : a renseigner a la main.
+            "tourist_score": None,
+            "visit_access": None,
+            "pets_allowed": None,
+        },
     },
     {
         "poi": {
@@ -443,6 +498,15 @@ RHUMERIES = [
             "longitude": -61.1651,
             "address": "Saint-Pierre, Martinique",
             "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Ch%C3%A2teau_Depaz.jpg/1280px-Ch%C3%A2teau_Depaz.jpg",
+        },
+        "details": {
+            "opening_hours": None,
+            "phone": "+596 596 78 64 98",
+            "website": "https://www.depaz.fr",
+            # Non documentes dans OpenStreetMap : a renseigner a la main.
+            "tourist_score": None,
+            "visit_access": None,
+            "pets_allowed": None,
         },
     },
     {
@@ -460,6 +524,15 @@ RHUMERIES = [
             "address": "Fort-de-France, Martinique",
             "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Distillerie_Dillon.JPG/1280px-Distillerie_Dillon.JPG",
         },
+        "details": {
+            "opening_hours": None,
+            "phone": None,
+            "website": None,
+            # Non documentes dans OpenStreetMap : a renseigner a la main.
+            "tourist_score": None,
+            "visit_access": None,
+            "pets_allowed": None,
+        },
     },
 ]
 
@@ -473,23 +546,37 @@ def seed():
         # Idempotence par fiche et non tout-ou-rien : l'ancienne version s'arretait des
         # que la table contenait une ligne, ce qui empechait d'ajouter une categorie
         # a une base existante sans la detruire.
-        deja = {nom for (nom,) in db.query(PointOfInterest.name).all()}
-        ajouts = ignores = 0
+        existants = {p.name: p for p in db.query(PointOfInterest).all()}
+        ajouts = ignores = details_ajoutes = 0
 
         def ajouter(data, libelle, classe_details=None, champ=None):
-            nonlocal ajouts, ignores
+            nonlocal ajouts, ignores, details_ajoutes
             nom = data["poi"]["name"]
-            if nom in deja:
-                ignores += 1
-                return
-            poi = PointOfInterest(**data["poi"])
-            db.add(poi)
-            if classe_details is not None:
+            poi = existants.get(nom)
+
+            if poi is None:
+                poi = PointOfInterest(**data["poi"])
+                db.add(poi)
                 db.flush()  # Obtenir l'id avant d'ajouter les détails
+                existants[nom] = poi
+                ajouts += 1
+                print(f"  {libelle} ajoutée : {nom}")
+            else:
+                ignores += 1
+
+            # Les details sont traites a part : une fiche peut exister sans eux, par
+            # exemple quand la table de details a ete creee apres l'insertion de la fiche.
+            if classe_details is None or not data.get("details"):
+                return
+            deja_detail = (
+                db.query(classe_details)
+                .filter(getattr(classe_details, champ) == poi.id)
+                .first()
+            )
+            if deja_detail is None:
                 db.add(classe_details(**{champ: poi.id}, **data["details"]))
-            deja.add(nom)
-            ajouts += 1
-            print(f"  {libelle} ajoutée : {nom}")
+                details_ajoutes += 1
+                print(f"    infos pratiques ajoutées : {nom}")
 
         for beach_data in BEACHES:
             ajouter(beach_data, "Plage", BeachDetails, "point_of_interest_id")
@@ -499,11 +586,15 @@ def seed():
 
         # Les rhumeries n'ont pas de table de details : un simple PointOfInterest suffit.
         for rhumerie_data in RHUMERIES:
-            ajouter(rhumerie_data, "Rhumerie")
+            ajouter(rhumerie_data, "Rhumerie", RumDistilleryDetails, "point_of_interest_id")
 
         db.commit()
         total = db.query(PointOfInterest).count()
-        print(f"\n{ajouts} ajoutée(s), {ignores} déjà présente(s). {total} activités au total.")
+        print(
+            f"\n{ajouts} ajoutée(s), {ignores} déjà présente(s), "
+            f"{details_ajoutes} fiche(s) de détails complétée(s). "
+            f"{total} activités au total."
+        )
 
     except Exception as e:
         db.rollback()
