@@ -58,6 +58,22 @@
     <button class="filter-btn" onclick="setFilter(this)">🎉 Événements</button>
     <button class="filter-btn" onclick="setFilter(this)">🏠 Logements</button>
     <button class="filter-btn" onclick="setFilter(this)">🛒 Marché</button>
+    <button type="button" class="filter-btn filter-btn-commune" id="btn-commune"
+            aria-expanded="false" aria-controls="commune-panel">📍 Par commune</button>
+  </div>
+  <div class="commune-panel" id="commune-panel" hidden>
+    <div class="commune-champ">
+      <label class="commune-label" for="commune-select">Commune</label>
+      <select class="commune-select" id="commune-select">
+        <option value="">Choisir une commune</option>
+      </select>
+    </div>
+    <div class="commune-champ commune-champ-rayon">
+      <label class="commune-label" for="rayon-range">Rayon</label>
+      <input class="rayon-range" id="rayon-range" type="range" min="5" max="50" step="5" value="10">
+      <output class="rayon-valeur" id="rayon-valeur" for="rayon-range">10 km</output>
+    </div>
+    <button type="button" class="commune-reset" id="commune-reset">Effacer</button>
   </div>
 </div>
 
