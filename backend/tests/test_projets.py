@@ -8,7 +8,7 @@ def _register_and_login(client, email="voyageur@test.com"):
         "first_name": "Paul",
         "last_name": "Martin",
         "email": email,
-        "password": "motdepasse456",
+        "password": "Motdepasse456",
     })
     return response.json()["access_token"]
 
