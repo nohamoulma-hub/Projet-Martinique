@@ -16,10 +16,11 @@ const SUPPORTED_CATEGORIES = {
   'Tout voir': null,
   'Plages': 'beach',
   'Randonnées': 'hike',
+  'Rhumeries': 'rum_distillery',
 };
 
 // Catégories hors scope v1 : au clic, affiche un message dans la grille
-const UNSUPPORTED_LABELS = ['Rhumeries', 'Restaurants', 'Activités', 'Événements', 'Logements', 'Marché'];
+const UNSUPPORTED_LABELS = ['Restaurants', 'Activités', 'Événements', 'Logements', 'Marché'];
 
 // Etat courant du catalogue
 let currentFilter = null;    // valeur de la categorie API
@@ -260,6 +261,7 @@ function setFilter(btn) {
   currentFilter = null;
   if (btn.textContent.includes('Plage')) currentFilter = 'beach';
   else if (btn.textContent.includes('Randon')) currentFilter = 'hike';
+  else if (btn.textContent.includes('Rhumerie')) currentFilter = 'rum_distillery';
 
   currentPageNum = 1;
   currentSearch = document.querySelector('.search-input').value.trim();
