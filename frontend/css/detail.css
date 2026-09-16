@@ -449,3 +449,48 @@
   justify-content: center;
   padding: 20px;
 }
+
+/* Fiche pratique des rhumeries.
+   Un champ absent d'OpenStreetMap s'affiche "Non renseigne" : en retrait visuellement,
+   pour ne pas etre confondu avec une vraie valeur. */
+.fiche-vide {
+  color: var(--doux);
+  font-style: italic;
+  opacity: .75;
+}
+
+/* Numero cliquable : ouvre l'application telephone sur mobile. */
+.fiche-lien {
+  color: var(--bleu);
+  text-decoration: none;
+}
+.fiche-lien:hover,
+.fiche-lien:focus-visible { text-decoration: underline; }
+
+.score-inline-label {
+  font-size: 11px;
+  color: var(--doux);
+}
+
+/* Anti-scintillement au chargement.
+   Le HTML livre une fiche de maquette (Anse Céron, plage) remplacée par les vraies
+   données une fois l'API répondue. Sans ce masquage, une rhumerie affichait une fraction
+   de seconde la fréquentation et les équipements d'une plage.
+   visibility plutôt que display : la place reste réservée, aucun saut de mise en page. */
+body.chargement .hero,
+body.chargement .description,
+body.chargement .access-grid,
+body.chargement .fiche-card,
+body.chargement .gallery-grid,
+body.chargement .alerte-card,
+body.chargement .breadcrumb-inner {
+  visibility: hidden;
+}
+
+/* Bandeau avec la photo de l'activite. Le flou du degrade par defaut est retire :
+   il sert a lisser le degrade, mais rendrait une vraie photo meconnaissable.
+   La lisibilite du titre reste assuree par .hero-overlay. */
+.hero-bg.avec-photo {
+  background: var(--hero-photo) center / cover no-repeat;
+  filter: none;
+}
