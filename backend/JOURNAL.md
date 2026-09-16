@@ -706,3 +706,73 @@ de sortie en erreur quand le dossier est introuvable.
 
 **Etat des photos :** 12 fichiers, 3,7 Mo, aucune au-dessus de 1600 px. Rien a optimiser
 actuellement.
+
+---
+
+## 2026-09-16 - Ajout des 8 rhumeries
+
+Premiere categorie ajoutee depuis la v1 : la base passe de 16 a 24 activites.
+
+### Donnees
+
+Aucune migration necessaire : `RUM_DISTILLERY` figurait deja dans l'enumeration `Category`,
+cote Python comme cote PostgreSQL. Les rhumeries n'ont pas de table de details, contrairement
+aux plages et randonnees : une simple fiche `PointOfInterest` suffit.
+
+**Sources, verifiees et non ecrites de memoire :**
+
+- **Coordonnees GPS : OpenStreetMap** via Nominatim. Les huit correspondent a un objet
+  reellement cartographie (`landuse=industrial`, `craft=distillery`...), pas a une approximation
+  de commune.
+- **Descriptions : Wikipedia fr**, une requete groupee. Les formulations invérifiables
+  (superlatifs, frequentation, anecdotes) ont ete retirees d'une premiere redaction.
+- **Photos : Wikimedia Commons**, par categories curees plutot que par recherche plein texte.
+
+### Deux pieges evites
+
+1. **Homonymes.** La recherche plein texte remontait des photos de « Plantation St. James »
+   signees d'un photographe nomme **J. Depaz**, sans rapport avec la distillerie Depaz, ainsi
+   que des vues de **Trois-Rivieres au Quebec**. Passer par les categories Commons a regle le
+   probleme.
+2. **Poids des images.** Le premier fichier verifie pesait **7,4 Mo**. Wikimedia demande
+   explicitement d'utiliser les vignettes pour la reutilisation : les URL enregistrees pointent
+   donc des vignettes de 1280 px. Les 28 photos totalisent environ 11 Mo au lieu de plusieurs
+   centaines.
+
+### Fait notable corrige
+
+Le rhum **Trois Rivieres n'est plus distille a Sainte-Luce depuis 2004** : la production est
+transferee a La Mauny, a Riviere-Pilote. Le site de Sainte-Luce reste visitable, c'est ce qui
+interesse un voyageur. La description le dit explicitement.
+
+### Changement de comportement de seed.py
+
+Le script s'arretait des que la table contenait une seule ligne, ce qui rendait impossible
+l'ajout d'une categorie sans detruire la base. Il compare desormais **chaque nom** a l'existant
+et ignore les doublons : `8 ajoutee(s), 16 deja presente(s)`.
+
+### Limite assumee
+
+Sur les 28 URL de photos, **21 ont ete verifiees en HTTP 200 avec leur taille**. Les 7 autres
+ont ete resolues par l'API Commons (donc les fichiers existent, avec leur licence), mais leurs
+octets n'ont pas pu etre confirmes : Wikimedia limite le debit par adresse IP et ce conteneur a
+ete bloque apres mes rafales de requetes.
+
+La preuve que ce n'est pas un signe de lien mort : les trois photos de J.M, d'abord en echec,
+ont repondu normalement apres deux minutes de pause. Les 7 restantes sont tres probablement
+valides elles aussi. **Chaque distillerie a au moins sa photo de couverture verifiee.**
+
+D'ou l'ajout de `scripts/verifier_photos.py`, qui teste toutes les URL distantes de la base et
+permet de lever ce doute depuis une autre connexion.
+
+### Obligation legale non encore remplie
+
+Les licences CC BY et CC BY-SA **imposent de crediter l'auteur**. L'inventaire complet est dans
+`scripts/CREDITS_PHOTOS.md`, mais rien ne s'affiche cote public : l'obligation n'est donc pas
+satisfaite tant qu'une page de credits n'existe pas sur le site. Notee dans le README.
+
+### Inegalite de couverture photo
+
+5 photos pour Trois Rivieres, Saint-James, Clement et Depaz ; 3 pour Neisson et J.M ; **1 seule**
+pour La Mauny et Dillon. C'est tout ce que Wikimedia Commons propose sous licence libre pour ces
+deux dernieres. Notee dans le README.
