@@ -28,6 +28,10 @@ let currentSearch = '';      // terme de recherche
 let currentPageNum = 1;
 let currentSort = 'nom';
 let isLoading = false;
+let reloadPending = false;   // un rechargement demande pendant un chargement en cours
+let currentCommune = '';     // commune du filtre de proximite, vide si inactif
+let currentRayon = 10;       // rayon autour de la commune, en km
+let communesLoaded = false;
 
 // Mappe le tourist_score (1-5) vers un label de fréquentation
 function scoreLabel(score) {
@@ -154,10 +158,16 @@ function buildCard(item) {
         ${metaHtml}
       </div>
       <div class="card-footer">
-        <span class="card-location">📍 ${commune}</span>
+        <span class="card-location">📍 ${commune}${formatDistance(item.distance_km)}</span>
         <a href="detail.html?id=${item.id}" class="card-cta">Voir le détail →</a>
       </div>
     </article>`;
+}
+
+// Distance affichee a cote de la commune quand le filtre de proximite est actif
+function formatDistance(distanceKm) {
+  if (distanceKm === undefined || distanceKm === null) return '';
+  return ` · ${String(distanceKm).replace('.', ',')} km`;
 }
 
 // Affiche un message "Bientôt disponible" dans la grille
@@ -177,7 +187,11 @@ function showComingSoon(label) {
 
 // Charge et affiche les activités depuis l'API
 async function loadActivites(append = false) {
-  if (isLoading) return;
+  if (isLoading) {
+    // Un changement de filtre pendant un chargement ne doit pas etre perdu
+    if (!append) reloadPending = true;
+    return;
+  }
   isLoading = true;
 
   const grid = document.querySelector('.catalogue-grid');
@@ -190,6 +204,16 @@ async function loadActivites(append = false) {
   if (currentSearch) params.set('search', currentSearch);
   params.set('page', currentPageNum);
   params.set('sort', currentSort);
+  // Autour d'une commune, l'API trie par distance : le choix de tri n'a plus d'effet
+  const sortSelect = document.querySelector('.sort-select');
+  if (sortSelect) {
+    sortSelect.disabled = currentCommune !== '';
+    sortSelect.title = currentCommune ? 'Résultats triés par distance' : '';
+  }
+  if (currentCommune) {
+    params.set('commune', currentCommune);
+    params.set('rayon', currentRayon);
+  }
 
   try {
     const res = await fetch(`${API_URL}/activites?${params}`);
@@ -200,7 +224,10 @@ async function loadActivites(append = false) {
     if (!append) grid.innerHTML = '';
 
     if (items.length === 0 && !append) {
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#666;">Aucune activité trouvée.</div>';
+      const message = currentCommune
+        ? `Aucune activité à moins de ${currentRayon} km de ${currentCommune}. Essayez un rayon plus large.`
+        : 'Aucune activité trouvée.';
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#666;">${message}</div>`;
     } else {
       items.forEach(item => {
         grid.insertAdjacentHTML('beforeend', buildCard(item));
@@ -210,7 +237,10 @@ async function loadActivites(append = false) {
     // Compteur de résultats
     const countEl = document.querySelector('.results-count');
     if (countEl) {
-      countEl.innerHTML = `<strong>${data.total} résultat${data.total > 1 ? 's' : ''}</strong> · Martinique`;
+      const lieu = currentCommune
+        ? `à ${currentRayon} km de ${currentCommune}`
+        : 'Martinique';
+      countEl.innerHTML = `<strong>${data.total} résultat${data.total > 1 ? 's' : ''}</strong> · ${lieu}`;
     }
 
     // Bouton "Voir plus" si pagination
@@ -236,12 +266,18 @@ async function loadActivites(append = false) {
     // Le premier chargement leve le marqueur, quel que soit le resultat.
     // append vaut true pour "Voir plus" : le contenu est deja visible a ce moment.
     if (!append) document.body.classList.remove('chargement');
+    if (reloadPending) {
+      reloadPending = false;
+      currentPageNum = 1;
+      loadActivites();
+    }
   }
 }
 
 // Gestion des clics sur les boutons de filtre
 function setFilter(btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  // Le bouton "Par commune" a son propre etat : il n'est pas une categorie
+  document.querySelectorAll('.filter-btn:not(.filter-btn-commune)').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 
   const label = btn.textContent.replace(/^[^\w\s]+\s*/, '').trim(); // retire l'emoji du début
@@ -251,11 +287,20 @@ function setFilter(btn) {
   const isUnsupported = UNSUPPORTED_LABELS.some(ul => btn.textContent.includes(ul.replace(/^\p{Emoji}\s*/u, '')));
 
   if (isUnsupported) {
-    // Affiche un message "Bientôt disponible" dans la grille
+    // Distance affichee a cote de la commune quand le filtre de proximite est actif
+function formatDistance(distanceKm) {
+  if (distanceKm === undefined || distanceKm === null) return '';
+  return ` · ${String(distanceKm).replace('.', ',')} km`;
+}
+
+// Affiche un message "Bientôt disponible" dans la grille
     const rawLabel = btn.textContent.trim();
     showComingSoon(`${rawLabel} — bientôt disponible`);
     return;
   }
+
+  // "Tout voir" retire aussi le filtre de proximite
+  if (btn.textContent.includes('Tout voir')) closeCommunePanel(false);
 
   // Détermine la categorie API à partir du texte du bouton
   currentFilter = null;
@@ -266,6 +311,81 @@ function setFilter(btn) {
   currentPageNum = 1;
   currentSearch = document.querySelector('.search-input').value.trim();
   loadActivites();
+}
+
+// Remplit la liste des communes depuis l'API, une seule fois
+async function loadCommunes() {
+  if (communesLoaded) return;
+  const select = document.getElementById('commune-select');
+  try {
+    const res = await fetch(`${API_URL}/activites/communes`);
+    if (!res.ok) throw new Error();
+    const communes = await res.json();
+    communes.forEach(nom => select.add(new Option(nom, nom)));
+    communesLoaded = true;
+  } catch {
+    select.options[0].textContent = 'Communes indisponibles';
+  }
+}
+
+// Ouvre le panneau de proximite
+function openCommunePanel() {
+  document.getElementById('commune-panel').hidden = false;
+  const btn = document.getElementById('btn-commune');
+  btn.setAttribute('aria-expanded', 'true');
+  btn.classList.add('active');
+  loadCommunes();
+}
+
+// Ferme le panneau et retire le filtre de proximite. reload vaut false quand
+// l'appelant recharge deja la liste lui-meme.
+function closeCommunePanel(reload = true) {
+  document.getElementById('commune-panel').hidden = true;
+  const btn = document.getElementById('btn-commune');
+  btn.setAttribute('aria-expanded', 'false');
+  btn.classList.remove('active');
+  resetCommune(reload);
+}
+
+// Vide la commune choisie et recharge si un filtre etait actif
+function resetCommune(reload = true) {
+  const avaitFiltre = currentCommune !== '';
+  currentCommune = '';
+  document.getElementById('commune-select').value = '';
+  if (reload && avaitFiltre) {
+    currentPageNum = 1;
+    loadActivites();
+  }
+}
+
+// Branche le bouton, la liste et la barre de rayon
+function initCommuneFilter() {
+  const btn = document.getElementById('btn-commune');
+  const select = document.getElementById('commune-select');
+  const range = document.getElementById('rayon-range');
+  const valeur = document.getElementById('rayon-valeur');
+
+  btn.addEventListener('click', () => {
+    if (document.getElementById('commune-panel').hidden) openCommunePanel();
+    else closeCommunePanel();
+  });
+
+  select.addEventListener('change', () => {
+    currentCommune = select.value;
+    currentPageNum = 1;
+    loadActivites();
+  });
+
+  // La valeur s'affiche pendant le glissement, la liste se recharge au relachement
+  range.addEventListener('input', () => { valeur.textContent = `${range.value} km`; });
+  range.addEventListener('change', () => {
+    currentRayon = Number(range.value);
+    if (!currentCommune) return;
+    currentPageNum = 1;
+    loadActivites();
+  });
+
+  document.getElementById('commune-reset').addEventListener('click', () => resetCommune());
 }
 
 // Recherche textuelle
@@ -290,6 +410,8 @@ function handleSort(select) {
 document.addEventListener('DOMContentLoaded', async () => {
   // Navigation selon l'état de connexion
   await updateNav();
+
+  initCommuneFilter();
 
   // Applique le filtre depuis l'URL (?filtre=plages, randonnees, etc.) si présent
   const filtreParam = new URLSearchParams(window.location.search).get('filtre');
