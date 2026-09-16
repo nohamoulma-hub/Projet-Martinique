@@ -48,16 +48,17 @@ Projet-Martinique/
 ## **ÉTAT ACTUEL**
 
 ### Backend
-- ✅ 7 modèles SQLAlchemy : `User`, `PointOfInterest`, `PoiImage`, `BeachDetails`,
-  `HikeDetails`, `TravelProject`, `TravelProjectItem`
-- ✅ PostgreSQL 18 en conteneur, 3 migrations Alembic appliquées
+- ✅ 8 modèles SQLAlchemy : `User`, `PointOfInterest`, `PoiImage`, `BeachDetails`,
+  `HikeDetails`, `RumDistilleryDetails`, `TravelProject`, `TravelProjectItem`
+- ✅ PostgreSQL 18 en conteneur, 4 migrations Alembic appliquées
 - ✅ 5 schémas Pydantic : `auth`, `meteo`, `point_of_interest`, `travel_project`, `user`
 - ✅ 6 routers, soit 11 routes : catalogue, détail d'activité, inscription, connexion,
   profil, projets de voyage avec ajout et retrait d'activités, météo, health
 - ✅ 2 services : `auth_service` (JWT, bcrypt), `meteo_service` (API externe)
-- ✅ 29 tests pytest, tous au vert
-- ✅ Données de démonstration : 16 points d'intérêt, insérés par `scripts/seed.py`
-- ❌ Aucune donnée pour les catégories restaurants, rhumeries, logements, événements
+- ✅ 33 tests pytest, tous au vert
+- ✅ Données de démonstration : 24 points d'intérêt (9 plages, 7 randonnées,
+  8 rhumeries), insérés par `scripts/seed.py`
+- ❌ Aucune donnée pour les catégories restaurants, logements, événements
 
 ### Frontend
 - ✅ 9 pages HTML avec CSS et JS séparés
