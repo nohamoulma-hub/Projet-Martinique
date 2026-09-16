@@ -70,6 +70,22 @@ function extractCommune(address) {
   return address.split(',')[0].trim();
 }
 
+// Libelles affiches sous le nom de chaque vignette, a la place du code de l'API
+const CATEGORY_LABELS = {
+  beach: 'Plage',
+  hike: 'Randonnée',
+  rum_distillery: 'Rhumerie',
+  restaurant: 'Restaurant',
+};
+
+// Classe qui donne a la vignette son fond de secours quand elle n'a pas de photo
+const CATEGORY_CLASSES = {
+  beach: 'cat-beach',
+  hike: 'cat-hike',
+  rum_distillery: 'cat-rum',
+  restaurant: 'cat-resto',
+};
+
 // Construit le HTML d'une card activité selon son type
 function buildCard(item) {
   const commune = extractCommune(item.address);
@@ -111,9 +127,8 @@ function buildCard(item) {
   }
 
   const icon = isBeach ? '🏖️' : isHike ? '🥾' : '📍';
-  const badgeClass = isBeach ? 'badge-beach' : isHike ? 'badge-hike' : '';
-  const badgeLabel = isBeach ? 'Plage' : isHike ? 'Randonnée' : item.category;
-  const cardClass = isBeach ? 'cat-beach' : isHike ? 'cat-hike' : '';
+  const categoryLabel = CATEGORY_LABELS[item.category] || item.category;
+  const cardClass = CATEGORY_CLASSES[item.category] || '';
 
   const PLACEHOLDER_NAMES = ['Gorges de la Falaise'];
   const isPlaceholder = PLACEHOLDER_NAMES.includes(item.name);
@@ -127,11 +142,13 @@ function buildCard(item) {
       <div class="card-visual">
         <div class="card-visual-bg" style="${bgStyle}"></div>
         <div class="card-icon">${item.image_url ? '' : icon}</div>
-        <span class="card-badge ${badgeClass}">${badgeLabel}</span>
         ${isPlaceholder ? '<span class="card-badge-placeholder">à modifier</span>' : ''}
       </div>
       <div class="card-body">
-        <h2 class="card-name">${item.name}</h2>
+        <div class="card-heading">
+          <h2 class="card-name">${item.name}</h2>
+          <p class="card-category">${categoryLabel}</p>
+        </div>
         <p class="card-desc">${item.description || ''}</p>
         ${metaHtml}
       </div>
