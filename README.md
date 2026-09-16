@@ -233,6 +233,11 @@ Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
 - [ ] Assistant IA de planning (interface prête, logique à connecter)
 - [ ] Comparateur de billets d'avion (Paris -> Fort-de-France)
 - [x] Migration SQLite -> PostgreSQL (validée sur PostgreSQL 18.6 : migrations, enums, données, API, tests)
+- [ ] **Fonction « mot de passe oublié ».** Aucune n'existe : un utilisateur qui oublie son
+      mot de passe est bloqué. En développement, `backend/scripts/reset_password.py` dépanne,
+      mais c'est un outil d'administration. La vraie fonctionnalité demande l'envoi d'un
+      email avec un lien à usage unique et à durée limitée, donc un service d'envoi (SMTP ou
+      API transactionnelle) et une nouvelle dépendance. Indispensable avant la mise en ligne.
 - [ ] Déploiement (hébergement à définir)
 
 ---
