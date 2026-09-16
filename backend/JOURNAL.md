@@ -776,3 +776,84 @@ satisfaite tant qu'une page de credits n'existe pas sur le site. Notee dans le R
 5 photos pour Trois Rivieres, Saint-James, Clement et Depaz ; 3 pour Neisson et J.M ; **1 seule**
 pour La Mauny et Dillon. C'est tout ce que Wikimedia Commons propose sous licence libre pour ces
 deux dernieres. Notee dans le README.
+
+---
+
+## 2026-09-16 (suite) - Fiche pratique des rhumeries
+
+### Demande
+
+La fiche pratique d'une rhumerie reprenait celle des plages. Souhait : y garder la
+frequentation, les horaires, l'acces, le telephone et l'accueil des animaux.
+
+### Nouvelle table
+
+`rum_distillery_details`, sur le patron de `beach_details` et `hike_details` : une plage n'a
+pas d'horaires et une rhumerie n'a pas de denivele. Migration `d07cc5acde44`, qui ne cree que
+cette table. Aucun modele existant n'a ete modifie.
+
+Tous les champs sont facultatifs. `pets_allowed` est un booleen **nullable** : `None` signifie
+« information inconnue », ce qui n'est pas la meme chose que `False`. Un test le verifie.
+
+### Donnees : ce qui est source, ce qui ne l'est pas
+
+Horaires, telephone et site web viennent d'**OpenStreetMap** (tags `opening_hours`, `phone`,
+`website`). Aucune valeur n'a ete inventee, en particulier aucun numero de telephone.
+
+| Distillerie | Horaires | Telephone |
+|---|---|---|
+| Neisson, Trois Rivieres, J.M | oui | oui |
+| Clement | oui | non |
+| Saint-James, Depaz | non | oui |
+| La Mauny, Dillon | non | non |
+
+**Frequentation, acces et animaux ne sont documentes pour aucune distillerie.** Le tag `dog`
+d'OSM n'est renseigne nulle part. Ces champs s'affichent « Non renseigne » et attendent une
+saisie manuelle.
+
+### Affichage
+
+- Horaires OSM traduits en francais (« Mo-Fr 08:00-17:00 » devient « Du lundi au vendredi
+  8h-17h »). Un format non reconnu, comme un creneau coupe ou un jour ferie, est affiche brut
+  plutot que mal traduit.
+- Telephone en lien `tel:`, pour composer directement depuis un mobile.
+- Valeurs echappees avant insertion par `innerHTML`.
+
+### Bugs trouves en chemin
+
+1. **Libelle brut `rum_distillery`.** Trois fonctions calculaient chacune un libelle de
+   categorie et ne connaissaient que `beach` et `hike`. Le code brut s'affichait dans l'en-tete
+   de la fiche (signale par l'utilisateur), mais aussi dans le **badge du bandeau** et le
+   **titre de l'onglet**. Remplace par une table unique `LIBELLES_CATEGORIE`. Le fil d'Ariane
+   affichait « Activites » au lieu de « Rhumeries ».
+
+2. **La photo de l'activite n'a jamais ete affichee dans le bandeau**, pour aucune categorie.
+   Le code ciblait `.detail-hero`, une classe absente du HTML, ou l'element s'appelle `.hero`.
+   Toutes les fiches affichaient donc le meme degrade d'ocean code en dur, ce qui donnait a une
+   rhumerie l'allure d'une plage. La photo est desormais posee sur `.hero-bg` via une variable
+   CSS, et le flou du degrade est retire pour elle.
+
+3. **Scintillement de la maquette.** `detail.html` n'avait pas le marqueur de chargement : la
+   fiche « Anse Ceron, plage » apparaissait une fraction de seconde avant les vraies donnees.
+   Meme correctif que sur les quatre autres pages, avec un `finally` pour que la page soit
+   revelee aussi quand l'identifiant manque ou que l'API echoue.
+
+### Accessibilite
+
+Nouvelle couleur d'accent rouge pour les rhumeries, tiree du design system. Premier essai a
+2,98:1 sur une photo claire, sous le seuil de lisibilite. Porte a 4,58:1 avec un fond plus
+opaque et un texte blanc pur.
+
+**Non corrige, hors perimetre :** le badge des randonnees est a 2,84:1 dans le meme cas de
+figure, et celui des plages a 3,10:1.
+
+### seed.py
+
+Il complete desormais les details manquants d'une fiche deja presente. C'est ce qui a permis
+d'ajouter les informations pratiques des huit rhumeries sans les recreer. Il ne **met pas a
+jour** une ligne de details existante : une correction de valeur passe par SQL.
+
+### Tests
+
+4 tests ajoutes (filtre par categorie, details exposes, `False` distinct de `None`, rhumerie
+sans details, plage sans details de rhumerie). 33 tests au vert.
