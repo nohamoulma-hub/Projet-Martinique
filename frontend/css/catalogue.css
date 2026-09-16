@@ -149,27 +149,18 @@
   .cat-lodge    .card-visual-bg { background: linear-gradient(135deg, #D69E2E, #975A16); }
 
   .card-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 42px; }
-  .card-badge {
-    position: absolute; top: 10px; right: 10px;
-    font-size: 10px; padding: 3px 9px; border-radius: 12px;
-    font-weight: 500; letter-spacing: .5px;
-  }
-  .badge-beach  { background: rgba(26,122,158,.75); color: #B8ECF7; }
-  .badge-hike   { background: rgba(45,106,63,.75);  color: #ADFFD7; }
   .card-badge-placeholder {
     position: absolute; bottom: 10px; left: 10px;
     font-size: 10px; padding: 3px 9px; border-radius: 12px;
     font-weight: 600; letter-spacing: .5px;
     background: rgba(200,57,43,.85); color: #fff;
   }
-  .badge-rum    { background: rgba(139,69,19,.75);  color: #FFD9B0; }
-  .badge-resto  { background: rgba(200,57,43,.75);  color: #FFD5D0; }
-  .badge-act    { background: rgba(240,180,41,.75); color: #3A2800; }
-  .badge-event  { background: rgba(107,70,193,.75); color: #E9D8FD; }
-  .badge-lodge  { background: rgba(214,158,46,.75); color: #3A2800; }
 
   .card-body { padding: 18px 20px 20px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
   .card-name { font-family: var(--font-titre); font-size: 18px; color: var(--texte); line-height: 1.2; }
+  /* Nom et categorie groupes : l'ecart de 8px du corps de carte les separerait trop */
+  .card-heading { display: flex; flex-direction: column; gap: 3px; }
+  .card-category { font-size: 15px; font-weight: 500; color: var(--texte); opacity: .75; }
   .card-desc { font-size: 13px; color: var(--doux); line-height: 1.5; flex: 1; }
 
   .card-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
