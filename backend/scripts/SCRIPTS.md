@@ -13,10 +13,11 @@ La stack doit être démarrée (`docker compose up -d`) pour que `exec` fonction
 
 | Script | Rôle | Écrit où | Rejouable sans risque |
 |---|---|---|---|
-| `seed.py` | Insère les 16 activités de démonstration | base | oui, refuse si la base est déjà peuplée |
+| `seed.py` | Insère les 24 activités de démonstration | base | oui, ignore celles déjà présentes |
 | `update_images.py` | Assigne la photo de couverture de chaque activité | base | oui |
 | `seed_gallery.py` | Remplit la galerie photos des pages de détail | base | oui, remplace les photos existantes |
 | `optimize_images.py` | Allège les photos trop lourdes | fichiers | oui, mais **cassé sous Docker**, voir plus bas |
+| `verifier_photos.py` | Teste toutes les URL de photos distantes | rien | oui |
 
 Aucun de ces scripts ne crée de compte utilisateur. Après un `docker compose down -v`, il faut
 se réinscrire à la main depuis la page `auth.html`.
@@ -25,19 +26,20 @@ se réinscrire à la main depuis la page `auth.html`.
 
 ## seed.py
 
-Insère les 16 activités de démonstration : 9 plages et 7 randonnées, avec leurs coordonnées GPS
-réelles et leurs tables de détail (`beach_details`, `hike_details`).
+Insère les 24 activités de démonstration : 9 plages, 7 randonnées et 8 rhumeries, avec leurs
+coordonnées GPS réelles. Les plages et randonnées ont en plus une table de détail
+(`beach_details`, `hike_details`) ; les rhumeries n'en ont pas.
 
 ```bash
 docker compose exec backend python scripts/seed.py
 ```
 
-**Protection intégrée.** Si la table `points_of_interest` contient déjà des lignes, le script
-affiche `Base déjà peuplée (16 activités). Aucune action.` et s'arrête. Il ne crée donc jamais
-de doublons, et tu peux le lancer sans crainte.
+**Protection intégrée, fiche par fiche.** Le script compare chaque nom à ce qui existe déjà et
+ignore les doublons. Il affiche par exemple `8 ajoutée(s), 16 déjà présente(s)`.
 
-Pour repeupler volontairement, il faut d'abord vider la table, ce qui suppose de savoir ce que
-tu fais.
+C'est ce qui permet d'ajouter une nouvelle catégorie à une base en service sans la détruire.
+L'ancienne version s'arrêtait dès que la table contenait une seule ligne, ce qui obligeait à
+tout vider pour ajouter quoi que ce soit.
 
 ---
 
@@ -73,10 +75,32 @@ docker compose exec backend python scripts/seed_gallery.py
 ```
 
 **Remplace** les photos existantes de chaque activité concernée au lieu de les ajouter, donc
-aucun doublon possible. Trois activités sont couvertes pour l'instant : Anse Noire, Anse Dufour
-et Anse Couleuvre.
+aucun doublon possible. Onze activités sont couvertes : trois plages (Anse Noire, Anse Dufour,
+Anse Couleuvre) dont les photos sont locales, et les huit rhumeries, dont les photos viennent de
+Wikimedia Commons.
 
-À relancer après avoir modifié le dictionnaire `GALLERIES` du script.
+Deux dictionnaires alimentent le script : `GALLERIES` pour les photos locales et
+`GALLERIES_RHUMERIES` pour les photos distantes. À relancer après avoir modifié l'un des deux.
+
+---
+
+## verifier_photos.py
+
+Teste que toutes les URL de photos distantes enregistrées en base répondent encore.
+
+```bash
+docker compose exec backend python scripts/verifier_photos.py
+```
+
+Les photos des rhumeries sont hébergées par Wikimedia Commons : ce script détecte un lien mort,
+par exemple si un fichier y est renommé ou supprimé. Il ne teste que les URL commençant par
+`http` ; les fichiers locaux de `/assets/` sont servis par nginx et ne sont pas concernés.
+
+Un échec `HTTP 429` signale une limitation de débit de Wikimedia sur ton adresse IP, pas un lien
+mort. Le script espace déjà ses requêtes et retente, mais relance-le plus tard en cas de doute.
+
+L'attribution des auteurs, exigée par les licences CC BY et CC BY-SA, est tenue dans
+`CREDITS_PHOTOS.md`, à côté de ce fichier.
 
 ---
 
@@ -137,7 +161,7 @@ fonctionnel, dans cet ordre :
 
 ```bash
 docker compose up -d                                        # les migrations se jouent au démarrage
-docker compose exec backend python scripts/seed.py          # les 16 activités
+docker compose exec backend python scripts/seed.py          # les 24 activités
 docker compose exec backend python scripts/update_images.py # les photos de couverture
 docker compose exec backend python scripts/seed_gallery.py  # les galeries
 ```
