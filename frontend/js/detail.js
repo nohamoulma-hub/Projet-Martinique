@@ -85,12 +85,62 @@ function fillHikeHeroStats(hike_details) {
   }
 }
 
+// Libelles francais des categories. Trois fonctions de la page en calculaient chacune
+// une version, et celles qui ne connaissaient que "beach" et "hike" affichaient le code
+// brut : "rum_distillery" dans le badge du bandeau, le titre de l'onglet et la fiche.
+const LIBELLES_CATEGORIE = {
+  beach: 'Plage',
+  hike: 'Randonnée',
+  rum_distillery: 'Rhumerie',
+  restaurant: 'Restaurant',
+  activity: 'Activité',
+  event: 'Événement',
+  accommodation: 'Logement',
+};
+
+function libelleCategorie(categorie) {
+  return LIBELLES_CATEGORIE[categorie] || 'Activité';
+}
+
+// Echappe une valeur avant insertion via innerHTML. Les donnees viennent de la base,
+// mais un horaire ou un numero contenant un chevron casserait la fiche.
+function echapper(v) {
+  return String(v).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[c]));
+}
+
+// Traduit des horaires au format OpenStreetMap ("Mo-Su 09:00-17:00") en français.
+// Retourne la chaîne d'origine si le format n'est pas reconnu : mieux vaut afficher
+// une information brute mais exacte qu'une traduction fausse.
+const JOURS_OSM = { Mo: 'lundi', Tu: 'mardi', We: 'mercredi', Th: 'jeudi',
+                    Fr: 'vendredi', Sa: 'samedi', Su: 'dimanche' };
+
+function formatHoraires(osm) {
+  if (!osm) return null;
+  // "08:30" -> "8h30", "09:00" -> "9h"
+  const heure = h => h.replace(/^0/, '').replace(':00', 'h').replace(':', 'h');
+
+  const parties = osm.split(';').map(p => p.trim()).filter(Boolean).map(partie => {
+    const m = partie.match(/^([A-Za-z]{2})(?:-([A-Za-z]{2}))?\s+(\d{2}:\d{2})-(\d{2}:\d{2})$/);
+    if (!m) return null;
+    const [, j1, j2, h1, h2] = m;
+    const creneau = `${heure(h1)}-${heure(h2)}`;
+    if (j1 === 'Mo' && j2 === 'Su') return `tous les jours ${creneau}`;
+    if (!j2) return `${JOURS_OSM[j1] || j1} ${creneau}`;
+    return `du ${JOURS_OSM[j1] || j1} au ${JOURS_OSM[j2] || j2} ${creneau}`;
+  });
+
+  if (parties.some(p => p === null)) return osm;
+  const texte = parties.join(', ');
+  return texte.charAt(0).toUpperCase() + texte.slice(1);
+}
+
 // Rempli la fiche pratique de la sidebar selon le type d'activité
 function fillFicheCard(activite) {
   const ficheHeader = document.querySelector('.fiche-header-sub');
   if (ficheHeader) {
-    const typeLabel = activite.category === 'beach' ? 'Plage' : activite.category === 'hike' ? 'Randonnée' : activite.category;
-    ficheHeader.textContent = `${activite.name} · ${typeLabel}`;
+    ficheHeader.textContent = `${activite.name} · ${libelleCategorie(activite.category)}`;
   }
 
   const ficheBody = document.querySelector('.fiche-body');
@@ -114,6 +164,60 @@ function fillFicheCard(activite) {
       <div class="fiche-row">
         <span class="fiche-row-label">Accès</span>
         <span class="fiche-row-value">Toute l'année</span>
+      </div>`;
+  } else if (activite.category === 'rum_distillery') {
+    // Les donnees viennent d'OpenStreetMap, qui ne documente pas tout : un champ vide
+    // s'affiche "Non renseigné" plutot que d'etre masque, pour qu'on sache qu'il manque.
+    const rd = activite.rum_distillery_details || {};
+    const vide = '<span class="fiche-row-value fiche-vide">Non renseigné</span>';
+
+    const frequentation = rd.tourist_score != null
+      ? `<div class="score-inline">
+           <div class="score-dots-row">${buildDotsRow(rd.tourist_score)}</div>
+           <span class="score-inline-label">${scoreLabel(rd.tourist_score)}</span>
+         </div>`
+      : vide;
+
+    const horaires = rd.opening_hours
+      ? `<span class="fiche-row-value">${echapper(formatHoraires(rd.opening_hours))}</span>`
+      : vide;
+
+    const acces = rd.visit_access
+      ? `<span class="fiche-row-value">${echapper(rd.visit_access)}</span>`
+      : vide;
+
+    // Lien tel: pour composer directement le numero depuis un telephone
+    const telephone = rd.phone
+      ? `<a class="fiche-row-value fiche-lien" href="tel:${echapper(rd.phone.replace(/\s/g, ''))}">${echapper(rd.phone)}</a>`
+      : vide;
+
+    // pets_allowed vaut null quand l'information est inconnue, ce qui differe de false
+    const animaux = rd.pets_allowed === true
+      ? '<span class="fiche-row-value">Acceptés</span>'
+      : rd.pets_allowed === false
+        ? '<span class="fiche-row-value">Non acceptés</span>'
+        : vide;
+
+    ficheBody.innerHTML = `
+      <div class="fiche-row">
+        <span class="fiche-row-label">Fréquentation</span>
+        ${frequentation}
+      </div>
+      <div class="fiche-row">
+        <span class="fiche-row-label">Horaires</span>
+        ${horaires}
+      </div>
+      <div class="fiche-row">
+        <span class="fiche-row-label">Accès</span>
+        ${acces}
+      </div>
+      <div class="fiche-row">
+        <span class="fiche-row-label">Téléphone</span>
+        ${telephone}
+      </div>
+      <div class="fiche-row">
+        <span class="fiche-row-label">Animaux</span>
+        ${animaux}
       </div>`;
   } else if (activite.category === 'hike' && activite.hike_details) {
     const hd = activite.hike_details;
@@ -262,7 +366,7 @@ function fillAccessGrid(activite) {
 function fillBreadcrumb(activite) {
   const bc = document.querySelector('.breadcrumb-inner');
   if (!bc) return;
-  const typeLabel = activite.category === 'beach' ? 'Plages' : activite.category === 'hike' ? 'Randonnées' : 'Activités';
+  const typeLabel = { beach: 'Plages', hike: 'Randonnées', rum_distillery: 'Rhumeries' }[activite.category] || 'Activités';
   bc.innerHTML = `
     <a href="accueil.html">Accueil</a>
     <span class="breadcrumb-sep">›</span>
@@ -292,14 +396,21 @@ function injectBackButton() {
 
 // Applique la couleur d'accent selon le type (beach = bleu, hike = vert)
 function applyTypeAccent(category) {
-  const isBeach = category === 'beach';
-  const isHike = category === 'hike';
+  // Couleurs par categorie, tirees du design system Madras : bleu pour la mer,
+  // vert pour la foret, rouge pour le rhum.
+  const ACCENTS = {
+    beach:          { accent: '#1A5C8A', fond: 'rgba(26,92,138,.75)', texte: '#B8ECF7' },
+    hike:           { accent: '#1D7A4E', fond: 'rgba(29,122,78,.75)', texte: '#ADFFD7' },
+    // Fond plus opaque que les deux autres : le rouge sur une photo claire tombait
+    // sous le seuil de lisibilite (2,98:1). A 0,92 et en blanc pur : 4,58:1.
+    rum_distillery: { accent: '#C8392B', fond: 'rgba(200,57,43,.92)', texte: '#FFFFFF' },
+  };
+  const couleurs = ACCENTS[category];
+  if (!couleurs) return;
 
-  if (!isBeach && !isHike) return;
-
-  const accentColor = isBeach ? '#1A5C8A' : '#1D7A4E';
-  const badgeBg = isBeach ? 'rgba(26,92,138,.75)' : 'rgba(29,122,78,.75)';
-  const badgeText = isBeach ? '#B8ECF7' : '#ADFFD7';
+  const accentColor = couleurs.accent;
+  const badgeBg = couleurs.fond;
+  const badgeText = couleurs.texte;
 
   // Couleur du badge hero (type de l'activite)
   const heroBadge = document.querySelector('.hero-badge');
@@ -405,18 +516,21 @@ async function loadActivite(id) {
     }
     const activite = await res.json();
     const commune = extractCommune(activite.address);
-    const typeLabel = activite.category === 'beach' ? 'Plage' : activite.category === 'hike' ? 'Randonnée' : activite.category;
+    const typeLabel = libelleCategorie(activite.category);
 
     // Titre de la page
     document.title = `${activite.name} : ${typeLabel} - Martinique`;
 
     // Photo de fond du hero
+    // Le code visait .detail-hero, une classe absente du HTML : la photo n'etait donc
+    // jamais posee, et toutes les activites affichaient le degrade d'ocean par defaut.
+    // L'URL passe par une variable CSS pour que le style reste dans la feuille.
     if (activite.image_url) {
-      const hero = document.querySelector('.detail-hero');
-      if (hero) {
-        hero.style.backgroundImage = `url('${activite.image_url}')`;
-        hero.style.backgroundSize = 'cover';
-        hero.style.backgroundPosition = 'center';
+      const heroBg = document.querySelector('.hero-bg');
+      if (heroBg) {
+        const url = activite.image_url.replace(/"/g, '%22');
+        heroBg.style.setProperty('--hero-photo', `url("${url}")`);
+        heroBg.classList.add('avec-photo');
       }
     }
 
@@ -614,9 +728,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
-  if (!id) {
-    document.querySelector('.hero-title').textContent = 'Activité introuvable';
-    return;
+  // finally : la page doit etre revelee aussi quand l'id manque ou que l'API echoue,
+  // sinon elle resterait masquee indefiniment.
+  try {
+    if (!id) {
+      document.querySelector('.hero-title').textContent = 'Activité introuvable';
+      return;
+    }
+    await loadActivite(id);
+  } finally {
+    document.body.classList.remove('chargement');
   }
-  loadActivite(id);
 });
