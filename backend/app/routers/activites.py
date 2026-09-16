@@ -9,12 +9,24 @@ from app.models.rum_distillery_details import RumDistilleryDetails
 from app.models.poi_image import PoiImage
 from app.models.point_of_interest import Category, PointOfInterest
 from app.schemas.point_of_interest import PointOfInterestDetail, PointOfInterestRead
+from app.services.communes_service import COMMUNES, distance_km, rectangle_englobant
 
 router = APIRouter(prefix="/activites", tags=["activites"])
 
 # Nombre maximum d'activités par page. Multiple de 1, 2 et 3, les nombres de colonnes
 # possibles de la grille du catalogue : sinon la dernière ligne avant "Voir plus" est incomplète.
 PAGE_SIZE = 18
+
+# Bornes du rayon de recherche autour d'une commune, en kilomètres
+RAYON_MIN_KM = 1
+RAYON_MAX_KM = 100
+
+
+@router.get("/communes", response_model=list[str], summary="Communes de Martinique")
+def list_communes():
+    """Retourne les communes utilisables par le filtre de proximité, par ordre alphabétique."""
+    # Déclarée avant /{activite_id}, sinon "communes" serait lu comme un identifiant
+    return list(COMMUNES)
 
 
 @router.get("", response_model=dict, summary="Liste des activités")
@@ -23,6 +35,8 @@ def list_activites(
     search: str | None = Query(None, description="Recherche textuelle sur le nom"),
     page: int = Query(1, ge=1, description="Numéro de page"),
     sort: str = Query("nom", pattern="^(popularite|nom)$", description="Tri : 'nom' ou 'popularite'"),
+    commune: str | None = Query(None, description="Limiter aux activités proches de cette commune"),
+    rayon: int = Query(10, ge=RAYON_MIN_KM, le=RAYON_MAX_KM, description="Rayon autour de la commune, en km"),
     db: Session = Depends(get_db),
 ):
     """Retourne la liste paginée des activités avec filtres optionnels."""
@@ -43,15 +57,50 @@ def list_activites(
         # Popularite : tri par id en fallback (le score est sur beach_details, pas sur poi)
         query = query.order_by(PointOfInterest.id)
 
-    total = query.count()
     offset = (page - 1) * PAGE_SIZE
-    items = query.offset(offset).limit(PAGE_SIZE).all()
 
+    if commune is None:
+        total = query.count()
+        items = query.offset(offset).limit(PAGE_SIZE).all()
+        return {
+            "items": [PointOfInterestRead.model_validate(item) for item in items],
+            "total": total,
+            "page": page,
+            "has_more": (offset + PAGE_SIZE) < total,
+        }
+
+    if commune not in COMMUNES:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"La commune « {commune} » est inconnue.",
+        )
+
+    # Le calcul de distance se fait en Python : SQLite, utilisé par les tests, n'a pas de
+    # fonctions trigonométriques fiables. Le rectangle limite les lignes chargées.
+    lat, lon = COMMUNES[commune]
+    lat_min, lat_max, lon_min, lon_max = rectangle_englobant(lat, lon, rayon)
+    candidats = query.filter(
+        PointOfInterest.latitude.between(lat_min, lat_max),
+        PointOfInterest.longitude.between(lon_min, lon_max),
+    ).all()
+
+    proches = []
+    for item in candidats:
+        distance = distance_km(lat, lon, item.latitude, item.longitude)
+        if distance <= rayon:
+            proches.append((distance, item))
+    # Autour d'une commune, le plus utile est de voir d'abord le plus proche
+    proches.sort(key=lambda paire: paire[0])
+
+    page_items = proches[offset:offset + PAGE_SIZE]
     return {
-        "items": [PointOfInterestRead.model_validate(item) for item in items],
-        "total": total,
+        "items": [
+            {**PointOfInterestRead.model_validate(item).model_dump(), "distance_km": round(distance, 1)}
+            for distance, item in page_items
+        ],
+        "total": len(proches),
         "page": page,
-        "has_more": (offset + PAGE_SIZE) < total,
+        "has_more": (offset + PAGE_SIZE) < len(proches),
     }
 
 
