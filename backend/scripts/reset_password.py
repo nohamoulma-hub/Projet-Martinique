@@ -32,6 +32,10 @@ def erreur_mot_de_passe(mdp):
     """Retourne un message d'erreur, ou None si le mot de passe est valide."""
     if len(mdp) < 8:
         return "Le mot de passe doit contenir au moins 8 caractères."
+    # bcrypt 5 refuse au-delà de 72 octets (il levait ValueError et le script plantait).
+    # Mesure en octets et non en caractères : une lettre accentuée en occupe deux.
+    if len(mdp.encode("utf-8")) > 72:
+        return "Le mot de passe ne doit pas dépasser 72 octets (environ 70 caractères)."
     if not re.search(r"[A-Z]", mdp):
         return "Le mot de passe doit contenir au moins une majuscule."
     if not re.search(r"[0-9]", mdp):
