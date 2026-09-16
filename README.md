@@ -175,6 +175,13 @@ Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
 
 ### Données et photos
 
+- [ ] **Rendre les crédits photo accessibles depuis le site.** Les licences CC BY et CC BY-SA
+      des photos de rhumeries imposent de créditer l'auteur. L'inventaire existe dans
+      `backend/scripts/CREDITS_PHOTOS.md`, mais rien ne s'affiche côté public : une page
+      « Crédits » ou une mention sur la fiche de chaque activité reste à faire.
+- [ ] Compléter les galeries de La Mauny et Dillon : une seule photo libre existe sur
+      Wikimedia Commons pour chacune, contre 5 pour les autres distilleries.
+
 - [ ] Photos manquantes pour les activités : Gorges de la Falaise (badge "à modifier" en place)
 - [ ] Photos de couverture pour les vignettes accueil restantes : Restaurants, Activités, Rhumeries, Logements
 - [ ] Enrichir la galerie photos pour les autres plages et randonnées
@@ -182,7 +189,10 @@ Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
 ### Catégories à développer
 
 - [ ] Restaurants (aucune donnée en base pour l'instant)
-- [ ] Rhumeries
+- [x] Rhumeries : 8 distilleries ajoutées (Neisson, Trois Rivières, Saint-James, J.M,
+      La Mauny, Clément, Depaz, Dillon), coordonnées relevées sur OpenStreetMap,
+      descriptions d'après Wikipédia, 28 photos Wikimedia Commons sous licence libre.
+      Attributions tenues dans `backend/scripts/CREDITS_PHOTOS.md`.
 - [ ] Activités nautiques / loisirs
 - [ ] Logements
 - [ ] Événements
