@@ -2,6 +2,7 @@
 from app.models.beach_details import BeachDetails
 from app.models.hike_details import HikeDetails
 from app.models.point_of_interest import Category, PointOfInterest
+from app.models.rum_distillery_details import RumDistilleryDetails
 
 
 def _create_beach(db, name="Plage Test", tourist_score=3):
@@ -39,6 +40,24 @@ def _create_hike(db, name="Randonnée Test"):
         elevation_loss=100,
         duration=60,
     ))
+    db.commit()
+    return poi
+
+
+def _create_rhumerie(db, name="Rhumerie Test", **details):
+    """Insère une rhumerie de test. Sans details, aucune ligne de details n'est creee."""
+    poi = PointOfInterest(
+        name=name,
+        category=Category.RUM_DISTILLERY,
+        description="Rhumerie de test",
+        latitude=14.7,
+        longitude=-61.1,
+        address="Test, Martinique",
+    )
+    db.add(poi)
+    db.flush()
+    if details:
+        db.add(RumDistilleryDetails(point_of_interest_id=poi.id, **details))
     db.commit()
     return poi
 
@@ -143,3 +162,56 @@ def test_get_activite_not_found(client):
     response = client.get("/api/activites/999")
     assert response.status_code == 404
     assert "introuvable" in response.json()["detail"].lower()
+
+
+def test_list_activites_filter_by_rum_distillery(client, db_session):
+    """Le filtre categorie=rum_distillery ne renvoie que les rhumeries."""
+    _create_beach(db_session, name="Plage Filtre")
+    _create_rhumerie(db_session, name="Rhumerie Filtre")
+
+    response = client.get("/api/activites?categorie=rum_distillery")
+    assert response.status_code == 200
+    noms = [i["name"] for i in response.json()["items"]]
+    assert noms == ["Rhumerie Filtre"]
+
+
+def test_get_activite_detail_rum_distillery(client, db_session):
+    """Le detail d'une rhumerie expose ses informations pratiques."""
+    poi = _create_rhumerie(
+        db_session,
+        opening_hours="Mo-Su 09:00-17:00",
+        phone="+596 596 00 00 00",
+        website="https://exemple.fr",
+        pets_allowed=False,
+    )
+
+    response = client.get(f"/api/activites/{poi.id}")
+    assert response.status_code == 200
+    data = response.json()
+    details = data["rum_distillery_details"]
+    assert details["opening_hours"] == "Mo-Su 09:00-17:00"
+    assert details["phone"] == "+596 596 00 00 00"
+    # False doit rester False et ne pas etre confondu avec une absence d'information
+    assert details["pets_allowed"] is False
+    assert details["tourist_score"] is None
+    # Les details des autres categories restent vides
+    assert data["beach_details"] is None
+    assert data["hike_details"] is None
+
+
+def test_get_activite_detail_rum_distillery_without_details(client, db_session):
+    """Une rhumerie sans ligne de details renvoie null plutot qu'une erreur."""
+    poi = _create_rhumerie(db_session, name="Rhumerie Sans Details")
+
+    response = client.get(f"/api/activites/{poi.id}")
+    assert response.status_code == 200
+    assert response.json()["rum_distillery_details"] is None
+
+
+def test_get_activite_detail_beach_has_no_rum_details(client, db_session):
+    """Une plage ne renvoie pas de details de rhumerie."""
+    poi = _create_beach(db_session, name="Plage Sans Rhum")
+
+    response = client.get(f"/api/activites/{poi.id}")
+    assert response.status_code == 200
+    assert response.json()["rum_distillery_details"] is None
