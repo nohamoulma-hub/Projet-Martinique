@@ -1,3 +1,106 @@
+/* Barre de navigation : source unique pour les 7 pages du site.
+ *
+ * Exception assumee a la regle "un fichier CSS par page". La nav est un element
+ * commun declare dans le design system Madras, et ces regles etaient auparavant
+ * dupliquees dans les 7 feuilles. Les valeurs avaient derive d'une page a l'autre :
+ * gap de 28px sur detail et detail-voyage contre 32px ailleurs, padding du bouton
+ * a 16px sur detail contre 18px ailleurs, couleur des liens a 0.7 contre 0.75.
+ * D'ou un menu 24px plus etroit sur detail, visible comme un decalage.
+ *
+ * A charger APRES la feuille de la page : les variables (--jaune, --rouge...)
+ * viennent du :root de chaque page, et certaines regles doivent rester prioritaires.
+ *
+ * Valeurs retenues : celles de la majorite des pages. */
+
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  height: 64px;
+  background: rgba(13, 31, 45, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(240, 180, 41, 0.15);
+  overflow: hidden;
+}
+
+/* Barre de progression du scroll, integree en haut de la nav.
+   En position absolue, donc sa place dans le DOM n'influence pas la mise en page :
+   c'est pourquoi elle est premier enfant sur certaines pages et dernier sur d'autres
+   sans que cela se voie. */
+.madras-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 5px;
+  width: 0%;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--rouge) 0px,  var(--rouge) 18px,
+    var(--vert)  18px, var(--vert)  36px,
+    var(--jaune) 36px, var(--jaune) 54px,
+    var(--bleu)  54px, var(--bleu)  72px
+  );
+  transition: width .08s linear;
+  will-change: width;
+  pointer-events: none;
+}
+
+.nav-logo {
+  font-family: var(--font-titre);
+  font-size: 20px;
+  color: var(--jaune);
+  text-decoration: none;
+}
+
+.nav-logo span {
+  color: rgba(240, 180, 41, 0.45);
+  font-style: italic;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.logo-flower { vertical-align: middle; margin: 0 4px; }
+
+.nav-right-group { display: flex; align-items: center; gap: 24px; }
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: color .2s;
+}
+
+/* La regle .active manquait sur accueil et detail : le lien de la page courante
+   n'y etait donc jamais mis en valeur. */
+.nav-links a:hover,
+.nav-links a.active { color: var(--jaune); }
+
+.nav-cta {
+  background: var(--rouge);
+  color: white !important;
+  padding: 8px 18px;
+  border-radius: var(--rayon);
+  font-weight: 500 !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  transition: background .2s !important;
+}
+
+.nav-cta:hover { background: #a52d20 !important; }
+
 /* Styles de la bulle de profil et de son menu deroulant.
  *
  * Exception assumee a la regle "un fichier CSS par page" : la bulle est un element
@@ -91,3 +194,16 @@ html.connecte .nav-cta { display: none; }
    contenait "MD", les initiales de la maquette, visibles a chaque chargement. */
 .nav-avatar:empty { visibility: hidden; }
 html.deconnecte .nav-avatar { display: none; }
+
+
+/* --- Responsive ---
+ *
+ * Le point de rupture divergeait aussi : 768px sur accueil et catalogue, 600px sur
+ * detail et meteo, et aucune regle sur detail-voyage, espace-personnel et planning-ia,
+ * dont les liens ne disparaissaient donc jamais. 768px est retenu : au-dela, six liens
+ * plus le logo ne tiennent pas dans une barre de 64px. */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  /* Gouttiere reduite sur petit ecran, comme dans le reste du site. */
+  nav { padding: 0 20px; }
+}
