@@ -328,37 +328,182 @@ HIKES = [
 ]
 
 
+# Donnees des rhumeries.
+# Coordonnees relevees sur OpenStreetMap, descriptions etablies d'apres Wikipedia fr.
+# Photos : Wikimedia Commons, licences libres verifiees une a une (CC0, CC BY,
+# CC BY-SA ou domaine public). Les URL pointent des vignettes de 1280 px et non les
+# fichiers d'origine, qui atteignent plusieurs Mo : Wikimedia demande explicitement
+# d'utiliser les vignettes pour la reutilisation.
+# Une rhumerie n'a pas de table de details dediee, contrairement aux plages et aux
+# randonnees : seule la fiche PointOfInterest existe.
+RHUMERIES = [
+    {
+        "poi": {
+            "name": "Distillerie Neisson",
+            "category": Category.RUM_DISTILLERY,
+            "description": (
+                "Distillerie de rhum agricole installée au Carbet, sur la côte caraïbe, "
+                "entre Bellefontaine et Saint-Pierre. Elle est aussi désignée sous le "
+                "nom de Thieubert."
+            ),
+            "latitude": 14.7002,
+            "longitude": -61.1765,
+            "address": "Le Carbet, Martinique",
+            "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Chai_de_la_distillerie_Neisson.jpg/1280px-Chai_de_la_distillerie_Neisson.jpg",
+        },
+    },
+    {
+        "poi": {
+            "name": "Rhum Trois Rivières",
+            "category": Category.RUM_DISTILLERY,
+            "description": (
+                "Domaine historique de Sainte-Luce, reconnaissable à son moulin. Le "
+                "rhum Trois Rivières n'y est plus distillé depuis 2004 : la production "
+                "a été transférée à la distillerie La Mauny, à Rivière-Pilote."
+            ),
+            "latitude": 14.4797,
+            "longitude": -60.9648,
+            "address": "Sainte-Luce, Martinique",
+            "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/34/Trois_Rivieres_facade_enseigne_moulin_2015.jpg/1280px-Trois_Rivieres_facade_enseigne_moulin_2015.jpg",
+        },
+    },
+    {
+        "poi": {
+            "name": "Distillerie Saint-James",
+            "category": Category.RUM_DISTILLERY,
+            "description": (
+                "Distillerie de rhum agricole de Sainte-Marie, installée d'abord sur le "
+                "site de l'habitation Trou-Vaillant, à Saint-Pierre. Elle abrite un "
+                "musée du rhum."
+            ),
+            "latitude": 14.7835,
+            "longitude": -60.9973,
+            "address": "Sainte-Marie, Martinique",
+            "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/Martinique-sainte-marie-rhumerie-saint-james.jpg/1280px-Martinique-sainte-marie-rhumerie-saint-james.jpg",
+        },
+    },
+    {
+        "poi": {
+            "name": "Distillerie J.M",
+            "category": Category.RUM_DISTILLERY,
+            "description": (
+                "Rhum agricole produit depuis 1845 à Macouba, dans le nord de l'île, "
+                "entre la rivière Roches et la rivière de Macouba, au pied de la "
+                "montagne Pelée. La distillerie occupe les 300 hectares de l'habitation "
+                "de Fonds-Préville, qui existe depuis 1790."
+            ),
+            "latitude": 14.8628,
+            "longitude": -61.1367,
+            "address": "Macouba, Martinique",
+            "image_url": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Rhumerie_JM.JPG",
+        },
+    },
+    {
+        "poi": {
+            "name": "Distillerie La Mauny",
+            "category": Category.RUM_DISTILLERY,
+            "description": (
+                "Distillerie de rhum agricole située à deux kilomètres au nord de "
+                "Rivière-Pilote. Elle distille les rhums AOC La Mauny, Duquesne et "
+                "Trois Rivières, à partir de cannes cultivées localement."
+            ),
+            "latitude": 14.5089,
+            "longitude": -60.9063,
+            "address": "Rivière-Pilote, Martinique",
+            "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/La_Mauny_001.jpg/1280px-La_Mauny_001.jpg",
+        },
+    },
+    {
+        "poi": {
+            "name": "Habitation Clément",
+            "category": Category.RUM_DISTILLERY,
+            "description": (
+                "Ancienne habitation sucrière coloniale du François, autrefois appelée "
+                "habitation de l'Acajou. Rachetée en 1887 par Homère Clément, l'un des "
+                "tout premiers médecins de couleur de l'île, elle est ensuite convertie "
+                "en distillerie. Le domaine se visite : maison créole, chais et "
+                "jardins."
+            ),
+            "latitude": 14.6021,
+            "longitude": -60.9067,
+            "address": "Le François, Martinique",
+            "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a2/Les_chais_de_l%27habitation_Cl%C3%A9ment_en_Martinique.jpg/1280px-Les_chais_de_l%27habitation_Cl%C3%A9ment_en_Martinique.jpg",
+        },
+    },
+    {
+        "poi": {
+            "name": "Distillerie Depaz",
+            "category": Category.RUM_DISTILLERY,
+            "description": (
+                "Distillerie de rhum agricole de Saint-Pierre, au pied de la montagne "
+                "Pelée. Elle a été créée par Victor Depaz (1886-1960), né à "
+                "Saint-Pierre, et le château qui domine le domaine porte son nom."
+            ),
+            "latitude": 14.7588,
+            "longitude": -61.1651,
+            "address": "Saint-Pierre, Martinique",
+            "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Ch%C3%A2teau_Depaz.jpg/1280px-Ch%C3%A2teau_Depaz.jpg",
+        },
+    },
+    {
+        "poi": {
+            "name": "Distillerie Dillon",
+            "category": Category.RUM_DISTILLERY,
+            "description": (
+                "Distillerie installée à Fort-de-France, anciennement habitation "
+                "Dillon. Fondée à la fin du XVIIe siècle, l'exploitation produit du "
+                "sucre de canne pendant un siècle et demi avant de se tourner vers le "
+                "rhum au XIXe siècle."
+            ),
+            "latitude": 14.6168,
+            "longitude": -61.0494,
+            "address": "Fort-de-France, Martinique",
+            "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Distillerie_Dillon.JPG/1280px-Distillerie_Dillon.JPG",
+        },
+    },
+]
+
+
 def seed():
     """Peuple la base de données avec des plages et randonnées de Martinique."""
     db = SessionLocal()
     try:
-        # Vérification pour éviter un double-peuplement
-        existing_count = db.query(PointOfInterest).count()
-        if existing_count > 0:
-            print(f"Base déjà peuplée ({existing_count} activités). Aucune action.")
-            return
-
         print("Peuplement de la base de données...")
 
-        for beach_data in BEACHES:
-            poi = PointOfInterest(**beach_data["poi"])
+        # Idempotence par fiche et non tout-ou-rien : l'ancienne version s'arretait des
+        # que la table contenait une ligne, ce qui empechait d'ajouter une categorie
+        # a une base existante sans la detruire.
+        deja = {nom for (nom,) in db.query(PointOfInterest.name).all()}
+        ajouts = ignores = 0
+
+        def ajouter(data, libelle, classe_details=None, champ=None):
+            nonlocal ajouts, ignores
+            nom = data["poi"]["name"]
+            if nom in deja:
+                ignores += 1
+                return
+            poi = PointOfInterest(**data["poi"])
             db.add(poi)
-            db.flush()  # Obtenir l'id avant d'ajouter les détails
-            details = BeachDetails(point_of_interest_id=poi.id, **beach_data["details"])
-            db.add(details)
-            print(f"  Plage ajoutée : {poi.name}")
+            if classe_details is not None:
+                db.flush()  # Obtenir l'id avant d'ajouter les détails
+                db.add(classe_details(**{champ: poi.id}, **data["details"]))
+            deja.add(nom)
+            ajouts += 1
+            print(f"  {libelle} ajoutée : {nom}")
+
+        for beach_data in BEACHES:
+            ajouter(beach_data, "Plage", BeachDetails, "point_of_interest_id")
 
         for hike_data in HIKES:
-            poi = PointOfInterest(**hike_data["poi"])
-            db.add(poi)
-            db.flush()
-            details = HikeDetails(point_of_interest_id=poi.id, **hike_data["details"])
-            db.add(details)
-            print(f"  Randonnée ajoutée : {poi.name}")
+            ajouter(hike_data, "Randonnée", HikeDetails, "point_of_interest_id")
+
+        # Les rhumeries n'ont pas de table de details : un simple PointOfInterest suffit.
+        for rhumerie_data in RHUMERIES:
+            ajouter(rhumerie_data, "Rhumerie")
 
         db.commit()
         total = db.query(PointOfInterest).count()
-        print(f"\nBase peuplée avec succes : {total} activités au total.")
+        print(f"\n{ajouts} ajoutée(s), {ignores} déjà présente(s). {total} activités au total.")
 
     except Exception as e:
         db.rollback()
