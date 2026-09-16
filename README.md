@@ -180,8 +180,9 @@ Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
       `backend/scripts/CREDITS_PHOTOS.md`, mais rien ne s'affiche côté public : une page
       « Crédits » ou une mention sur la fiche de chaque activité reste à faire.
 - [ ] **Compléter les informations pratiques des rhumeries.** Horaires, téléphone et site
-      viennent d'OpenStreetMap, mais la fréquentation, les conditions d'accès et l'accueil des
-      animaux n'y sont documentés pour aucune distillerie : ils affichent « Non renseigné ».
+      viennent d'OpenStreetMap, mais la fréquentation n'y est documentée pour aucune
+      distillerie : elle affiche « Non renseigné ». Les colonnes `visit_access` et
+      `pets_allowed` existent en base mais ne sont plus affichées sur la fiche.
       La Mauny et Dillon n'ont en plus ni horaires ni téléphone. Champs à remplir dans le
       bloc `details` de chaque rhumerie, dans `backend/scripts/seed.py`.
       Attention : `seed.py` ne crée une ligne de détails que si elle manque, il ne met pas à
