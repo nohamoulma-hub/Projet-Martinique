@@ -102,6 +102,37 @@
   .filter-btn:hover { border-color: var(--nuit); color: var(--texte); }
   .filter-btn.active { background: var(--nuit); border-color: var(--nuit); color: #fff; }
 
+  /* Filtre de proximite : panneau sous la rangee de filtres */
+  .commune-panel {
+    max-width: 1200px; margin: 14px auto 0;
+    padding-top: 14px; border-top: 1px solid var(--card-border);
+    display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px;
+  }
+  .commune-champ { display: flex; align-items: center; gap: 10px; }
+  .commune-champ-rayon { flex: 1 1 260px; max-width: 420px; }
+  .commune-label { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--doux); }
+  .commune-select {
+    padding: 7px 12px; border-radius: var(--rayon);
+    border: 1px solid var(--card-border); background: var(--card-bg);
+    color: var(--texte); font-family: var(--font-corps); font-size: 13px;
+    max-width: 100%;
+  }
+  .rayon-range { flex: 1; min-width: 0; accent-color: var(--rouge); cursor: pointer; }
+  .rayon-valeur {
+    min-width: 48px; text-align: right;
+    font-size: 13px; font-weight: 500; color: var(--texte);
+    font-variant-numeric: tabular-nums;
+  }
+  .commune-reset {
+    padding: 6px 14px; border-radius: 20px;
+    border: 1px solid var(--card-border); background: transparent;
+    color: var(--doux); font-family: var(--font-corps); font-size: 12px; cursor: pointer;
+  }
+  .commune-reset:hover { border-color: var(--nuit); color: var(--texte); }
+  .commune-select:focus-visible, .rayon-range:focus-visible, .commune-reset:focus-visible {
+    outline: 2px solid var(--bleu); outline-offset: 2px;
+  }
+
   /* Barre de résultats */
   .results-bar {
     padding: 20px 6% 0;
@@ -116,6 +147,8 @@
     color: var(--doux); font-family: var(--font-corps); font-size: 12px;
     cursor: pointer; outline: none;
   }
+
+  .sort-select:disabled { opacity: .5; cursor: not-allowed; }
 
   /* Grille */
   .catalogue-section { padding: 24px 6% 80px; }
