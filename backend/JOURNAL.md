@@ -857,3 +857,51 @@ jour** une ligne de details existante : une correction de valeur passe par SQL.
 
 4 tests ajoutes (filtre par categorie, details exposes, `False` distinct de `None`, rhumerie
 sans details, plage sans details de rhumerie). 33 tests au vert.
+
+---
+
+## 2026-09-16 (suite) - Reinitialisation de mot de passe
+
+### Contexte
+
+L'utilisateur ne pouvait plus se connecter. Diagnostic mene avant toute modification :
+
+- **Backend sain.** Inscription, connexion et acces au profil testes de bout en bout avec un
+  compte jetable, supprime ensuite.
+- **Deux comptes quasi homonymes** en base : `noham.oumla@gmail.com` (14 septembre, inversion
+  de lettres) et `noham.oulma@gmail.com` (15 septembre).
+- **Piste du cache ecartee comme cause probable mais confirmee comme risque reel** : un ancien
+  `auth-utils.js` en cache, d'avant le prefixe `/api`, enverrait la connexion vers
+  `/auth/connexion`, qui renvoie une 404 HTML. Le JS afficherait alors « Impossible de joindre
+  le serveur », message trompeur puisque le serveur repond.
+
+Cause finale : mot de passe oublie.
+
+### Solution
+
+Le site n'a aucune fonction « mot de passe oublie », et un hash bcrypt ne se relit pas. Ajout
+de `scripts/reset_password.py`, outil de developpement :
+
+- sans argument, liste les comptes pour retrouver le bon email ;
+- saisie par `getpass` : le mot de passe ne s'affiche pas et n'apparait ni dans l'historique du
+  terminal ni dans les arguments du processus, donc jamais dans la conversation ;
+- memes regles qu'a l'inscription (8 caracteres, une majuscule, un chiffre), le backend n'en
+  imposant aucune ;
+- hachage par `hash_password`, la fonction de l'application ;
+- relecture en base et verification par `verify_password` apres ecriture.
+
+Teste sur un compte jetable : regles refusees, confirmation discordante (abandon apres trois
+essais sans modification), puis ancien mot de passe refuse (401) et nouveau accepte (200) via la
+vraie route de connexion.
+
+### Limite
+
+Le script contourne toute authentification : sa seule protection est l'acces au conteneur. Ce
+n'est pas une fonctionnalite. La vraie fonction « mot de passe oublie » demande un envoi
+d'email, donc une nouvelle dependance : notee dans le README comme prerequis a la mise en ligne.
+
+### Constat au passage
+
+Le backend n'impose aucune regle sur les mots de passe : seul le formulaire le fait. Un appel
+direct a l'API peut donc creer un compte avec un mot de passe d'un caractere. Non corrige,
+signale a l'utilisateur.
