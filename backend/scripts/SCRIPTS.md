@@ -41,6 +41,14 @@ C'est ce qui permet d'ajouter une nouvelle catégorie à une base en service san
 L'ancienne version s'arrêtait dès que la table contenait une seule ligne, ce qui obligeait à
 tout vider pour ajouter quoi que ce soit.
 
+**Il complète aussi les détails manquants.** Une fiche déjà présente mais sans sa ligne de
+détails reçoit celle-ci. C'est ce qui a permis d'ajouter les informations pratiques des
+rhumeries (horaires, téléphone, site web) après leur création, sans les recréer.
+
+Les horaires, téléphones et sites web des rhumeries proviennent d'OpenStreetMap. La
+fréquentation, les conditions d'accès et l'accueil des animaux n'y sont documentés pour aucune
+distillerie : ces champs valent `None` dans le script et attendent une saisie manuelle.
+
 ---
 
 ## update_images.py
