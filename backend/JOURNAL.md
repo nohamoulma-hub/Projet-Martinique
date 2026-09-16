@@ -1003,3 +1003,45 @@ ceux qui ne dependent pas des regles. Fichiers restaures a l'identique ensuite.
 
 Ajouter la limite de 72 octets a `validatePassword()` cote formulaire. Non bloquant : le serveur
 refuse deja avec un message que le formulaire affiche correctement, grace au nouveau format.
+
+
+## 2026-09-16 (suite) - Filtre par commune avec rayon de recherche
+
+### Fonctionnement
+
+Un bouton « Par commune » dans la barre de filtres ouvre un panneau : liste des 34 communes et
+barre de rayon de 5 à 50 km, par pas de 5. Les résultats sont triés du plus proche au plus
+loin, et chaque vignette affiche sa distance. Le filtre se combine avec les catégories.
+Refermer le panneau ou cliquer « Tout voir » retire le filtre.
+
+### Décisions
+
+**Coordonnées officielles.** Les 34 communes et leurs coordonnées viennent de
+geo.api.gouv.fr (département 972), pas d'une saisie de mémoire. On prend la mairie plutôt que
+le centre géométrique : c'est le bourg, là où le voyageur se repère. Stockées dans
+`app/services/communes_service.py`, exposées par `GET /api/activites/communes` pour que le
+frontend n'en tienne pas une copie. La route est déclarée avant `/{activite_id}`.
+
+**Distance calculée en Python.** Les tests tournent sur SQLite, sans fonctions
+trigonométriques fiables. Un préfiltre SQL par rectangle limite les lignes chargées, puis la
+formule de haversine tranche. La pagination se fait ensuite sur la liste triée.
+
+**Paramètres validés.** Commune inconnue et rayon hors de 1 à 100 km renvoient 422 avec un
+message en français. Le frontend limite déjà à 5 à 50 km ; l'API garde une marge.
+
+**Tri.** Autour d'une commune, l'API trie par distance : le menu de tri est grisé tant que le
+filtre est actif, plutôt que de proposer un choix sans effet.
+
+**Taille de page passée de 20 à 18** (même journée) : 18 se divise par 1, 2 et 3, les nombres
+de colonnes de la grille. La dernière ligne avant « Voir plus » n'est plus incomplète.
+
+### Tests
+
+8 tests ajoutés, 56 au total : distance connue entre deux mairies, liste des communes,
+filtrage par rayon et ordre, combinaison avec la catégorie, pagination, commune inconnue,
+rayon hors bornes, absence de distance sans filtre.
+
+### Reste ouvert
+
+Sur mobile, la barre de filtres est collante et le panneau l'allonge : elle occupe une grande
+partie de l'écran au défilement. Point déjà présent avant, aggravé par le panneau.
