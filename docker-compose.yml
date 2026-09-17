@@ -50,6 +50,10 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:?definir JWT_SECRET_KEY dans le fichier .env}
       JWT_EXPIRE_HOURS: ${JWT_EXPIRE_HOURS:-24}
       ENVIRONMENT: development
+      # Assistant de planning. Sans clé, l'assistant renvoie 503 et le reste du site
+      # fonctionne normalement.
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      PLANNING_BUDGET_EUR: ${PLANNING_BUDGET_EUR:-5}
     depends_on:
       db:
         condition: service_healthy
