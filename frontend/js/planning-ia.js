@@ -1,4 +1,4 @@
-// Planning IA : navigation, context bar et signalement "bientôt disponible" pour l'IA.
+// Assistant de planning : conversation avec l'API et affichage du planning enregistré.
 
 const bar = document.getElementById('madrasBar');
 window.addEventListener('scroll', () => {
@@ -7,130 +7,255 @@ window.addEventListener('scroll', () => {
   bar.style.width = (isNaN(pct) ? 0 : pct) + '%';
 });
 
-function selectChip(el) { el.classList.toggle('selected'); }
+// Doit rester aligne sur DELAI_ENTRE_MESSAGES_SECONDES du backend, qui fait foi
+const DELAI_SECONDES = 5;
 
-function switchPlanWeek(n) {
-  document.querySelectorAll('.week-tab-btn').forEach((btn, i) => btn.classList.toggle('active', i + 1 === n));
-  document.querySelectorAll('.plan-week-content').forEach((c, i) => c.classList.toggle('active', i + 1 === n));
+const LIBELLES_CATEGORIE = {
+  beach: 'Plage',
+  hike: 'Randonnée',
+  rum_distillery: 'Rhumerie',
+  restaurant: 'Restaurant',
+};
+
+let conversationId = null;
+let projetId = null;
+let envoiEnCours = false;
+
+// Neutralise le HTML : le texte vient du modèle et des données, jamais de balises
+function echapper(texte) {
+  const d = document.createElement('div');
+  d.textContent = texte == null ? '' : String(texte);
+  return d.innerHTML;
 }
 
+// Ajoute une bulle dans le fil et fait defiler jusqu'en bas
+function ajouterMessage(role, texte) {
+  const fil = document.getElementById('chatMessages');
+  const typing = document.getElementById('typingIndicator');
+  const bulle = document.createElement('div');
+  bulle.className = `msg-bulle ${role === 'user' ? 'user' : 'ia'}`;
+  // Les sauts de ligne du modèle comptent : ils structurent le programme
+  bulle.innerHTML = echapper(texte).replace(/\n/g, '<br>');
+  fil.insertBefore(bulle, typing);
+  fil.scrollTop = fil.scrollHeight;
+  return bulle;
+}
+
+function afficherTyping(visible) {
+  const typing = document.getElementById('typingIndicator');
+  if (typing) typing.hidden = !visible;
+  if (visible) {
+    const fil = document.getElementById('chatMessages');
+    fil.scrollTop = fil.scrollHeight;
+  }
+}
+
+function majStatut(texte, disponible = true) {
+  const zone = document.getElementById('contextStatus');
+  const libelle = document.getElementById('contextStatusText');
+  if (libelle) libelle.textContent = texte;
+  if (zone) zone.classList.toggle('indisponible', !disponible);
+}
+
+// Deplie ou replie une journee du planning
 function toggleDay(el) {
   el.classList.toggle('open');
 }
 
-// Chat desactive : affiche le bandeau "Bientôt disponible" mais laisse le DOM intact
-function sendMessage() {
-  const ta = document.querySelector('.chat-input');
-  const txt = ta.value.trim();
-  if (!txt) return;
-  const msgs = document.getElementById('chatMessages');
-  const typing = document.getElementById('typingIndicator');
-
-  const bulle = document.createElement('div');
-  bulle.className = 'msg-bulle user';
-  bulle.textContent = txt;
-  msgs.insertBefore(bulle, typing);
-
-  const time = document.createElement('div');
-  time.className = 'msg-time right';
-  time.textContent = 'A l\'instant';
-  msgs.insertBefore(time, typing);
-
-  ta.value = '';
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-// Charge le nom du projet si projet_id est dans l'URL
-async function loadContextProjet(projetId) {
-  if (!projetId) return;
-  const token = getToken();
-  if (!token) return;
-
+// Remplit le volet du planning a partir du projet enregistre
+async function chargerPlanning(id) {
+  if (!id) return;
   try {
-    const res = await fetch(`${API_URL}/projets/${projetId}`, {
-      headers: getAuthHeaders(),
-    });
+    const res = await fetch(`${API_URL}/projets/${id}`, { headers: getAuthHeaders() });
     if (!res.ok) return;
     const projet = await res.json();
 
-    // Met à jour la context bar
-    const contextTrip = document.querySelector('.context-trip');
-    if (contextTrip) {
-      const startDate = projet.start_date || '';
-      const endDate = projet.end_date || '';
-      const days = (projet.start_date && projet.end_date)
-        ? Math.round((new Date(projet.end_date) - new Date(projet.start_date)) / (1000 * 60 * 60 * 24))
-        : 0;
-      contextTrip.innerHTML = `Planning IA pour <strong>${projet.name}</strong>${startDate ? ` · ${startDate} au ${endDate} · ${days} jours` : ''}`;
-    }
+    const conteneur = document.getElementById('planJours');
+    const vide = document.getElementById('planVide');
+    if (vide) vide.remove();
 
-    // Lien "Mon projet" : retour vers detail-voyage
-    const backLink = document.querySelector('.context-left .back-link');
-    if (backLink) {
-      backLink.href = `detail-voyage.html?id=${projetId}`;
-      backLink.removeAttribute('onclick');
-    }
+    // Regroupe les activites par journee : l'API les renvoie a plat
+    const parJour = new Map();
+    (projet.items || []).forEach(item => {
+      const jour = item.day_number || 1;
+      if (!parJour.has(jour)) parJour.set(jour, []);
+      parJour.get(jour).push(item);
+    });
 
-  } catch (_) {
-    // Silencieux : on laisse le contenu statique de la maquette
+    // Les journées de repos n'ont aucune activité : l'API ne les renvoie donc pas.
+    // On complète la suite des jours pour qu'elles restent visibles dans le planning.
+    const numeros = [...parJour.keys()].sort((a, b) => a - b);
+    const dernier = numeros.length ? numeros[numeros.length - 1] : 0;
+    const jours = [];
+    for (let n = 1; n <= dernier; n++) jours.push(n);
+
+    conteneur.innerHTML = jours.map(jour => {
+      const activites = parJour.get(jour) || [];
+      if (activites.length === 0) {
+        return `
+        <div class="plan-day plan-day-repos">
+          <div class="plan-day-head">
+            <div class="plan-day-left"><span class="plan-day-num">Jour ${jour}</span></div>
+            <div class="plan-day-left"><span class="plan-day-summary">Journée de repos</span></div>
+          </div>
+        </div>`;
+      }
+      const resume = activites.map(i => i.activity.name).join(' · ');
+      const lignes = activites.map(i => `
+        <div class="plan-activity">
+          <div class="plan-act-info">
+            <p class="plan-act-name">${echapper(i.activity.name)}</p>
+            <p class="plan-act-cat">${echapper(LIBELLES_CATEGORIE[i.activity.category] || i.activity.category)}</p>
+          </div>
+        </div>`).join('');
+      return `
+        <div class="plan-day open" onclick="toggleDay(this)">
+          <div class="plan-day-head">
+            <div class="plan-day-left">
+              <span class="plan-day-num">Jour ${jour}</span>
+            </div>
+            <div class="plan-day-left">
+              <span class="plan-day-summary">${echapper(resume)}</span>
+              <span class="plan-day-chevron">▼</span>
+            </div>
+          </div>
+          <div class="plan-activities">${lignes}</div>
+        </div>`;
+    }).join('');
+
+    const sousTitre = document.getElementById('planHeaderSub');
+    if (sousTitre) {
+      const actives = numeros.length;
+      sousTitre.textContent = `${projet.name} · ${jours.length} journée${jours.length > 1 ? 's' : ''}`
+        + (jours.length > actives ? `, dont ${jours.length - actives} de repos` : '');
+    }
+    const lien = document.getElementById('planLien');
+    if (lien) {
+      lien.href = `detail-voyage.html?id=${projet.id}`;
+      lien.hidden = false;
+    }
+    const contexte = document.getElementById('contextTrip');
+    if (contexte) contexte.textContent = projet.name;
+  } catch {
+    // Le planning reste consultable depuis l'espace personnel : on n'alarme pas ici
   }
 }
 
-// Affiche les zones désactivées (chat-input, chips) avec opacité réduite
-function applyIaDisabledStyle() {
-  const inputWrap = document.querySelector('.chat-input-wrap');
-  if (inputWrap) inputWrap.style.opacity = '0.5';
-
-  const chips = document.querySelector('.suggestion-chips');
-  // Toutes les suggestion-chips recoivent une opacité réduite
-  document.querySelectorAll('.suggestion-chips').forEach(c => c.style.opacity = '0.5');
+// Bloque l'envoi pendant le delai impose par le serveur, avec un compte a rebours
+function attendreDelai() {
+  const bouton = document.querySelector('.send-btn');
+  if (!bouton) return;
+  let reste = DELAI_SECONDES;
+  bouton.disabled = true;
+  bouton.textContent = reste;
+  const minuteur = setInterval(() => {
+    reste -= 1;
+    if (reste <= 0) {
+      clearInterval(minuteur);
+      bouton.disabled = false;
+      bouton.textContent = '↑';
+    } else {
+      bouton.textContent = reste;
+    }
+  }, 1000);
 }
 
-// Boutons "Regénérer" et "Valider" : tooltip "Bientôt disponible"
-function setupFooterButtons() {
-  const regen = document.querySelector('.plan-regen');
-  const validate = document.querySelector('.plan-validate');
+// Envoie le message du voyageur et affiche la reponse
+async function sendMessage() {
+  const zone = document.querySelector('.chat-input');
+  const texte = zone.value.trim();
+  if (!texte || envoiEnCours || !conversationId) return;
 
-  [regen, validate].forEach(btn => {
-    if (!btn) return;
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const msg = btn.textContent.trim() + ' : bientôt disponible.';
-      let tip = btn.nextElementSibling;
-      if (!tip || !tip.classList.contains('btn-soon')) {
-        tip = document.createElement('span');
-        // btn-soon est le marqueur de recherche, tip-bientot l'apparence.
-        tip.className = 'btn-soon tip-bientot';
-        btn.parentNode.insertBefore(tip, btn.nextSibling);
-      }
-      tip.textContent = 'Bientôt disponible';
-      setTimeout(() => { if (tip) tip.textContent = ''; }, 2000);
+  envoiEnCours = true;
+  ajouterMessage('user', texte);
+  zone.value = '';
+  afficherTyping(true);
+
+  try {
+    const res = await fetch(`${API_URL}/planning/conversations/${conversationId}/messages`, {
+      method: 'POST',
+      headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: texte }),
     });
+    const data = await res.json().catch(() => ({}));
+    afficherTyping(false);
+
+    if (!res.ok) {
+      ajouterMessage('ia', data.detail || "L'assistant est momentanément indisponible.");
+      if (res.status === 503) majStatut('Assistant indisponible', false);
+      return;
+    }
+
+    ajouterMessage('ia', data.reply);
+    majStatut(`${data.messages_restants} message(s) restant(s)`);
+    if (data.travel_project_id && data.travel_project_id !== projetId) {
+      projetId = data.travel_project_id;
+      chargerPlanning(projetId);
+    }
+  } catch {
+    afficherTyping(false);
+    ajouterMessage('ia', "La connexion au serveur a échoué. Réessayez dans un instant.");
+  } finally {
+    envoiEnCours = false;
+    attendreDelai();
+  }
+}
+
+// Ouvre une conversation, ou rouvre celle passee dans l'URL
+async function initConversation() {
+  const params = new URLSearchParams(window.location.search);
+  const existante = params.get('conversation');
+
+  // Reprise d'une conversation de l'historique
+  if (existante) {
+    const res = await fetch(`${API_URL}/planning/conversations/${existante}`, {
+      headers: getAuthHeaders(),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      conversationId = data.id;
+      projetId = data.travel_project_id;
+      data.messages.forEach(m => ajouterMessage(m.role, m.content));
+      majStatut(`${data.messages_restants} message(s) restant(s)`);
+      if (projetId) chargerPlanning(projetId);
+      return;
+    }
+  }
+
+  const accueil = await fetch(`${API_URL}/planning/accueil`).then(r => r.json()).catch(() => null);
+
+  const res = await fetch(`${API_URL}/planning/conversations`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
   });
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    // Limite quotidienne atteinte : on affiche le message du serveur et on coupe la saisie
+    ajouterMessage('ia', data.detail || "Impossible d'ouvrir une conversation.");
+    majStatut('Limite atteinte', false);
+    document.querySelector('.chat-input').disabled = true;
+    document.querySelector('.send-btn').disabled = true;
+    return;
+  }
+
+  conversationId = data.id;
+  if (accueil) ajouterMessage('ia', accueil.message);
+  majStatut(`${data.messages_restants} message(s) restant(s)`);
 }
 
-// Ajoute le bandeau "Assistant IA bientôt disponible" en haut du chat
-function addIaBanner() {
-  const chatPanel = document.querySelector('.chat-panel');
-  if (!chatPanel) return;
-  const banner = document.createElement('div');
-  banner.className = 'ia-banner';
-  banner.textContent = 'Assistant IA bientôt disponible — les réponses sont simulées.';
-  chatPanel.insertBefore(banner, chatPanel.firstChild);
-}
-
-// Initialisation
 document.addEventListener('DOMContentLoaded', async () => {
-  requireAuth();
   await updateNav();
 
-  const params = new URLSearchParams(window.location.search);
-  const projetId = params.get('projet_id');
+  // Connexion obligatoire : chaque message a un coût et le planning appartient à un compte
+  if (!getToken()) {
+    window.location.href = 'auth.html?redirect=planning-ia.html';
+    return;
+  }
 
-  await loadContextProjet(projetId);
-  addIaBanner();
-  applyIaDisabledStyle();
-  setupFooterButtons();
-  // Pas de loadNavAvatar ici : updateNav construit deja la bulle sur cette page,
-  // l'appeler aussi doublait la requete vers /api/utilisateurs/moi.
+  try {
+    await initConversation();
+  } finally {
+    document.body.classList.remove('chargement');
+  }
 });
