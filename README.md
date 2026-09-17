@@ -125,29 +125,30 @@ Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
 
 ### Backend
 
-- 6 modèles SQLAlchemy : `User`, `PointOfInterest`, `BeachDetails`, `HikeDetails`, `TravelProject`, `TravelProjectItem`
-- Modèle `PoiImage` pour les galeries photos (table `poi_images`)
-- 18 routes API :
+- 9 modèles SQLAlchemy : `User`, `PointOfInterest`, `PoiImage`, `BeachDetails`, `HikeDetails`,
+  `RumDistilleryDetails`, `RestaurantDetails`, `TravelProject`, `TravelProjectItem`
+- PostgreSQL 18 en conteneur, 5 migrations Alembic
+- 12 routes API, toutes sous le préfixe `/api` :
   - `GET /health`
-  - `GET /api/activites` (pagination, filtres catégorie/recherche/tri)
-  - `GET /api/activites/{id}` (détail + beach_details ou hike_details + galerie photos)
+  - `GET /api/activites` (pagination, filtres catégorie, recherche, tri, commune et rayon)
+  - `GET /api/activites/communes` (les 34 communes, pour le filtre de proximité)
+  - `GET /api/activites/{id}` (détail + table de détails de la catégorie + galerie photos)
   - `POST /api/auth/inscription` et `POST /api/auth/connexion` (JWT)
   - `GET /api/utilisateurs/moi` et `PUT /api/utilisateurs/moi` (protégées)
   - `GET/POST/PUT/DELETE /api/projets` et `POST/DELETE /api/projets/{id}/activites` (protégées)
   - `GET /api/meteo` (données en direct via Open-Meteo, coordonnées Fort-de-France)
-- Authentification JWT avec hachage bcrypt
-- 29 tests (pytest + httpx), tous verts
-- Fichiers statiques servis via FastAPI : `/site` pour le frontend, `/assets` pour les photos locales
+- Authentification JWT avec hachage bcrypt, règles de mot de passe centralisées dans
+  `app/core/security.py`
+- 60 tests (pytest + httpx), tous verts
+- Statique servi par nginx, qui relaie `/api/` vers le backend
 
 ### Données
 
-- **15 activités** en base : 8 plages + 7 randonnées (coordonnées GPS réelles, détails complets)
-- **1 activité supplémentaire** : Anse Couleuvre (plage sauvage, Le Prêcheur)
-- **Photos réelles** associées à 3 activités (galerie multi-photos) :
-  - Anse Noire : 2 photos
-  - Anse Dufour : 4 photos
-  - Anse Couleuvre : 4 photos
-- Photos de couverture (image principale) pour 14 activités sur 16
+- **40 activités** en base : 9 plages, 7 randonnées, 8 rhumeries, 16 restaurants,
+  coordonnées GPS réelles et table de détails par catégorie
+- **Photos** : galeries pour 3 plages (photos personnelles) et les 8 rhumeries
+  (28 photos Wikimedia Commons, crédits dans `backend/scripts/CREDITS_PHOTOS.md`)
+- Les 16 restaurants n'ont aucune photo : aucune image libre de droit trouvée
 
 ### Frontend
 
