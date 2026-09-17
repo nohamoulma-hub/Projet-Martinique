@@ -310,3 +310,31 @@
   text-align: center;
   border-bottom: 1px solid #e0d8c8;
 }
+
+/* Assistant branché sur l'API : états qui n'existaient pas dans la maquette */
+
+/* Aucun planning enregistré : le volet explique ce qui va s'y afficher */
+.plan-vide {
+  margin: 24px 20px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--doux);
+}
+
+.plan-jours { flex: 1; overflow-y: auto; }
+
+/* Assistant hors service : la pastille passe du vert au rouge */
+.context-status.indisponible .status-dot { background: var(--rouge); }
+.context-status.indisponible { color: var(--rouge); }
+
+/* Compte à rebours entre deux messages */
+.send-btn:disabled { opacity: .5; cursor: not-allowed; font-size: 13px; }
+.chat-input:disabled { opacity: .6; cursor: not-allowed; }
+
+/* Anti-clignotement : la page reste masquée tant que la conversation n'est pas prête */
+body.chargement .split-wrapper,
+body.chargement .context-bar { visibility: hidden; }
+
+/* Journée sans activité : elle reste visible, mais ne se déplie pas */
+.plan-day-repos { cursor: default; opacity: .75; }
+.plan-day-repos .plan-day-summary { font-style: italic; }
