@@ -30,6 +30,8 @@ BEACHES = [
             "latitude": 14.8442,
             "longitude": -61.1812,
             "address": "Le Prêcheur, Martinique",
+            # Acces libre
+            "price_eur": 0,
         },
         "details": {
             "tourist_score": 2,
@@ -48,6 +50,8 @@ BEACHES = [
             "latitude": 14.3969,
             "longitude": -60.8726,
             "address": "Sainte-Anne, Martinique",
+            # Acces libre
+            "price_eur": 0,
         },
         "details": {
             "tourist_score": 5,
@@ -66,6 +70,8 @@ BEACHES = [
             "latitude": 14.5383,
             "longitude": -61.0726,
             "address": "Les Anses-d'Arlet, Martinique",
+            # Acces libre
+            "price_eur": 0,
         },
         "details": {
             "tourist_score": 3,
@@ -84,6 +90,8 @@ BEACHES = [
             "latitude": 14.5397,
             "longitude": -61.0705,
             "address": "Les Anses-d'Arlet, Martinique",
+            # Acces libre
+            "price_eur": 0,
         },
         "details": {
             "tourist_score": 3,
@@ -102,6 +110,8 @@ BEACHES = [
             "latitude": 14.4706,
             "longitude": -61.0276,
             "address": "Le Diamant, Martinique",
+            # Acces libre
+            "price_eur": 0,
         },
         "details": {
             "tourist_score": 4,
@@ -120,6 +130,8 @@ BEACHES = [
             "latitude": 14.5488,
             "longitude": -61.0574,
             "address": "Les Trois-Ilets, Martinique",
+            # Acces libre
+            "price_eur": 0,
         },
         "details": {
             "tourist_score": 3,
@@ -138,6 +150,8 @@ BEACHES = [
             "latitude": 14.7622,
             "longitude": -60.8821,
             "address": "La Trinité, Martinique",
+            # Acces libre
+            "price_eur": 0,
         },
         "details": {
             "tourist_score": 2,
@@ -156,6 +170,8 @@ BEACHES = [
             "latitude": 14.5562,
             "longitude": -61.0596,
             "address": "Les Trois-Ilets, Martinique",
+            # Acces libre
+            "price_eur": 0,
         },
         "details": {
             "tourist_score": 4,
@@ -174,6 +190,8 @@ BEACHES = [
             "latitude": 14.8465,
             "longitude": -61.2283,
             "address": "Le Prêcheur, Martinique",
+            # Acces libre
+            "price_eur": 0,
         },
         "details": {
             "tourist_score": 2,
@@ -197,6 +215,8 @@ HIKES = [
             "latitude": 14.8157,
             "longitude": -61.1672,
             "address": "Morne Rouge, Martinique",
+            # Acces libre
+            "price_eur": 0,
         },
         "details": {
             "difficulty": "Difficile",
@@ -218,6 +238,8 @@ HIKES = [
             "latitude": 14.7736,
             "longitude": -60.8598,
             "address": "La Trinité, Martinique",
+            # Acces libre
+            "price_eur": 0,
         },
         "details": {
             "difficulty": "Facile",
@@ -239,6 +261,8 @@ HIKES = [
             "latitude": 14.7014,
             "longitude": -61.1242,
             "address": "Carbet, Martinique",
+            # Acces libre
+            "price_eur": 0,
         },
         "details": {
             "difficulty": "Difficile",
@@ -279,6 +303,8 @@ HIKES = [
             "latitude": 14.4782,
             "longitude": -61.0282,
             "address": "Le Diamant, Martinique",
+            # Acces libre
+            "price_eur": 0,
         },
         "details": {
             "difficulty": "Moyen",
@@ -299,6 +325,8 @@ HIKES = [
             "latitude": 14.8261,
             "longitude": -61.1835,
             "address": "Le Prêcheur, Martinique",
+            # Acces libre
+            "price_eur": 0,
         },
         "details": {
             "difficulty": "Facile",
@@ -319,6 +347,8 @@ HIKES = [
             "latitude": 14.4025,
             "longitude": -60.8895,
             "address": "Sainte-Anne, Martinique",
+            # Acces libre
+            "price_eur": 0,
         },
         "details": {
             "difficulty": "Facile",
@@ -832,6 +862,8 @@ RESTAURANTS = [
             "latitude": 14.61816,
             "longitude": -61.04069,
             "address": "Avenue des Arawaks, 97200 Fort-de-France, Martinique",
+            # prix moyen ViaMichelin
+            "price_eur": 29,
             "image_url": None,
         },
         "details": {
@@ -855,6 +887,8 @@ RESTAURANTS = [
             "latitude": 14.54687,
             "longitude": -61.05068,
             "address": "Rue des Palmiers, 97229 Les Trois-Îlets, Martinique",
+            # prix moyen ViaMichelin
+            "price_eur": 40,
             "image_url": None,
         },
         "details": {
@@ -927,10 +961,10 @@ def seed():
         # que la table contenait une ligne, ce qui empechait d'ajouter une categorie
         # a une base existante sans la detruire.
         existants = {p.name: p for p in db.query(PointOfInterest).all()}
-        ajouts = ignores = details_ajoutes = details_completes = adresses_maj = 0
+        ajouts = ignores = details_ajoutes = details_completes = adresses_maj = prix_maj = 0
 
         def ajouter(data, libelle, classe_details=None, champ=None):
-            nonlocal ajouts, ignores, details_ajoutes, details_completes, adresses_maj
+            nonlocal ajouts, ignores, details_ajoutes, details_completes, adresses_maj, prix_maj
             nom = data["poi"]["name"]
             poi = existants.get(nom)
 
@@ -949,6 +983,12 @@ def seed():
                     poi.address = data["poi"]["address"]
                     adresses_maj += 1
                     print(f"    adresse mise à jour : {nom}")
+                # Le prix suit la meme regle que l'adresse : le script en est la source
+                prix = data["poi"].get("price_eur")
+                if prix is not None and poi.price_eur != prix:
+                    poi.price_eur = prix
+                    prix_maj += 1
+                    print(f"    prix mis à jour : {nom} ({prix} €)")
 
             # Les details sont traites a part : une fiche peut exister sans eux, par
             # exemple quand la table de details a ete creee apres l'insertion de la fiche.
@@ -996,7 +1036,8 @@ def seed():
         print(
             f"\n{ajouts} ajoutée(s), {ignores} déjà présente(s), "
             f"{details_ajoutes} fiche(s) de détails créée(s), "
-            f"{details_completes} complétée(s), {adresses_maj} adresse(s) mise(s) à jour. "
+            f"{details_completes} complétée(s), {adresses_maj} adresse(s) et "
+            f"{prix_maj} prix mis à jour. "
             f"{total} activités au total."
         )
 
