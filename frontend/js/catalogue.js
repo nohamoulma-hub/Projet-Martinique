@@ -341,8 +341,10 @@ async function loadCommunes() {
     const communes = await res.json();
     communes.forEach(nom => select.add(new Option(nom, nom)));
     communesLoaded = true;
-  } catch {
-    select.options[0].textContent = 'Communes indisponibles';
+  } catch (err) {
+    // Panne rendue visible : sans cela, la liste reste muette et semble simplement vide
+    select.options[0].textContent = 'Communes indisponibles, réessayer';
+    console.error('Chargement des communes impossible :', err);
   }
 }
 
@@ -452,6 +454,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await updateNav();
 
   initCommuneFilter();
+  loadCommunes();
 
   // Restaure le filtre de proximite depuis l'URL avant de charger, pour que le retour
   // arriere depuis une fiche retrouve l'ecran tel qu'il etait.
