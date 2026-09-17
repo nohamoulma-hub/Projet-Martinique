@@ -17,28 +17,6 @@
     --input-bg: #faf8f4;
     --input-border: #d6cfc2;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #0D1F2D;
-      --card-bg: #142030;
-      --card-border: rgba(255,255,255,0.08);
-      --texte: #EDE8DC;
-      --doux: #9e8f7a;
-      --input-bg: #1a2d40;
-      --input-border: #2e4560;
-      --blanc: #EDE8DC;
-    }
-  }
-  :root[data-theme="light"] {
-    --bg: #FEFCF7; --card-bg: #fff; --card-border: rgba(0,0,0,0.08);
-    --texte: #1A1208; --doux: #6B5B45;
-    --input-bg: #faf8f4; --input-border: #d6cfc2; --blanc: #FEFCF7;
-  }
-  :root[data-theme="dark"] {
-    --bg: #0D1F2D; --card-bg: #142030; --card-border: rgba(255,255,255,0.08);
-    --texte: #EDE8DC; --doux: #9e8f7a;
-    --input-bg: #1a2d40; --input-border: #2e4560; --blanc: #EDE8DC;
-  }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
