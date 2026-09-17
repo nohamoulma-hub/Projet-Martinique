@@ -11,10 +11,16 @@ function updateProgress() {
 window.addEventListener('scroll', updateProgress, { passive: true });
 updateProgress();
 
-// Extrait la commune depuis le champ address (ex: "Le Prêcheur, Martinique" -> "Le Prêcheur")
+// Extrait la commune du champ address. Celui-ci peut se limiter a la commune
+// ("Le Prêcheur, Martinique") ou porter une adresse complete
+// ("Route de Belfond, 97221 Le Carbet, Martinique") : on lit la derniere partie
+// avant "Martinique" et on retire le code postal.
 function extractCommune(address) {
   if (!address) return '';
-  return address.split(',')[0].trim();
+  const parties = address.split(',').map(p => p.trim()).filter(Boolean);
+  const sansPays = parties.filter(p => !/^martinique$/i.test(p));
+  const derniere = sansPays[sansPays.length - 1] || parties[0] || '';
+  return derniere.replace(/^\d{5}\s*/, '').trim();
 }
 
 // Mappe le tourist_score (1-5) vers un label de fréquentation
@@ -309,6 +315,13 @@ function fillAccessGrid(activite) {
     items.push({ icon: '📍', label: 'Départ', value: commune || '-' });
     items.push({ icon: '🥾', label: 'Difficulté', value: activite.hike_details.difficulty || '-' });
     items.push({ icon: '⏱️', label: 'Durée estimée', value: formatDuration(activite.hike_details.duration) || '-' });
+  } else if (activite.category === 'rum_distillery') {
+    items.push({ icon: '📍', label: 'Adresse', value: activite.address || '-' });
+    items.push({ icon: '🏘️', label: 'Commune', value: commune || '-' });
+    const rd = activite.rum_distillery_details;
+    if (rd && rd.opening_hours) {
+      items.push({ icon: '🕘', label: 'Horaires', value: formatHoraires(rd.opening_hours) });
+    }
   } else {
     items.push({ icon: '📍', label: 'Adresse', value: activite.address || '-' });
   }
