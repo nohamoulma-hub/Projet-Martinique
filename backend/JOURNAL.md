@@ -1081,3 +1081,50 @@ sinon les vignettes de maquette (parasol, palmier), qui laissaient croire à des
 
 **Formatage des horaires étendu** aux deux services par jour ("12:00-14:15,19:00-22:00" ->
 "12h-14h15 et 19h-22h") et à minuit.
+
+
+## 2026-09-17 (suite) - Assistant IA de planning
+
+### Ce qui a été construit
+
+Modèle **Claude Sonnet 5** via le SDK `anthropic`, appelé uniquement par le backend.
+Deux tables (`conversations`, `conversation_messages`), une colonne `price_eur` sur
+`points_of_interest`, migration `13364eb2b53f`, service `planning_service.py`, router
+`/api/planning`, page `planning-ia.html` branchée, onglet « Assistant IA » dans l'espace
+personnel, 20 tests (80 au total).
+
+### Décisions
+
+**Le planning est un vrai projet de voyage.** L'assistant écrit dans `travel_projects` et
+`travel_project_items`, les tables qui existaient déjà. L'utilisateur modifie donc son
+planning depuis `detail-voyage.html` sans repasser par l'IA, comme demandé, et aucune page
+n'a été réécrite pour cela.
+
+**L'invention est empêchée par le code, pas seulement par le prompt.** Le modèle ne connaît
+le catalogue que par l'outil `rechercher_activites`, qui lit la base ; `creer_planning`
+refuse tout identifiant inconnu et n'écrit alors rien. Une consigne de prompt seule aurait
+été une promesse, pas une garantie.
+
+**Tous les garde-fous sont côté serveur** : 3 conversations par jour et par compte,
+30 messages par conversation, 2 000 caractères par message, 5 secondes entre deux messages,
+plafond de dépense global de 5 € par défaut. Un contrôle côté navigateur se contournerait
+avec la console. Le coût est calculé depuis les tokens réellement consommés et cumulé sur
+chaque conversation.
+
+**Contre l'injection de prompt** : le texte du voyageur est encadré par une balise
+`<message_du_voyageur>` et le prompt système précise que messages et descriptions sont des
+données, jamais des consignes. Les règles ne sont jamais recopiées dans la conversation.
+
+**Journées de repos.** L'API ne renvoie que les activités, donc une journée vide n'existe
+pas en base. Le volet du planning reconstitue la suite des jours pour afficher « Journée de
+repos », sinon le jour 2 d'un séjour aurait simplement disparu de l'affichage.
+
+**Prix.** La colonne `price_eur` vaut 0 pour les plages et randonnées (accès libre) et porte
+un prix moyen pour deux restaurants. Les tarifs des rhumeries ne sont pas publiés de façon
+vérifiable : ils restent à `None`, et l'assistant dit qu'il les ignore.
+
+### Limite connue
+
+Le modèle n'est pas testé en conditions réelles : aucune clé API n'est configurée sur ce
+poste. La boucle d'outils a été validée avec un faux client qui rejoue une conversation
+complète (recherche, enregistrement, conclusion).
