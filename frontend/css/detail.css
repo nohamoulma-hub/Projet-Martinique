@@ -467,6 +467,12 @@ body.chargement .breadcrumb-inner {
 /* Bandeau avec la photo de l'activite. Le flou du degrade par defaut est retire :
    il sert a lisser le degrade, mais rendrait une vraie photo meconnaissable.
    La lisibilite du titre reste assuree par .hero-overlay. */
+/* Degrades de secours quand l'activite n'a pas encore de photo. Memes couleurs que les
+   vignettes du catalogue, pour qu'une categorie garde la meme identite d'une page a l'autre. */
+.hero-bg.sans-photo-restaurant { background: linear-gradient(135deg, #C8392B, #8B1A0D); filter: none; }
+.hero-bg.sans-photo-rum-distillery { background: linear-gradient(135deg, #8B4513, #5C2D08); filter: none; }
+.hero-bg.sans-photo-hike { background: linear-gradient(135deg, #1D7A4E, #0C3D27); filter: none; }
+
 .hero-bg.avec-photo {
   background: var(--hero-photo) center / cover no-repeat;
   filter: none;
