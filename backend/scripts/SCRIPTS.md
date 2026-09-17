@@ -43,7 +43,9 @@ L'ancienne version s'arrêtait dès que la table contenait une seule ligne, ce q
 tout vider pour ajouter quoi que ce soit.
 
 **Il complète aussi les détails manquants.** Une fiche déjà présente mais sans sa ligne de
-détails reçoit celle-ci. C'est ce qui a permis d'ajouter les informations pratiques des
+détails reçoit celle-ci, et une ligne existante voit ses **colonnes vides** remplies par les
+valeurs du script. Une valeur déjà en base n'est jamais écrasée : le script complète, il ne
+corrige pas. Pour changer une valeur existante, passer par SQL. C'est ce qui a permis d'ajouter les informations pratiques des
 rhumeries (horaires, téléphone, site web) après leur création, sans les recréer.
 
 Les horaires, téléphones et sites web des rhumeries proviennent d'OpenStreetMap. La
