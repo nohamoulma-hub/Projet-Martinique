@@ -84,7 +84,9 @@ const JOURS_OSM = { Mo: 'lundi', Tu: 'mardi', We: 'mercredi', Th: 'jeudi',
 function formatHoraires(osm) {
   if (!osm) return null;
   // "08:30" -> "8h30", "09:00" -> "9h"
-  const heure = h => h.replace(/^0/, '').replace(':00', 'h').replace(':', 'h');
+  const heure = h => h === '00:00'
+    ? 'minuit'
+    : h.replace(/^0/, '').replace(':00', 'h').replace(':', 'h');
 
   // "Tu,We,Sa" -> "mardi, mercredi et samedi"
   const listeJours = spec => {
@@ -93,11 +95,16 @@ function formatHoraires(osm) {
     return `${noms.slice(0, -1).join(', ')} et ${noms[noms.length - 1]}`;
   };
 
+  // "12:00-14:15,19:00-22:00" -> "12h-14h15 et 19h-22h" : les restaurants ont deux services
+  const creneaux = spec => spec.split(',')
+    .map(c => c.split('-').map(heure).join('-'))
+    .join(' et ');
+
   const parties = osm.split(';').map(p => p.trim()).filter(Boolean).map(partie => {
-    const m = partie.match(/^([A-Za-z]{2}(?:[,-][A-Za-z]{2})*)\s+(\d{2}:\d{2})-(\d{2}:\d{2})$/);
+    const m = partie.match(/^([A-Za-z]{2}(?:[,-][A-Za-z]{2})*)\s+(\d{2}:\d{2}-\d{2}:\d{2}(?:,\d{2}:\d{2}-\d{2}:\d{2})*)$/);
     if (!m) return null;
-    const [, jours, h1, h2] = m;
-    const creneau = `${heure(h1)}-${heure(h2)}`;
+    const [, jours, horaires] = m;
+    const creneau = creneaux(horaires);
     if (jours === 'Mo-Su') return `tous les jours ${creneau}`;
     // Un intervalle ("Mo-Fr") se lit "du ... au ...", une liste s'enumere
     if (jours.includes('-')) {
@@ -186,6 +193,42 @@ function fillFicheCard(activite) {
         <span class="fiche-row-label">Site web</span>
         ${site}
       </div>`;
+  } else if (activite.category === 'restaurant') {
+    const rt = activite.restaurant_details || {};
+    const vide = '<span class="fiche-row-value fiche-vide">Non renseigné</span>';
+    const valeur = texte => texte
+      ? `<span class="fiche-row-value">${echapper(texte)}</span>`
+      : vide;
+
+    // Le guide Michelin n'attribue pas d'etoile en Martinique : l'absence de distinction
+    // est une information en soi, on l'affiche plutot que de laisser la ligne vide.
+    const distinction = rt.michelin_distinction
+      ? `<span class="fiche-row-value">${echapper(rt.michelin_distinction)}</span>`
+      : '<span class="fiche-row-value">Aucune distinction Michelin</span>';
+
+    const telephone = rt.phone
+      ? `<a class="fiche-row-value fiche-lien" href="tel:${echapper(rt.phone.replace(/\s/g, ''))}">${echapper(rt.phone)}</a>`
+      : vide;
+
+    const site = rt.website
+      ? `<a class="fiche-row-value fiche-lien" href="${echapper(rt.website)}" target="_blank" rel="noopener">${echapper(rt.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/.*$/, ''))}</a>`
+      : vide;
+
+    const lignes = [
+      ['Cuisine', valeur(rt.cuisine)],
+      ['Horaires', valeur(rt.opening_hours ? formatHoraires(rt.opening_hours) : null)],
+      ['Distinction', distinction],
+      ['Téléphone', telephone],
+      ['Site web', site],
+    ];
+    // La ligne n'apparait que pour un restaurant d'hotel
+    if (rt.hotel_name) lignes.splice(3, 0, ['Hôtel', valeur(rt.hotel_name)]);
+
+    ficheBody.innerHTML = lignes.map(([libelle, contenu]) => `
+      <div class="fiche-row">
+        <span class="fiche-row-label">${libelle}</span>
+        ${contenu}
+      </div>`).join('');
   } else if (activite.category === 'hike' && activite.hike_details) {
     const hd = activite.hike_details;
     ficheBody.innerHTML = `
@@ -286,7 +329,15 @@ function openLightbox(urls, startIndex) {
 // Rempli la galerie photos avec les images de l'API (ou laisse les placeholders si vide)
 function fillGallery(images) {
   const grid = document.querySelector('.gallery-grid');
-  if (!grid || images.length === 0) return;
+  if (!grid) return;
+
+  // Sans photo, les vignettes de maquette (parasol, palmier) resteraient affichees et
+  // feraient croire a des photos du lieu. On masque la section entiere.
+  if (images.length === 0) {
+    const section = grid.closest('section') || grid.parentElement;
+    if (section) section.hidden = true;
+    return;
+  }
 
   const urls = images.map(img => img.url);
 
@@ -315,6 +366,16 @@ function fillAccessGrid(activite) {
     items.push({ icon: '📍', label: 'Départ', value: commune || '-' });
     items.push({ icon: '🥾', label: 'Difficulté', value: activite.hike_details.difficulty || '-' });
     items.push({ icon: '⏱️', label: 'Durée estimée', value: formatDuration(activite.hike_details.duration) || '-' });
+  } else if (activite.category === 'restaurant') {
+    items.push({ icon: '📍', label: 'Adresse', value: activite.address || '-' });
+    items.push({ icon: '🏘️', label: 'Commune', value: commune || '-' });
+    const rt = activite.restaurant_details;
+    if (rt && rt.opening_hours) {
+      items.push({ icon: '🕘', label: 'Horaires', value: formatHoraires(rt.opening_hours) });
+    }
+    if (rt && rt.hotel_name) {
+      items.push({ icon: '🏨', label: 'Dans l\'hôtel', value: rt.hotel_name });
+    }
   } else if (activite.category === 'rum_distillery') {
     items.push({ icon: '📍', label: 'Adresse', value: activite.address || '-' });
     items.push({ icon: '🏘️', label: 'Commune', value: commune || '-' });
@@ -340,7 +401,7 @@ function fillAccessGrid(activite) {
 function fillBreadcrumb(activite) {
   const bc = document.querySelector('.breadcrumb-inner');
   if (!bc) return;
-  const typeLabel = { beach: 'Plages', hike: 'Randonnées', rum_distillery: 'Rhumeries' }[activite.category] || 'Activités';
+  const typeLabel = { beach: 'Plages', hike: 'Randonnées', rum_distillery: 'Rhumeries', restaurant: 'Restaurants' }[activite.category] || 'Activités';
   bc.innerHTML = `
     <a href="accueil.html">Accueil</a>
     <span class="breadcrumb-sep">›</span>
@@ -378,6 +439,8 @@ function applyTypeAccent(category) {
     // Fond plus opaque que les deux autres : le rouge sur une photo claire tombait
     // sous le seuil de lisibilite (2,98:1). A 0,92 et en blanc pur : 4,58:1.
     rum_distillery: { accent: '#C8392B', fond: 'rgba(200,57,43,.92)', texte: '#FFFFFF' },
+    // Jaune Madras : sur ce fond clair, le texte doit etre sombre (--nuit), 9,4:1
+    restaurant:     { accent: '#B07C0A', fond: 'rgba(240,180,41,.92)', texte: '#0D1F2D' },
   };
   const couleurs = ACCENTS[category];
   if (!couleurs) return;
@@ -499,13 +562,15 @@ async function loadActivite(id) {
     // Le code visait .detail-hero, une classe absente du HTML : la photo n'etait donc
     // jamais posee, et toutes les activites affichaient le degrade d'ocean par defaut.
     // L'URL passe par une variable CSS pour que le style reste dans la feuille.
-    if (activite.image_url) {
-      const heroBg = document.querySelector('.hero-bg');
-      if (heroBg) {
-        const url = activite.image_url.replace(/"/g, '%22');
-        heroBg.style.setProperty('--hero-photo', `url("${url}")`);
-        heroBg.classList.add('avec-photo');
-      }
+    const heroBg = document.querySelector('.hero-bg');
+    if (activite.image_url && heroBg) {
+      const url = activite.image_url.replace(/"/g, '%22');
+      heroBg.style.setProperty('--hero-photo', `url("${url}")`);
+      heroBg.classList.add('avec-photo');
+    } else if (heroBg) {
+      // Sans photo, le degrade par defaut evoque une plage : on le remplace par la
+      // couleur de la categorie, sinon un restaurant s'annonce en bleu lagon.
+      heroBg.classList.add(`sans-photo-${activite.category.replace(/_/g, '-')}`);
     }
 
     // Hero
