@@ -450,9 +450,10 @@ RHUMERIES = [
             "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/La_Mauny_001.jpg/1280px-La_Mauny_001.jpg",
         },
         "details": {
-            "opening_hours": None,
-            "phone": None,
-            "website": None,
+            # Saisis a la main : absents d'OpenStreetMap
+            "opening_hours": "Tu,We,Sa 09:00-17:30; Fr 09:00-17:00",
+            "phone": "+596 596 62 18 79",
+            "website": "https://www.maisonlamauny.com/fr-fr/",
             # Non documentes dans OpenStreetMap : a renseigner a la main.
             "tourist_score": None,
             "visit_access": None,
@@ -525,9 +526,11 @@ RHUMERIES = [
             "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Distillerie_Dillon.JPG/1280px-Distillerie_Dillon.JPG",
         },
         "details": {
-            "opening_hours": None,
-            "phone": None,
-            "website": None,
+            # Saisis a la main : absents d'OpenStreetMap
+            "opening_hours": "Mo-Fr 09:00-16:00",
+            # 0596 75 20 20 au format international, comme les autres fiches
+            "phone": "+596 596 75 20 20",
+            "website": "https://www.rhums-dillon.com/",
             # Non documentes dans OpenStreetMap : a renseigner a la main.
             "tourist_score": None,
             "visit_access": None,
@@ -547,10 +550,10 @@ def seed():
         # que la table contenait une ligne, ce qui empechait d'ajouter une categorie
         # a une base existante sans la detruire.
         existants = {p.name: p for p in db.query(PointOfInterest).all()}
-        ajouts = ignores = details_ajoutes = 0
+        ajouts = ignores = details_ajoutes = details_completes = 0
 
         def ajouter(data, libelle, classe_details=None, champ=None):
-            nonlocal ajouts, ignores, details_ajoutes
+            nonlocal ajouts, ignores, details_ajoutes, details_completes
             nom = data["poi"]["name"]
             poi = existants.get(nom)
 
@@ -577,6 +580,20 @@ def seed():
                 db.add(classe_details(**{champ: poi.id}, **data["details"]))
                 details_ajoutes += 1
                 print(f"    infos pratiques ajoutées : {nom}")
+                return
+
+            # Ligne deja presente : on ne remplit que les colonnes vides, pour qu'une
+            # information ajoutee au script arrive en base sans ecraser une saisie faite
+            # ailleurs ni obliger a repartir d'une base neuve.
+            champs_remplis = [
+                cle for cle, valeur in data["details"].items()
+                if valeur is not None and getattr(deja_detail, cle) is None
+            ]
+            for cle in champs_remplis:
+                setattr(deja_detail, cle, data["details"][cle])
+            if champs_remplis:
+                details_completes += 1
+                print(f"    infos pratiques complétées : {nom} ({', '.join(champs_remplis)})")
 
         for beach_data in BEACHES:
             ajouter(beach_data, "Plage", BeachDetails, "point_of_interest_id")
@@ -592,7 +609,8 @@ def seed():
         total = db.query(PointOfInterest).count()
         print(
             f"\n{ajouts} ajoutée(s), {ignores} déjà présente(s), "
-            f"{details_ajoutes} fiche(s) de détails complétée(s). "
+            f"{details_ajoutes} fiche(s) de détails créée(s), "
+            f"{details_completes} complétée(s). "
             f"{total} activités au total."
         )
 
