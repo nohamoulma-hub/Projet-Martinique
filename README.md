@@ -200,7 +200,9 @@ Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
 
 ### Catégories à développer
 
-- [ ] Restaurants (aucune donnée en base pour l'instant)
+- [x] Restaurants : 16 adresses ajoutées le 17/09/2026, dont 3 restaurants d'hôtel et
+      2 de la sélection du guide Michelin. Données OpenStreetMap, adresses par géocodage
+      inverse. Aucune photo libre de droit disponible.
 - [x] Rhumeries : 8 distilleries ajoutées (Neisson, Trois Rivières, Saint-James, J.M,
       La Mauny, Clément, Depaz, Dillon), coordonnées relevées sur OpenStreetMap,
       descriptions d'après Wikipédia, 28 photos Wikimedia Commons sous licence libre.
