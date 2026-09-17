@@ -191,13 +191,83 @@ async function loadProjets() {
   }
 }
 
-// Onglets : "Activités sauvegardées" et "Paramètres" -> message "Bientôt disponible"
+// Charge l'historique des conversations avec l'assistant de planning
+async function chargerConversations() {
+  const liste = document.getElementById('liste-conversations');
+  if (!liste) return;
+  liste.innerHTML = '<p class="conversations-vide">Chargement...</p>';
+
+  try {
+    const res = await fetch(`${API_URL}/planning/conversations`, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error();
+    const conversations = await res.json();
+
+    if (conversations.length === 0) {
+      liste.innerHTML = `<p class="conversations-vide">
+        Aucune conversation pour l'instant.
+        <a href="planning-ia.html">Demander un planning à l'assistant</a>.</p>`;
+      return;
+    }
+
+    liste.innerHTML = conversations.map(c => {
+      const date = new Date(c.created_at).toLocaleDateString('fr-FR',
+        { day: 'numeric', month: 'long', year: 'numeric' });
+      const titre = c.title || 'Conversation sans titre';
+      const planning = c.travel_project_id
+        ? `<a class="conversation-planning" href="detail-voyage.html?id=${c.travel_project_id}">Voir le planning</a>`
+        : '<span class="conversation-sans-planning">Aucun planning enregistré</span>';
+      return `
+        <div class="conversation-card">
+          <div>
+            <p class="conversation-titre">${echapperTexte(titre)}</p>
+            <p class="conversation-date">${date}</p>
+          </div>
+          <div class="conversation-actions">
+            ${planning}
+            <a class="conversation-reprendre" href="planning-ia.html?conversation=${c.id}">Reprendre</a>
+          </div>
+        </div>`;
+    }).join('');
+  } catch {
+    liste.innerHTML = '<p class="conversations-vide">Impossible de charger les conversations.</p>';
+  }
+}
+
+// Neutralise le HTML d'un titre repris du message de l'utilisateur
+function echapperTexte(texte) {
+  const d = document.createElement('div');
+  d.textContent = texte == null ? '' : String(texte);
+  return d.innerHTML;
+}
+
+// Onglets : "Assistant IA" affiche l'historique, "Activités sauvegardées" et
+// "Paramètres" restent hors scope v1
 function setupTabs() {
   const tabs = document.querySelectorAll('.ptab');
+  const sectionAssistant = document.getElementById('section-assistant');
+  // Les sections de la vue d'ensemble, a masquer quand on ouvre l'assistant
+  const sectionsProjets = [...document.querySelectorAll('.page-body > .section-head, .page-body > .voyage-grid, .page-body > .stats-row')];
+
+  const afficherAssistant = (visible) => {
+    if (sectionAssistant) sectionAssistant.hidden = !visible;
+    sectionsProjets.forEach(el => { el.hidden = visible; });
+  };
+
   tabs.forEach((tab, index) => {
     tab.addEventListener('click', () => {
-      // Onglets 2 et 3 (index 2, 3) sont hors scope v1
-      if (index === 2 || index === 3) {
+      // Onglet 2 : historique des conversations avec l'assistant
+      if (index === 2) {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const msg = document.getElementById('tab-soon-msg');
+        if (msg) msg.style.display = 'none';
+        afficherAssistant(true);
+        chargerConversations();
+        return;
+      }
+      afficherAssistant(false);
+      // Onglets 3 et 4 hors scope v1
+      if (index === 3 || index === 4) {
         tabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
         // Affiche un message dans le body si pas déjà affiché
