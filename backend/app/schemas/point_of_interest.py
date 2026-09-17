@@ -73,9 +73,23 @@ class PoiImageRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class RestaurantDetailsRead(BaseModel):
+    """Informations pratiques d'un restaurant. Tous les champs sont facultatifs :
+    OpenStreetMap et les sites des établissements ne documentent pas tout."""
+    cuisine: str | None = None
+    opening_hours: str | None = None
+    phone: str | None = None
+    website: str | None = None
+    michelin_distinction: str | None = None
+    hotel_name: str | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class PointOfInterestDetail(PointOfInterestRead):
     """Détail complet : inclut les informations spécifiques à la catégorie."""
     beach_details: BeachDetailsRead | None = None
     hike_details: HikeDetailsRead | None = None
     rum_distillery_details: RumDistilleryDetailsRead | None = None
+    restaurant_details: RestaurantDetailsRead | None = None
     images: list[PoiImageRead] = []
