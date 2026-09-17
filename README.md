@@ -181,15 +181,11 @@ Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
       des photos de rhumeries imposent de créditer l'auteur. L'inventaire existe dans
       `backend/scripts/CREDITS_PHOTOS.md`, mais rien ne s'affiche côté public : une page
       « Crédits » ou une mention sur la fiche de chaque activité reste à faire.
-- [ ] **Compléter les informations pratiques des rhumeries.** Horaires, téléphone et site
-      viennent d'OpenStreetMap, mais la fréquentation n'y est documentée pour aucune
-      distillerie : elle affiche « Non renseigné ». Les colonnes `visit_access` et
+- [ ] **Compléter les informations pratiques des rhumeries.** Horaires, téléphones, sites et
+      adresses postales sont complets pour les 8 distilleries depuis le 17/09/2026. Reste la
+      fréquentation (`tourist_score`), qu'aucune source ne documente : à saisir à la main dans
+      le bloc `details` de `backend/scripts/seed.py`. Les colonnes `visit_access` et
       `pets_allowed` existent en base mais ne sont plus affichées sur la fiche.
-      Champs à remplir dans le bloc `details` de chaque rhumerie, dans
-      `backend/scripts/seed.py`. Les horaires, téléphones et sites des 8 rhumeries sont
-      complets depuis le 17/09/2026.
-      Attention : `seed.py` ne crée une ligne de détails que si elle manque, il ne met pas à
-      jour une ligne existante. Pour corriger une valeur déjà en base, passer par SQL.
 - [ ] Compléter les galeries de La Mauny et Dillon : une seule photo libre existe sur
       Wikimedia Commons pour chacune, contre 5 pour les autres distilleries.
 
