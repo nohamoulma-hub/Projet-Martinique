@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.beach_details import BeachDetails
 from app.models.hike_details import HikeDetails
+from app.models.restaurant_details import RestaurantDetails
 from app.models.rum_distillery_details import RumDistilleryDetails
 from app.models.poi_image import PoiImage
 from app.models.point_of_interest import Category, PointOfInterest
@@ -118,6 +119,7 @@ def get_activite(activite_id: int, db: Session = Depends(get_db)):
     beach = None
     hike = None
     rhumerie = None
+    restaurant = None
     if poi.category == Category.BEACH:
         beach = db.query(BeachDetails).filter(BeachDetails.point_of_interest_id == poi.id).first()
     elif poi.category == Category.HIKE:
@@ -126,6 +128,12 @@ def get_activite(activite_id: int, db: Session = Depends(get_db)):
         rhumerie = (
             db.query(RumDistilleryDetails)
             .filter(RumDistilleryDetails.point_of_interest_id == poi.id)
+            .first()
+        )
+    elif poi.category == Category.RESTAURANT:
+        restaurant = (
+            db.query(RestaurantDetails)
+            .filter(RestaurantDetails.point_of_interest_id == poi.id)
             .first()
         )
 
@@ -140,5 +148,6 @@ def get_activite(activite_id: int, db: Session = Depends(get_db)):
     result.beach_details = beach
     result.hike_details = hike
     result.rum_distillery_details = rhumerie
+    result.restaurant_details = restaurant
     result.images = images
     return result
