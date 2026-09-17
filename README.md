@@ -185,8 +185,9 @@ Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
       viennent d'OpenStreetMap, mais la fréquentation n'y est documentée pour aucune
       distillerie : elle affiche « Non renseigné ». Les colonnes `visit_access` et
       `pets_allowed` existent en base mais ne sont plus affichées sur la fiche.
-      La Mauny et Dillon n'ont en plus ni horaires ni téléphone. Champs à remplir dans le
-      bloc `details` de chaque rhumerie, dans `backend/scripts/seed.py`.
+      Champs à remplir dans le bloc `details` de chaque rhumerie, dans
+      `backend/scripts/seed.py`. Les horaires, téléphones et sites des 8 rhumeries sont
+      complets depuis le 17/09/2026.
       Attention : `seed.py` ne crée une ligne de détails que si elle manque, il ne met pas à
       jour une ligne existante. Pour corriger une valeur déjà en base, passer par SQL.
 - [ ] Compléter les galeries de La Mauny et Dillon : une seule photo libre existe sur
