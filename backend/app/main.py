@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
-from app.routers import activites, auth, health, meteo, projets, utilisateurs
+from app.routers import activites, auth, health, meteo, planning, projets, utilisateurs
 
 # Toutes les routes API vivent sous /api. Un prefixe unique evite toute collision avec
 # un fichier statique du site (une route /meteo et une page meteo.html, par exemple) et
@@ -90,7 +90,7 @@ app.add_middleware(
 )
 
 # Enregistrement de tous les routeurs v1, tous sous le prefixe /api
-for routeur in (health, activites, auth, utilisateurs, projets, meteo):
+for routeur in (health, activites, auth, utilisateurs, projets, meteo, planning):
     app.include_router(routeur.router, prefix=API_PREFIX)
 
 # Sert le frontend statique depuis /site pour éviter les conflits avec les routes API
