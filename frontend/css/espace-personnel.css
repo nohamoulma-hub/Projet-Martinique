@@ -369,3 +369,19 @@ body.chargement .voyage-grid::after {
   justify-content: center;
   padding: 20px;
 }
+
+/* Historique des conversations avec l'assistant de planning */
+.conversations-liste { display: flex; flex-direction: column; gap: 10px; margin-bottom: 40px; }
+.conversation-card {
+  background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px;
+  padding: 14px 18px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.conversation-titre { font-size: 15px; font-weight: 500; color: var(--texte); }
+.conversation-date { font-size: 12px; color: var(--doux); margin-top: 2px; }
+.conversation-actions { display: flex; align-items: center; gap: 14px; }
+.conversation-planning, .conversation-reprendre { font-size: 13px; text-decoration: none; }
+.conversation-planning { color: var(--vert); }
+.conversation-reprendre { color: var(--rouge); font-weight: 500; }
+.conversation-sans-planning { font-size: 13px; color: var(--doux); }
+.conversations-vide { font-size: 14px; color: var(--doux); margin-bottom: 40px; }
