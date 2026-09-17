@@ -2,6 +2,7 @@
 from app.models.beach_details import BeachDetails
 from app.models.hike_details import HikeDetails
 from app.models.point_of_interest import Category, PointOfInterest
+from app.models.restaurant_details import RestaurantDetails
 from app.models.rum_distillery_details import RumDistilleryDetails
 
 
@@ -314,3 +315,61 @@ def test_sans_commune_pas_de_distance(client, db_session):
     _create_beach(db_session, "Plage Sans Distance")
     item = client.get("/api/activites").json()["items"][0]
     assert "distance_km" not in item
+
+
+def _create_restaurant(db, name="Restaurant Test", **details):
+    """Insère un restaurant de test avec sa ligne de details."""
+    poi = PointOfInterest(
+        name=name, category=Category.RESTAURANT, description="Test",
+        latitude=14.6, longitude=-61.0, address="Test, Martinique",
+    )
+    db.add(poi)
+    db.flush()
+    db.add(RestaurantDetails(point_of_interest_id=poi.id, **details))
+    db.commit()
+    return poi
+
+
+def test_get_activite_detail_restaurant(client, db_session):
+    """GET /activites/{id} pour un restaurant inclut restaurant_details."""
+    poi = _create_restaurant(
+        db_session, name="Table Test", cuisine="Créole", phone="+596 596 00 00 00",
+        opening_hours="Mo-Su 12:00-14:15,19:00-22:00", hotel_name="Hôtel Test",
+    )
+
+    response = client.get(f"/api/activites/{poi.id}")
+    assert response.status_code == 200
+    details = response.json()["restaurant_details"]
+    assert details["cuisine"] == "Créole"
+    assert details["hotel_name"] == "Hôtel Test"
+    # Aucune distinction : le guide Michelin n'etoile pas la Martinique
+    assert details["michelin_distinction"] is None
+
+
+def test_get_activite_detail_restaurant_sans_details(client, db_session):
+    """Un restaurant sans ligne de details renvoie null plutot qu'une erreur."""
+    poi = PointOfInterest(
+        name="Table Sans Details", category=Category.RESTAURANT, description="Test",
+        latitude=14.6, longitude=-61.0, address="Test, Martinique",
+    )
+    db_session.add(poi)
+    db_session.commit()
+
+    response = client.get(f"/api/activites/{poi.id}")
+    assert response.status_code == 200
+    assert response.json()["restaurant_details"] is None
+
+
+def test_filtre_categorie_restaurant(client, db_session):
+    """Le filtre de catégorie renvoie les restaurants."""
+    _create_restaurant(db_session, name="Table Filtrée")
+    _create_beach(db_session, name="Plage Non Filtrée")
+
+    data = client.get("/api/activites?categorie=restaurant").json()
+    assert [i["name"] for i in data["items"]] == ["Table Filtrée"]
+
+
+def test_restaurant_details_absent_des_autres_categories(client, db_session):
+    """Une plage ne renvoie pas de details de restaurant."""
+    poi = _create_beach(db_session, name="Plage Sans Table")
+    assert client.get(f"/api/activites/{poi.id}").json()["restaurant_details"] is None
