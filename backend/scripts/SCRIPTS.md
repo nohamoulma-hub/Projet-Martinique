@@ -48,7 +48,12 @@ valeurs du script. Une valeur déjà en base n'est jamais écrasée : le script 
 corrige pas. Pour changer une valeur existante, passer par SQL. C'est ce qui a permis d'ajouter les informations pratiques des
 rhumeries (horaires, téléphone, site web) après leur création, sans les recréer.
 
-Les horaires, téléphones et sites web des rhumeries proviennent d'OpenStreetMap. La
+**Il met aussi à jour les adresses.** L'adresse d'une fiche existante est réalignée sur celle
+du script, car c'est lui qui en est la source. Les adresses postales des rhumeries ont été
+relevées par géocodage inverse sur OpenStreetMap, à partir de leurs coordonnées GPS.
+
+Les horaires, téléphones et sites web des rhumeries proviennent d'OpenStreetMap, complétés à
+la main pour La Mauny, Dillon, Depaz, Saint-James et Clément. La
 fréquentation n'y est documentée pour aucune distillerie : elle vaut `None` dans le script et
 attend une saisie manuelle. Les champs d'accès et d'animaux existent encore mais ne sont plus
 affichés sur la page de détail.
