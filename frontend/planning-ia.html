@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planning IA : Martinique en famille</title>
-  <link rel="stylesheet" href="css/planning-ia.css">
+  <title>Planning IA : assistant de séjour</title>
+  <link rel="stylesheet" href="css/planning-ia.css?v=2">
   <link rel="stylesheet" href="css/nav.css">
-  <script src="js/etat-connexion.js"></script>
+  <script src="js/etat-connexion.js?v=2"></script>
 </head>
-<body>
+<body class="chargement">
 
 <!-- NAV -->
 <nav>
@@ -30,12 +30,12 @@
 <!-- BARRE DE CONTEXTE -->
 <div class="context-bar">
   <div class="context-left">
-    <a href="#" class="back-link" onclick="history.back(); return false;">Mon projet</a>
-    <p class="context-trip">Planning IA pour <strong>Martinique en famille</strong> · 12 — 22 sept. 2026 · 10 jours</p>
+    <a href="espace-personnel.html" class="back-link">Mon espace</a>
+    <p class="context-trip" id="contextTrip">Assistant de planification</p>
   </div>
-  <div class="context-status">
+  <div class="context-status" id="contextStatus">
     <div class="status-dot"></div>
-    Assistant disponible
+    <span id="contextStatusText">Assistant disponible</span>
   </div>
 </div>
 
@@ -46,49 +46,13 @@
   <!-- CHAT -->
   <div class="chat-panel">
     <div class="chat-header">
-      <p class="chat-header-tag">✦ Assistant IA · Martinique en famille</p>
+      <p class="chat-header-tag">✦ Assistant de planification · Martinique</p>
     </div>
     <div class="chat-messages" id="chatMessages">
-
-      <!-- Message IA d'accueil -->
-      <div class="msg-bulle ia">
-        Bonjour Marie ! Je suis votre assistant pour planifier <strong>Martinique en famille</strong>.<br><br>
-        Vous avez déjà 3 journées planifiées (jours 1 à 3). Je vais vous aider à compléter les 7 jours restants en tenant compte de vos activités existantes et de vos préférences.<br><br>
-        Pour commencer, quel est le rythme que vous souhaitez pour ce voyage ?
-      </div>
-      <div class="suggestion-chips">
-        <button class="chip" onclick="selectChip(this)">Rythme tranquille</button>
-        <button class="chip" onclick="selectChip(this)">Rythme soutenu</button>
-        <button class="chip" onclick="selectChip(this)">Mixte selon les jours</button>
-      </div>
-
-      <!-- Message utilisateur -->
-      <div class="msg-bulle user">Mixte selon les jours, avec au moins 2 journées très calmes pour se reposer.</div>
-      <div class="msg-time right">Il y a 1 min</div>
-
-      <!-- Message IA suite -->
-      <div class="msg-bulle ia">
-        Parfait. Quels types d'activités souhaitez-vous prioritiser pour les jours restants ?
-      </div>
-      <div class="suggestion-chips">
-        <button class="chip selected" onclick="selectChip(this)">Plages</button>
-        <button class="chip selected" onclick="selectChip(this)">Randonnées</button>
-        <button class="chip" onclick="selectChip(this)">Rhumeries</button>
-        <button class="chip" onclick="selectChip(this)">Marchés locaux</button>
-        <button class="chip" onclick="selectChip(this)">Snorkeling</button>
-        <button class="chip" onclick="selectChip(this)">Sites historiques</button>
-        <button class="chip" onclick="selectChip(this)">Restaurants</button>
-      </div>
-
-      <!-- Message utilisateur -->
-      <div class="msg-bulle user">Plages, marchés et snorkeling surtout. On a déjà fait une rando donc pas besoin d'en rajouter beaucoup.</div>
-      <div class="msg-time right">Il y a quelques secondes</div>
-
-      <!-- IA typing -->
-      <div class="msg-bulle ia" id="typingIndicator" style="padding:10px 16px;">
+      <!-- Les messages sont injectés par js/planning-ia.js -->
+      <div class="msg-bulle ia" id="typingIndicator" hidden style="padding:10px 16px;">
         <div class="typing"><span></span><span></span><span></span></div>
       </div>
-
     </div>
 
     <!-- ZONE DE SAISIE -->
@@ -106,240 +70,30 @@
   <div class="plan-panel">
     <div class="plan-header">
       <div>
-        <p class="plan-header-title">Planning généré</p>
-        <p class="plan-header-sub">7 jours · mis à jour en temps réel</p>
+        <p class="plan-header-title">Planning</p>
+        <p class="plan-header-sub" id="planHeaderSub">Aucun planning enregistré</p>
       </div>
     </div>
 
-    <!-- Onglets semaine -->
-    <div class="plan-week-tabs">
-      <button class="week-tab-btn active" onclick="switchPlanWeek(1)">
-        <span class="week-tab-label">Semaine 1</span>
-        <span class="week-tab-sub">Jours 4 – 7</span>
-      </button>
-      <button class="week-tab-btn" onclick="switchPlanWeek(2)">
-        <span class="week-tab-label">Semaine 2</span>
-        <span class="week-tab-sub">Jours 8 – 10</span>
-      </button>
-    </div>
-
-    <!-- Semaine 1 : jours 4 à 7 -->
-    <div class="plan-week-content active" id="plan-week-1">
-
-      <div class="plan-day open" onclick="toggleDay(this)">
-        <div class="plan-day-head">
-          <div class="plan-day-left">
-            <span class="plan-day-num">Jour 4</span>
-            <span class="plan-day-date">Mar. 15 sept.</span>
-          </div>
-          <div class="plan-day-left">
-            <span class="plan-day-summary">Salines · Snorkeling</span>
-            <span class="plan-day-chevron">▼</span>
-          </div>
-        </div>
-        <div class="plan-activities">
-          <div class="plan-activity">
-            <span class="plan-time">10h</span>
-            <div class="plan-act-info">
-              <p class="plan-act-name">Plage des Salines</p>
-              <p class="plan-act-cat cat-plage">Plage</p>
-            </div>
-          </div>
-          <div class="plan-activity">
-            <span class="plan-time">13h</span>
-            <div class="plan-act-info">
-              <p class="plan-act-name">Snack Le Marin</p>
-              <p class="plan-act-cat cat-resto">Déjeuner</p>
-            </div>
-          </div>
-          <div class="plan-activity">
-            <span class="plan-time">15h</span>
-            <div class="plan-act-info">
-              <p class="plan-act-name">Snorkeling Grande Anse</p>
-              <p class="plan-act-cat cat-detente">Snorkeling</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="plan-day" onclick="toggleDay(this)">
-        <div class="plan-day-head">
-          <div class="plan-day-left">
-            <span class="plan-day-num">Jour 5</span>
-            <span class="plan-day-date">Mer. 16 sept.</span>
-          </div>
-          <div class="plan-day-left">
-            <span class="plan-day-summary">Repos</span>
-            <span class="plan-day-chevron">▼</span>
-          </div>
-        </div>
-        <div class="plan-activities">
-          <div class="plan-activity">
-            <span class="plan-time">Matin</span>
-            <div class="plan-act-info">
-              <p class="plan-act-name">Journée libre · Repos</p>
-              <p class="plan-act-cat cat-detente">Détente</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="plan-day" onclick="toggleDay(this)">
-        <div class="plan-day-head">
-          <div class="plan-day-left">
-            <span class="plan-day-num">Jour 6</span>
-            <span class="plan-day-date">Jeu. 17 sept.</span>
-          </div>
-          <div class="plan-day-left">
-            <span class="plan-day-summary">Marché · Anse Couleuvre</span>
-            <span class="plan-day-chevron">▼</span>
-          </div>
-        </div>
-        <div class="plan-activities">
-          <div class="plan-activity">
-            <span class="plan-time">08h</span>
-            <div class="plan-act-info">
-              <p class="plan-act-name">Marché de Saint-Pierre</p>
-              <p class="plan-act-cat cat-culture">Marché</p>
-            </div>
-          </div>
-          <div class="plan-activity">
-            <span class="plan-time">14h</span>
-            <div class="plan-act-info">
-              <p class="plan-act-name">Anse Couleuvre</p>
-              <p class="plan-act-cat cat-plage">Plage</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="plan-day" onclick="toggleDay(this)">
-        <div class="plan-day-head">
-          <div class="plan-day-left">
-            <span class="plan-day-num">Jour 7</span>
-            <span class="plan-day-date">Ven. 18 sept.</span>
-          </div>
-          <div class="plan-day-left">
-            <span class="plan-day-summary">Snorkeling · Le Diamant</span>
-            <span class="plan-day-chevron">▼</span>
-          </div>
-        </div>
-        <div class="plan-activities">
-          <div class="plan-activity">
-            <span class="plan-time">09h</span>
-            <div class="plan-act-info">
-              <p class="plan-act-name">Snorkeling Anse Dufour</p>
-              <p class="plan-act-cat cat-detente">Snorkeling</p>
-            </div>
-          </div>
-          <div class="plan-activity">
-            <span class="plan-time">16h</span>
-            <div class="plan-act-info">
-              <p class="plan-act-name">Le Diamant · coucher de soleil</p>
-              <p class="plan-act-cat cat-plage">Plage</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Semaine 2 : jours 8 à 10 -->
-    <div class="plan-week-content" id="plan-week-2">
-
-      <div class="plan-day" onclick="toggleDay(this)">
-        <div class="plan-day-head">
-          <div class="plan-day-left">
-            <span class="plan-day-num">Jour 8</span>
-            <span class="plan-day-date">Sam. 19 sept.</span>
-          </div>
-          <div class="plan-day-left">
-            <span class="plan-day-summary">Repos</span>
-            <span class="plan-day-chevron">▼</span>
-          </div>
-        </div>
-        <div class="plan-activities">
-          <div class="plan-activity">
-            <span class="plan-time">Matin</span>
-            <div class="plan-act-info">
-              <p class="plan-act-name">Journée libre · Repos</p>
-              <p class="plan-act-cat cat-detente">Détente</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="plan-day" onclick="toggleDay(this)">
-        <div class="plan-day-head">
-          <div class="plan-day-left">
-            <span class="plan-day-num">Jour 9</span>
-            <span class="plan-day-date">Dim. 20 sept.</span>
-          </div>
-          <div class="plan-day-left">
-            <span class="plan-day-summary">Marché · Fonds Blancs</span>
-            <span class="plan-day-chevron">▼</span>
-          </div>
-        </div>
-        <div class="plan-activities">
-          <div class="plan-activity">
-            <span class="plan-time">09h</span>
-            <div class="plan-act-info">
-              <p class="plan-act-name">Marché du François</p>
-              <p class="plan-act-cat cat-culture">Marché</p>
-            </div>
-          </div>
-          <div class="plan-activity">
-            <span class="plan-time">14h</span>
-            <div class="plan-act-info">
-              <p class="plan-act-name">Les Fonds Blancs en bateau</p>
-              <p class="plan-act-cat cat-detente">Excursion</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="plan-day" onclick="toggleDay(this)">
-        <div class="plan-day-head">
-          <div class="plan-day-left">
-            <span class="plan-day-num">Jour 10</span>
-            <span class="plan-day-date">Lun. 21 sept.</span>
-          </div>
-          <div class="plan-day-left">
-            <span class="plan-day-summary">Anse Michel · Dîner d'adieu</span>
-            <span class="plan-day-chevron">▼</span>
-          </div>
-        </div>
-        <div class="plan-activities">
-          <div class="plan-activity">
-            <span class="plan-time">10h</span>
-            <div class="plan-act-info">
-              <p class="plan-act-name">Plage de l'Anse Michel</p>
-              <p class="plan-act-cat cat-plage">Plage</p>
-            </div>
-          </div>
-          <div class="plan-activity">
-            <span class="plan-time">19h</span>
-            <div class="plan-act-info">
-              <p class="plan-act-name">Dîner d'adieu · Fort-de-France</p>
-              <p class="plan-act-cat cat-resto">Restaurant</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <div class="plan-jours" id="planJours">
+      <p class="plan-vide" id="planVide">
+        Le planning s'affichera ici, jour par jour, dès que l'assistant l'aura enregistré.
+        Chaque journée se déplie d'un clic.
+      </p>
     </div>
 
     <div class="plan-footer">
-      <button class="plan-regen">Regénérer</button>
-      <button class="plan-validate" style="flex:1;">Valider et ajouter au voyage</button>
+      <a class="plan-validate" id="planLien" href="#" hidden style="flex:1;text-align:center;">
+        Modifier dans mon espace
+      </a>
     </div>
   </div>
 
 </div>
 </div>
 
-<script src="js/auth-utils.js"></script>
-<script src="js/planning-ia.js"></script>
+<script src="js/auth-utils.js?v=2"></script>
+<script src="js/planning-ia.js?v=2"></script>
 
 </body>
 </html>
