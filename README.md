@@ -125,10 +125,11 @@ Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
 
 ### Backend
 
-- 9 modèles SQLAlchemy : `User`, `PointOfInterest`, `PoiImage`, `BeachDetails`, `HikeDetails`,
-  `RumDistilleryDetails`, `RestaurantDetails`, `TravelProject`, `TravelProjectItem`
-- PostgreSQL 18 en conteneur, 5 migrations Alembic
-- 12 routes API, toutes sous le préfixe `/api` :
+- 11 modèles SQLAlchemy : `User`, `PointOfInterest`, `PoiImage`, `BeachDetails`, `HikeDetails`,
+  `RumDistilleryDetails`, `RestaurantDetails`, `TravelProject`, `TravelProjectItem`,
+  `Conversation`, `ConversationMessage`
+- PostgreSQL 18 en conteneur, 6 migrations Alembic
+- 16 routes API, toutes sous le préfixe `/api` :
   - `GET /health`
   - `GET /api/activites` (pagination, filtres catégorie, recherche, tri, commune et rayon)
   - `GET /api/activites/communes` (les 34 communes, pour le filtre de proximité)
@@ -137,9 +138,12 @@ Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
   - `GET /api/utilisateurs/moi` et `PUT /api/utilisateurs/moi` (protégées)
   - `GET/POST/PUT/DELETE /api/projets` et `POST/DELETE /api/projets/{id}/activites` (protégées)
   - `GET /api/meteo` (données en direct via Open-Meteo, coordonnées Fort-de-France)
+  - `GET /api/planning/accueil` (message d'accueil de l'assistant, seule route publique)
+  - `GET/POST /api/planning/conversations` et `GET /api/planning/conversations/{id}` (protégées)
+  - `POST /api/planning/conversations/{id}/messages` (protégée, appelle Claude Sonnet 5)
 - Authentification JWT avec hachage bcrypt, règles de mot de passe centralisées dans
   `app/core/security.py`
-- 60 tests (pytest + httpx), tous verts
+- 80 tests (pytest + httpx), tous verts
 - Statique servi par nginx, qui relaie `/api/` vers le backend
 
 ### Données
@@ -177,6 +181,13 @@ Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
 - [ ] Partage de projet de voyage (lien public)
 
 ### Données et photos
+
+- [ ] **Compléter le prix des activités.** La colonne `price_eur` alimente la planification
+      par budget de l'assistant. Renseignée pour les 9 plages et 6 randonnées (accès libre,
+      0 €) et pour 2 restaurants (prix moyen relevé sur ViaMichelin). Restent inconnus :
+      les 8 rhumeries (tarifs de visite non publiés de façon fiable), 14 restaurants et
+      Gorges de la Falaise (accès guidé payant). Un prix inconnu n'est pas inventé :
+      l'assistant le signale au voyageur.
 
 - [ ] **Trouver des photos pour les 16 restaurants.** Aucune image libre de droit n'existe
       sur Wikimedia Commons pour ces établissements : leurs vignettes affichent le dégradé
@@ -238,7 +249,12 @@ Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
       publie `127.0.0.1:5432` pour permettre l'inspection avec un client graphique. C'est sans
       risque en local, mais à retirer ou à protéger en production.
 - [ ] Alertes sargasses en temps réel (API Sargassum Watch System / USF identifiée)
-- [ ] Assistant IA de planning (interface prête, logique à connecter)
+- [x] **Assistant IA de planning.** Développé le 17/09/2026 avec Claude Sonnet 5.
+      Conversation sur `planning-ia.html`, planning affiché dans le volet de droite et
+      enregistré comme projet de voyage modifiable. Garde-fous côté serveur : connexion
+      obligatoire, 3 conversations par jour et par compte, 30 messages par conversation,
+      5 secondes entre deux messages, plafond de dépense global, refus des demandes hors
+      sujet et des activités absentes du catalogue. Clé dans `ANTHROPIC_API_KEY`.
 - [ ] Comparateur de billets d'avion (Paris -> Fort-de-France)
 - [x] Migration SQLite -> PostgreSQL (validée sur PostgreSQL 18.6 : migrations, enums, données, API, tests)
 - [x] **SECURITE : règles de mot de passe côté serveur.** Corrigé le 2026-09-16. Le backend
