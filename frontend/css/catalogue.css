@@ -193,7 +193,7 @@
   .card-name { font-family: var(--font-titre); font-size: 18px; color: var(--texte); line-height: 1.2; }
   /* Nom et categorie groupes : l'ecart de 8px du corps de carte les separerait trop */
   .card-heading { display: flex; flex-direction: column; gap: 3px; }
-  .card-category { font-size: 15px; font-weight: 500; color: var(--texte); opacity: .75; }
+  .card-category { font-size: 15px; font-weight: 500; color: var(--rouge); }
   .card-desc { font-size: 13px; color: var(--doux); line-height: 1.5; flex: 1; }
 
   .card-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
