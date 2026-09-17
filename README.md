@@ -177,6 +177,11 @@ Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
 
 ### Données et photos
 
+- [ ] **Trouver des photos pour les 16 restaurants.** Aucune image libre de droit n'existe
+      sur Wikimedia Commons pour ces établissements : leurs vignettes affichent le dégradé
+      de la catégorie et la section « Photos » est masquée sur leur fiche. Photos à prendre
+      sur place ou à obtenir des restaurateurs, puis à déclarer dans `scripts/seed_gallery.py`.
+
 - [ ] **Rendre les crédits photo accessibles depuis le site.** Les licences CC BY et CC BY-SA
       des photos de rhumeries imposent de créditer l'auteur. L'inventaire existe dans
       `backend/scripts/CREDITS_PHOTOS.md`, mais rien ne s'affiche côté public : une page
