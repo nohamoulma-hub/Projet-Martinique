@@ -48,17 +48,18 @@ Projet-Martinique/
 ## **ÉTAT ACTUEL**
 
 ### Backend
-- ✅ 9 modèles SQLAlchemy : `User`, `PointOfInterest`, `PoiImage`, `BeachDetails`,
+- ✅ 11 modèles SQLAlchemy : `User`, `PointOfInterest`, `PoiImage`, `BeachDetails`,
   `HikeDetails`, `RumDistilleryDetails`, `RestaurantDetails`, `TravelProject`,
-  `TravelProjectItem`
-- ✅ PostgreSQL 18 en conteneur, 5 migrations Alembic appliquées
+  `TravelProjectItem`, `Conversation`, `ConversationMessage`
+- ✅ PostgreSQL 18 en conteneur, 6 migrations Alembic appliquées
 - ✅ 5 schémas Pydantic : `auth`, `meteo`, `point_of_interest`, `travel_project`, `user`
 - ✅ 6 routers, soit 12 routes : catalogue (avec filtre par commune et rayon), liste des
   communes, détail d'activité, inscription, connexion,
   profil, projets de voyage avec ajout et retrait d'activités, météo, health
-- ✅ 3 services : `auth_service` (JWT, bcrypt), `meteo_service` (API externe),
-  `communes_service` (coordonnées des 34 communes, calcul de distance)
-- ✅ 60 tests pytest, tous au vert
+- ✅ 4 services : `auth_service` (JWT, bcrypt), `meteo_service` (API externe),
+  `communes_service` (coordonnées des 34 communes, calcul de distance),
+  `planning_service` (assistant IA : prompt, outils, garde-fous)
+- ✅ 80 tests pytest, tous au vert
 - ✅ Données de démonstration : 40 points d'intérêt (9 plages, 7 randonnées,
   8 rhumeries, 16 restaurants), insérés par `scripts/seed.py`
 - ❌ Aucune donnée pour les catégories logements, événements (hors v1)
@@ -152,6 +153,25 @@ Toutes les pages utilisent le design system "Madras". Ne pas s'en écarter.
 - Pour les routes protégées, le frontend envoie le token JWT dans le header :
   `Authorization: Bearer <token>`
 
+## **ASSISTANT IA DE PLANNING**
+
+Modèle : **Claude Sonnet 5** (`claude-sonnet-5`), via le SDK officiel `anthropic`.
+Clé dans `ANTHROPIC_API_KEY` (fichier `.env` à la racine), jamais dans le navigateur :
+tous les appels passent par le backend.
+
+Règles à ne pas contourner, toutes appliquées côté serveur :
+
+- Connexion obligatoire sur toutes les routes `/api/planning`.
+- 3 conversations par utilisateur et par jour, 30 messages par conversation,
+  2 000 caractères par message, 5 secondes entre deux messages.
+- Plafond de dépense global (`PLANNING_BUDGET_EUR`, 5 € par défaut) : au-delà,
+  l'assistant renvoie 503. Le coût réel est calculé depuis les tokens consommés.
+- Le modèle ne connaît le catalogue que par l'outil `rechercher_activites`, et
+  `creer_planning` refuse tout identifiant absent de la base. C'est ce qui empêche
+  matériellement l'invention d'activités.
+- Le texte du voyageur est encadré par `<message_du_voyageur>` : il est lu comme une
+  donnée, jamais comme une consigne.
+
 ## **JOURNAL DU PROJET**
 
 Le fichier `backend/JOURNAL.md` contient l'historique chronologique de toutes
@@ -161,8 +181,9 @@ techniques importantes qu'il a prises.
 
 ## **CE QU'IL NE FAUT PAS FAIRE**
 
-- ❌ Implémenter des fonctionnalités hors v1 (IA de planning, sargasses,
-  comparateur de vols, logements, événements)
+- ❌ Implémenter des fonctionnalités hors v1 (sargasses, comparateur de vols,
+  logements, événements). L'assistant IA de planning, lui, est développé depuis
+  le 17/09/2026 : voir `app/services/planning_service.py`.
 - ❌ Modifier les modèles SQLAlchemy existants
 - ❌ Modifier le schéma de base de données sans créer une migration Alembic
 - ❌ Installer une nouvelle librairie sans demander d'abord
