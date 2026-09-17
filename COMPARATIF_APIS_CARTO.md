@@ -62,6 +62,16 @@ s'engager.
 **a été supprimé en mars 2025**. Chaque service a désormais son propre quota gratuit, et ces
 quotas ne se cumulent pas.
 
+## Décision retenue (17 septembre 2026)
+
+**OpenRouteService** pour les distances par la route, pour rester cohérent avec
+OpenStreetMap, déjà utilisé dans le projet pour les informations des rhumeries. L'IGN,
+recommandé plus bas dans ce document, reste la solution de repli.
+
+**Google Places API** est gardé comme piste pour les restaurants et les logements, où sa base
+de lieux est plus fournie qu'OpenStreetMap. Voir la section « Google Places en détail » en fin
+de document pour ce qu'elle couvre vraiment et ce qu'elle ne couvre pas.
+
 ## Recommandation
 
 **Pour le calcul de distance : IGN Géoplateforme.**
@@ -116,3 +126,49 @@ une clé gratuite et l'affichage d'une attribution.
 - [Conditions générales cartes.gouv.fr](https://cartes.gouv.fr/cgu/)
 - [Restrictions techniques OpenRouteService](https://openrouteservice.org/restrictions/)
 - [Offres OpenRouteService](https://account.heigit.org/info/plans)
+
+## Google Places en détail
+
+Étudié le 17 septembre 2026, pour savoir si cette API pourrait remplir les champs laissés
+vides sur les activités.
+
+### Gratuite à notre échelle, oui
+
+Chaque service a son quota mensuel gratuit, et les champs les plus utiles ici relèvent du
+palier « Enterprise », dont le quota est le plus bas :
+
+| Ce qu'on demande | Palier | Gratuit par mois | Au-delà |
+|---|---|---|---|
+| Horaires, téléphone, site, note | Place Details Enterprise | 1 000 appels | 20 $ / 1 000 |
+| Retrouver un lieu par son nom | Text Search Enterprise | 1 000 appels | 35 $ / 1 000 |
+| Animaux acceptés, parking | Place Details Enterprise + Atmosphere | 1 000 appels | 25 $ / 1 000 |
+
+Avec 24 activités, un rafraîchissement complet coûte 24 appels. On reste très loin du quota,
+même en rafraîchissant chaque mois. Une carte bancaire reste exigée à l'inscription.
+
+### Ce qu'elle remplirait vraiment
+
+| Champ vide aujourd'hui | Google Places |
+|---|---|
+| Horaires des rhumeries (La Mauny, Dillon) | **oui** |
+| Téléphone des rhumeries | **oui** |
+| Site web | **oui** |
+| Fréquentation (`tourist_score`) | **non** : l'API donne la note et le nombre d'avis, jamais l'affluence. Les « horaires d'affluence » de Google Maps ne sont pas exposés par l'API |
+| Conditions de visite (`visit_access`) : visite libre ou guidée, tarif, réservation | **non** |
+| Animaux acceptés | techniquement oui, mais ce champ n'est renseigné que pour les restaurants, presque jamais pour une distillerie |
+| Équipements et détails des plages et randonnées | **non**, ce ne sont pas des établissements |
+
+### La contrainte qui change tout
+
+Les conditions de Google interdisent de conserver ce contenu plus de 30 jours. Seul
+l'identifiant de lieu (« place ID ») peut être gardé indéfiniment.
+
+On ne peut donc pas remplir la base une fois pour toutes : il faudrait un script de
+rafraîchissement mensuel, et afficher le logo Google là où ces informations apparaissent.
+
+### Conclusion
+
+Pour 8 rhumeries, écrire les horaires à la main coûte moins cher que de construire et
+maintenir un rafraîchissement mensuel. Google Places prendra son sens quand on ajoutera les
+restaurants et les logements, où les lieux se comptent en centaines et où OpenStreetMap est
+nettement plus lacunaire.
