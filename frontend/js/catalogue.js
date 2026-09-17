@@ -69,10 +69,16 @@ function formatDuration(minutes) {
   return m > 0 ? `${h}h${m.toString().padStart(2, '0')}` : `${h}h`;
 }
 
-// Extrait la commune depuis le champ address (ex: "Le Prêcheur, Martinique" -> "Le Prêcheur")
+// Extrait la commune du champ address. Celui-ci peut se limiter a la commune
+// ("Le Prêcheur, Martinique") ou porter une adresse complete
+// ("Route de Belfond, 97221 Le Carbet, Martinique") : on lit la derniere partie
+// avant "Martinique" et on retire le code postal.
 function extractCommune(address) {
   if (!address) return '';
-  return address.split(',')[0].trim();
+  const parties = address.split(',').map(p => p.trim()).filter(Boolean);
+  const sansPays = parties.filter(p => !/^martinique$/i.test(p));
+  const derniere = sansPays[sansPays.length - 1] || parties[0] || '';
+  return derniere.replace(/^\d{5}\s*/, '').trim();
 }
 
 // Libelles affiches sous le nom de chaque vignette, a la place du code de l'API
@@ -274,6 +280,24 @@ async function loadActivites(append = false) {
   }
 }
 
+// Nom de filtre utilise dans l'URL, inverse de la table du parametre ?filtre=
+const FILTRES_URL = { beach: 'plages', hike: 'randonnees', rum_distillery: 'rhumeries' };
+
+// Recopie l'etat des filtres dans l'URL. Sans cela, revenir depuis une fiche par le bouton
+// precedent du navigateur rouvrait le catalogue sans filtre.
+function syncUrl() {
+  const params = new URLSearchParams();
+  if (currentFilter && FILTRES_URL[currentFilter]) params.set('filtre', FILTRES_URL[currentFilter]);
+  if (currentCommune) {
+    params.set('commune', currentCommune);
+    params.set('rayon', currentRayon);
+  }
+  const query = params.toString();
+  // replaceState et non pushState : un clic sur un filtre ne doit pas ajouter une etape
+  // a l'historique, sinon le bouton precedent reculerait filtre par filtre.
+  history.replaceState(null, '', query ? `?${query}` : location.pathname);
+}
+
 // Gestion des clics sur les boutons de filtre
 function setFilter(btn) {
   // Le bouton "Par commune" a son propre etat : il n'est pas une categorie
@@ -287,13 +311,6 @@ function setFilter(btn) {
   const isUnsupported = UNSUPPORTED_LABELS.some(ul => btn.textContent.includes(ul.replace(/^\p{Emoji}\s*/u, '')));
 
   if (isUnsupported) {
-    // Distance affichee a cote de la commune quand le filtre de proximite est actif
-function formatDistance(distanceKm) {
-  if (distanceKm === undefined || distanceKm === null) return '';
-  return ` · ${String(distanceKm).replace('.', ',')} km`;
-}
-
-// Affiche un message "Bientôt disponible" dans la grille
     const rawLabel = btn.textContent.trim();
     showComingSoon(`${rawLabel} — bientôt disponible`);
     return;
@@ -310,6 +327,7 @@ function formatDistance(distanceKm) {
 
   currentPageNum = 1;
   currentSearch = document.querySelector('.search-input').value.trim();
+  syncUrl();
   loadActivites();
 }
 
@@ -354,6 +372,7 @@ function resetCommune(reload = true) {
   document.getElementById('commune-select').value = '';
   if (reload && avaitFiltre) {
     currentPageNum = 1;
+    syncUrl();
     loadActivites();
   }
 }
@@ -373,6 +392,7 @@ function initCommuneFilter() {
   select.addEventListener('change', () => {
     currentCommune = select.value;
     currentPageNum = 1;
+    syncUrl();
     loadActivites();
   });
 
@@ -382,10 +402,30 @@ function initCommuneFilter() {
     currentRayon = Number(range.value);
     if (!currentCommune) return;
     currentPageNum = 1;
+    syncUrl();
     loadActivites();
   });
 
   document.getElementById('commune-reset').addEventListener('click', () => resetCommune());
+}
+
+// Reapplique une commune et un rayon venus de l'URL, sans declencher de chargement :
+// l'appelant charge la liste une seule fois, ensuite.
+async function restaurerCommune(commune, rayon) {
+  if (!commune) return;
+  await loadCommunes();
+  const select = document.getElementById('commune-select');
+  // Commune inconnue ou liste indisponible : on ignore le parametre
+  if (![...select.options].some(o => o.value === commune)) return;
+
+  currentCommune = commune;
+  select.value = commune;
+  if (rayon >= 5 && rayon <= 50) {
+    currentRayon = rayon;
+    document.getElementById('rayon-range').value = rayon;
+    document.getElementById('rayon-valeur').textContent = `${rayon} km`;
+  }
+  openCommunePanel();
 }
 
 // Recherche textuelle
@@ -413,8 +453,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   initCommuneFilter();
 
+  // Restaure le filtre de proximite depuis l'URL avant de charger, pour que le retour
+  // arriere depuis une fiche retrouve l'ecran tel qu'il etait.
+  const urlParams = new URLSearchParams(window.location.search);
+  await restaurerCommune(urlParams.get('commune'), Number(urlParams.get('rayon')));
+
   // Applique le filtre depuis l'URL (?filtre=plages, randonnees, etc.) si présent
-  const filtreParam = new URLSearchParams(window.location.search).get('filtre');
+  const filtreParam = urlParams.get('filtre');
   if (filtreParam) {
     const map = {
       plages: 'Plage',
