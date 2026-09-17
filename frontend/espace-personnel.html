@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mon espace personnel : Martinique</title>
-  <link rel="stylesheet" href="css/espace-personnel.css">
+  <link rel="stylesheet" href="css/espace-personnel.css?v=2">
   <link rel="stylesheet" href="css/nav.css">
   <script src="js/etat-connexion.js"></script>
 </head>
@@ -61,6 +61,7 @@
   <div class="page-tabs-inner">
     <button class="ptab active">Vue d'ensemble</button>
     <button class="ptab">Mes voyages</button>
+    <button class="ptab">Assistant IA</button>
     <button class="ptab">Activités sauvegardées</button>
     <button class="ptab">Paramètres</button>
   </div>
@@ -68,6 +69,15 @@
 
 <!-- BODY -->
 <div class="page-body">
+
+  <!-- Historique des conversations avec l'assistant, rempli par le JS -->
+  <section id="section-assistant" hidden>
+    <div class="section-head">
+      <h2>Mes conversations avec l'assistant</h2>
+      <a href="planning-ia.html" class="section-link">Nouvelle conversation</a>
+    </div>
+    <div id="liste-conversations" class="conversations-liste"></div>
+  </section>
 
   <!-- Projets de voyage -->
   <div class="section-head">
@@ -204,7 +214,7 @@
 </div>
 
 <script src="js/auth-utils.js"></script>
-<script src="js/espace-personnel.js"></script>
+<script src="js/espace-personnel.js?v=2"></script>
 
 </body>
 </html>
