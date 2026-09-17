@@ -22,27 +22,6 @@
     --filter-active-bg: var(--nuit);
     --filter-active-color: #fff;
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #0A1820;
-      --texte: #F0EAD6;
-      --doux: #A89880;
-      --card-bg: #0F2330;
-      --card-border: rgba(255,255,255,0.08);
-      --filter-bg: rgba(255,255,255,0.06);
-      --sable: #1A2E3A;
-    }
-  }
-  :root[data-theme="light"] {
-    --bg: var(--blanc); --texte: #1A1208; --doux: #6B5B45;
-    --card-bg: #fff; --card-border: rgba(0,0,0,0.07);
-    --filter-bg: rgba(0,0,0,0.04); --sable: #F5EDD8;
-  }
-  :root[data-theme="dark"] {
-    --bg: #0A1820; --texte: #F0EAD6; --doux: #A89880;
-    --card-bg: #0F2330; --card-border: rgba(255,255,255,0.08);
-    --filter-bg: rgba(255,255,255,0.06); --sable: #1A2E3A;
-  }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
