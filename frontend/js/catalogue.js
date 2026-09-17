@@ -17,10 +17,11 @@ const SUPPORTED_CATEGORIES = {
   'Plages': 'beach',
   'Randonnées': 'hike',
   'Rhumeries': 'rum_distillery',
+  'Restaurants': 'restaurant',
 };
 
 // Catégories hors scope v1 : au clic, affiche un message dans la grille
-const UNSUPPORTED_LABELS = ['Restaurants', 'Activités', 'Événements', 'Logements', 'Marché'];
+const UNSUPPORTED_LABELS = ['Activités', 'Événements', 'Logements', 'Marché'];
 
 // Etat courant du catalogue
 let currentFilter = null;    // valeur de la categorie API
@@ -89,6 +90,14 @@ const CATEGORY_LABELS = {
   restaurant: 'Restaurant',
 };
 
+// Icone affichee a la place de la photo quand l'activite n'en a pas
+const CATEGORY_ICONS = {
+  beach: '🏖️',
+  hike: '🥾',
+  rum_distillery: '🥃',
+  restaurant: '🍽️',
+};
+
 // Classe qui donne a la vignette son fond de secours quand elle n'a pas de photo
 const CATEGORY_CLASSES = {
   beach: 'cat-beach',
@@ -137,7 +146,7 @@ function buildCard(item) {
       </div>`;
   }
 
-  const icon = isBeach ? '🏖️' : isHike ? '🥾' : '📍';
+  const icon = CATEGORY_ICONS[item.category] || '📍';
   const categoryLabel = CATEGORY_LABELS[item.category] || item.category;
   const cardClass = CATEGORY_CLASSES[item.category] || '';
 
@@ -281,7 +290,8 @@ async function loadActivites(append = false) {
 }
 
 // Nom de filtre utilise dans l'URL, inverse de la table du parametre ?filtre=
-const FILTRES_URL = { beach: 'plages', hike: 'randonnees', rum_distillery: 'rhumeries' };
+const FILTRES_URL = { beach: 'plages', hike: 'randonnees', rum_distillery: 'rhumeries',
+                      restaurant: 'restaurants' };
 
 // Recopie l'etat des filtres dans l'URL. Sans cela, revenir depuis une fiche par le bouton
 // precedent du navigateur rouvrait le catalogue sans filtre.
@@ -324,6 +334,7 @@ function setFilter(btn) {
   if (btn.textContent.includes('Plage')) currentFilter = 'beach';
   else if (btn.textContent.includes('Randon')) currentFilter = 'hike';
   else if (btn.textContent.includes('Rhumerie')) currentFilter = 'rum_distillery';
+  else if (btn.textContent.includes('Restau')) currentFilter = 'restaurant';
 
   currentPageNum = 1;
   currentSearch = document.querySelector('.search-input').value.trim();
