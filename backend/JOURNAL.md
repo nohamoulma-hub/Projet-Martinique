@@ -1045,3 +1045,39 @@ rayon hors bornes, absence de distance sans filtre.
 
 Sur mobile, la barre de filtres est collante et le panneau l'allonge : elle occupe une grande
 partie de l'écran au défilement. Point déjà présent avant, aggravé par le panneau.
+
+
+## 2026-09-17 (suite) - Onglet Restaurants
+
+### Ce qui a été ajouté
+
+16 restaurants, modèle `RestaurantDetails` (cuisine, horaires, téléphone, site, distinction
+Michelin, nom de l'hôtel), migration `bfffcd99a7d6`, filtre « Restaurants » activé dans le
+catalogue, fiche pratique et bloc « Accès » adaptés, 4 tests (60 au total).
+
+### Décisions
+
+**Aucun restaurant étoilé en Martinique.** Le guide Michelin n'inspecte pas les Outre-mer.
+Trois établissements figurent dans sa sélection : Le Dôme, O Ti Zandoli et Le Blue Rooftop
+(ce dernier absent d'OpenStreetMap, donc non intégré). La fiche affiche « Aucune distinction
+Michelin » plutôt qu'une ligne vide : l'absence est une information.
+
+**Champ `michelin_distinction` en texte et non en booléen**, pour accueillir plus tard
+« 1 étoile » ou « Bib Gourmand » sans migration.
+
+**Restaurants d'hôtel.** Trois sont inclus : O Ti Zandoli (La Suite Villa), La Sirène
+(Bakoua), Ylanga (French Coco). Aucun site officiel n'affirme noir sur blanc qu'ils
+accueillent les non-résidents : le champ `hotel_name` dit seulement que le restaurant est
+dans un hôtel, sans affirmer une politique d'accès qu'aucune source ne confirme.
+
+**Sources.** Noms, coordonnées, téléphones et horaires viennent d'OpenStreetMap (Overpass),
+les adresses du géocodage inverse Nominatim, les horaires des restaurants d'hôtel de leurs
+sites officiels.
+
+**Aucune photo.** Wikimedia Commons ne documente pas ces établissements. Plutôt que
+d'afficher une photo sans rapport, la vignette utilise le dégradé de la catégorie, le bandeau
+de la fiche prend la même couleur, et la section « Photos » est masquée. Elle affichait
+sinon les vignettes de maquette (parasol, palmier), qui laissaient croire à des photos du lieu.
+
+**Formatage des horaires étendu** aux deux services par jour ("12:00-14:15,19:00-22:00" ->
+"12h-14h15 et 19h-22h") et à minuit.
