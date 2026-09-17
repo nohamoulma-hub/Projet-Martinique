@@ -80,20 +80,32 @@ function formatHoraires(osm) {
   // "08:30" -> "8h30", "09:00" -> "9h"
   const heure = h => h.replace(/^0/, '').replace(':00', 'h').replace(':', 'h');
 
+  // "Tu,We,Sa" -> "mardi, mercredi et samedi"
+  const listeJours = spec => {
+    const noms = spec.split(',').map(j => JOURS_OSM[j] || j);
+    if (noms.length === 1) return noms[0];
+    return `${noms.slice(0, -1).join(', ')} et ${noms[noms.length - 1]}`;
+  };
+
   const parties = osm.split(';').map(p => p.trim()).filter(Boolean).map(partie => {
-    const m = partie.match(/^([A-Za-z]{2})(?:-([A-Za-z]{2}))?\s+(\d{2}:\d{2})-(\d{2}:\d{2})$/);
+    const m = partie.match(/^([A-Za-z]{2}(?:[,-][A-Za-z]{2})*)\s+(\d{2}:\d{2})-(\d{2}:\d{2})$/);
     if (!m) return null;
-    const [, j1, j2, h1, h2] = m;
+    const [, jours, h1, h2] = m;
     const creneau = `${heure(h1)}-${heure(h2)}`;
-    if (j1 === 'Mo' && j2 === 'Su') return `tous les jours ${creneau}`;
-    if (!j2) return `${JOURS_OSM[j1] || j1} ${creneau}`;
-    return `du ${JOURS_OSM[j1] || j1} au ${JOURS_OSM[j2] || j2} ${creneau}`;
+    if (jours === 'Mo-Su') return `tous les jours ${creneau}`;
+    // Un intervalle ("Mo-Fr") se lit "du ... au ...", une liste s'enumere
+    if (jours.includes('-')) {
+      const [j1, j2] = jours.split('-');
+      return `du ${JOURS_OSM[j1] || j1} au ${JOURS_OSM[j2] || j2} ${creneau}`;
+    }
+    return `${listeJours(jours)} ${creneau}`;
   });
 
   if (parties.some(p => p === null)) return osm;
   const texte = parties.join(', ');
   return texte.charAt(0).toUpperCase() + texte.slice(1);
 }
+
 
 // Rempli la fiche pratique de la sidebar selon le type d'activité
 function fillFicheCard(activite) {
@@ -141,6 +153,11 @@ function fillFicheCard(activite) {
       ? `<span class="fiche-row-value">${echapper(formatHoraires(rd.opening_hours))}</span>`
       : vide;
 
+    // Le libelle affiche le domaine, l'URL complete etant trop longue pour la fiche
+    const site = rd.website
+      ? `<a class="fiche-row-value fiche-lien" href="${echapper(rd.website)}" target="_blank" rel="noopener">${echapper(rd.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/.*$/, ''))}</a>`
+      : vide;
+
     // Lien tel: pour composer directement le numero depuis un telephone
     const telephone = rd.phone
       ? `<a class="fiche-row-value fiche-lien" href="tel:${echapper(rd.phone.replace(/\s/g, ''))}">${echapper(rd.phone)}</a>`
@@ -158,6 +175,10 @@ function fillFicheCard(activite) {
       <div class="fiche-row">
         <span class="fiche-row-label">Téléphone</span>
         ${telephone}
+      </div>
+      <div class="fiche-row">
+        <span class="fiche-row-label">Site web</span>
+        ${site}
       </div>`;
   } else if (activite.category === 'hike' && activite.hike_details) {
     const hd = activite.hike_details;
