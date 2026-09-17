@@ -13,7 +13,7 @@ La stack doit être démarrée (`docker compose up -d`) pour que `exec` fonction
 
 | Script | Rôle | Écrit où | Rejouable sans risque |
 |---|---|---|---|
-| `seed.py` | Insère les 24 activités de démonstration | base | oui, ignore celles déjà présentes |
+| `seed.py` | Insère les 40 activités de démonstration | base | oui, ignore celles déjà présentes |
 | `update_images.py` | Assigne la photo de couverture de chaque activité | base | oui |
 | `seed_gallery.py` | Remplit la galerie photos des pages de détail | base | oui, remplace les photos existantes |
 | `optimize_images.py` | Allège les photos trop lourdes | fichiers | oui, mais **cassé sous Docker**, voir plus bas |
@@ -27,9 +27,13 @@ se réinscrire à la main depuis la page `auth.html`.
 
 ## seed.py
 
-Insère les 24 activités de démonstration : 9 plages, 7 randonnées et 8 rhumeries, avec leurs
-coordonnées GPS réelles. Les plages et randonnées ont en plus une table de détail
-(`beach_details`, `hike_details`) ; les rhumeries n'en ont pas.
+Insère les 40 activités de démonstration : 9 plages, 7 randonnées, 8 rhumeries et
+16 restaurants, avec leurs coordonnées GPS réelles. Chaque catégorie a sa table de détail
+(`beach_details`, `hike_details`, `rum_distillery_details`, `restaurant_details`).
+
+Les données des restaurants viennent d'OpenStreetMap (noms, coordonnées, téléphones,
+horaires), les adresses du géocodage inverse, et les distinctions de la sélection du guide
+Michelin. Aucun restaurant de Martinique n'a d'étoile : le guide n'inspecte pas les Outre-mer.
 
 ```bash
 docker compose exec backend python scripts/seed.py
@@ -224,7 +228,7 @@ comptes utilisateurs.
 Ce ne sont pas des scripts, mais elles se cherchent aussi souvent.
 
 ```bash
-docker compose exec backend pytest                     # les 56 tests
+docker compose exec backend pytest                     # les 60 tests
 docker compose exec backend alembic upgrade head       # migrations (déjà jouées au démarrage)
 docker compose exec backend alembic revision --autogenerate -m "message"
 docker compose exec db psql -U martinique -d martinique # session SQL interactive
