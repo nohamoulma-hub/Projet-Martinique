@@ -170,6 +170,8 @@ Le frontend est alors servi sur `http://localhost:8000/site/accueil.html`
 
 - [x] Filtre par commune dans le catalogue, avec rayon de recherche de 5 à 50 km
 - [ ] Carte interactive des activités
+- [ ] Distances par la route plutôt qu'à vol d'oiseau pour le filtre par commune.
+      Choix du fournisseur étudié dans `COMPARATIF_APIS_CARTO.md`.
 - [ ] Avis et notes utilisateurs (étoiles + commentaires)
 - [ ] Partage de projet de voyage (lien public)
 
