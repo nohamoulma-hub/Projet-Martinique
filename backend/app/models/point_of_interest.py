@@ -29,6 +29,10 @@ class PointOfInterest(Base):
     longitude = Column(Float, nullable=False)
     address = Column(String(150), nullable=True)
     image_url = Column(String(500), nullable=True)
+    # Prix indicatif par personne, en euros. 0 pour un lieu gratuit, None quand le tarif
+    # n'est pas connu : l'assistant de planning doit pouvoir dire qu'il l'ignore plutot
+    # que de l'inventer. Colonne ajoutee pour la planification par budget.
+    price_eur = Column(Float, nullable=True)
 
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
