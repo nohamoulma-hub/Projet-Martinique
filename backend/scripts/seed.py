@@ -12,6 +12,7 @@ from app.core.database import SessionLocal
 from app.models.beach_details import BeachDetails
 from app.models.hike_details import HikeDetails
 from app.models.point_of_interest import Category, PointOfInterest
+from app.models.restaurant_details import RestaurantDetails
 from app.models.rum_distillery_details import RumDistilleryDetails
 
 
@@ -540,6 +541,382 @@ RHUMERIES = [
 ]
 
 
+# Restaurants. Noms, coordonnees, telephones et horaires releves dans OpenStreetMap, adresses
+# par geocodage inverse, distinctions verifiees sur la selection du guide Michelin. Aucune
+# photo libre de droit n'a ete trouvee pour ces etablissements : image_url reste None et la
+# vignette affiche le degrade de la categorie.
+RESTAURANTS = [
+    {
+        "poi": {
+            "name": "Yemanja",
+            "category": Category.RESTAURANT,
+            "description": (
+                "Restaurant de cuisine créole installé sur le front de mer de Grande Anse, au Carbet."
+            ),
+            "latitude": 14.70611,
+            "longitude": -61.18373,
+            "address": "Allée Joseph Lecurieux dit Ti Ojo, 97221 Le Carbet, Martinique",
+            "image_url": None,
+        },
+        "details": {
+            "cuisine": "Créole",
+            "opening_hours": "Mo-Su 11:00-00:00",
+            "phone": "+596 596 38 93 69",
+            "website": "https://fr-fr.facebook.com/yemanjamartinique",
+            # None quand l'etablissement n'a aucune distinction : le guide Michelin
+            # n'attribue pas d'etoile en Martinique.
+            "michelin_distinction": None,
+            "hotel_name": None,
+        },
+    },
+    {
+        "poi": {
+            "name": "Le Marie-Sainte",
+            "category": Category.RESTAURANT,
+            "description": (
+                "Table créole du centre de Fort-de-France, rue Victor Hugo."
+            ),
+            "latitude": 14.60552,
+            "longitude": -61.07308,
+            "address": "162 Rue Victor Hugo, 97200 Fort-de-France, Martinique",
+            "image_url": None,
+        },
+        "details": {
+            "cuisine": "Créole",
+            "opening_hours": None,
+            "phone": "+596 596 71 41 13",
+            "website": None,
+            # None quand l'etablissement n'a aucune distinction : le guide Michelin
+            # n'attribue pas d'etoile en Martinique.
+            "michelin_distinction": None,
+            "hotel_name": None,
+        },
+    },
+    {
+        "poi": {
+            "name": "Le Willkat",
+            "category": Category.RESTAURANT,
+            "description": (
+                "Restaurant de cuisine française à Sainte-Luce, allée des Campêches."
+            ),
+            "latitude": 14.47495,
+            "longitude": -60.95955,
+            "address": "40 Allée des Campêches, 97228 Sainte-Luce, Martinique",
+            "image_url": None,
+        },
+        "details": {
+            "cuisine": "Française",
+            "opening_hours": None,
+            "phone": "+596 596 48 54 24",
+            "website": None,
+            # None quand l'etablissement n'a aucune distinction : le guide Michelin
+            # n'attribue pas d'etoile en Martinique.
+            "michelin_distinction": None,
+            "hotel_name": None,
+        },
+    },
+    {
+        "poi": {
+            "name": "Chiche Restaurant",
+            "category": Category.RESTAURANT,
+            "description": (
+                "Restaurant de cuisine régionale sur le boulevard Kennedy, à Sainte-Luce."
+            ),
+            "latitude": 14.46756,
+            "longitude": -60.92206,
+            "address": "51 Boulevard Kennedy, 97228 Sainte-Luce, Martinique",
+            "image_url": None,
+        },
+        "details": {
+            "cuisine": "Créole",
+            "opening_hours": None,
+            "phone": "+596 596 38 42 56",
+            "website": "https://www.restaurant-chiche-martinique.com/",
+            # None quand l'etablissement n'a aucune distinction : le guide Michelin
+            # n'attribue pas d'etoile en Martinique.
+            "michelin_distinction": None,
+            "hotel_name": None,
+        },
+    },
+    {
+        "poi": {
+            "name": "New Cap",
+            "category": Category.RESTAURANT,
+            "description": (
+                "Restaurant de cuisine française et caribéenne au Diamant, près de l'anse Cafard."
+            ),
+            "latitude": 14.46904,
+            "longitude": -61.04618,
+            "address": "Allée de la Bonne Humeur, 97223 Le Diamant, Martinique",
+            "image_url": None,
+        },
+        "details": {
+            "cuisine": "Française, caribéenne",
+            "opening_hours": None,
+            "phone": "+596 596 76 12 99",
+            "website": None,
+            # None quand l'etablissement n'a aucune distinction : le guide Michelin
+            # n'attribue pas d'etoile en Martinique.
+            "michelin_distinction": None,
+            "hotel_name": None,
+        },
+    },
+    {
+        "poi": {
+            "name": "D'lo Féré",
+            "category": Category.RESTAURANT,
+            "description": (
+                "Snack de cuisine créole aux Anses-d'Arlet, ouvert du jeudi au mardi."
+            ),
+            "latitude": 14.49148,
+            "longitude": -61.08132,
+            "address": "4-15 Rue du Morne Champagne, 97217 Les Anses-d'Arlet, Martinique",
+            "image_url": None,
+        },
+        "details": {
+            "cuisine": "Créole",
+            "opening_hours": "Th-Tu 09:00-18:00",
+            "phone": "+596 696 10 57 22",
+            "website": "https://snack-dlo-fere.business.site/",
+            # None quand l'etablissement n'a aucune distinction : le guide Michelin
+            # n'attribue pas d'etoile en Martinique.
+            "michelin_distinction": None,
+            "hotel_name": None,
+        },
+    },
+    {
+        "poi": {
+            "name": "Ti Carbet",
+            "category": Category.RESTAURANT,
+            "description": (
+                "Restaurant de cuisine créole sur la presqu'île de la Caravelle, route du Phare."
+            ),
+            "latitude": 14.76525,
+            "longitude": -60.91091,
+            "address": "69 Route du Phare, 97220 La Trinité, Martinique",
+            "image_url": None,
+        },
+        "details": {
+            "cuisine": "Créole",
+            "opening_hours": None,
+            "phone": "+596 696 27 17 01",
+            "website": "https://www.facebook.com/pages/Ti-Carbet/143585085850614",
+            # None quand l'etablissement n'a aucune distinction : le guide Michelin
+            # n'attribue pas d'etoile en Martinique.
+            "michelin_distinction": None,
+            "hotel_name": None,
+        },
+    },
+    {
+        "poi": {
+            "name": "Le Refuge de l'Aileron",
+            "category": Category.RESTAURANT,
+            "description": (
+                "Restaurant situé au premier abri de la montagne Pelée, au départ du sentier de l'Aileron."
+            ),
+            "latitude": 14.80623,
+            "longitude": -61.15119,
+            "address": "Route de la Montagne Pelée, 97260 Le Morne-Rouge, Martinique",
+            "image_url": None,
+        },
+        "details": {
+            "cuisine": "Créole",
+            "opening_hours": None,
+            "phone": "+596 596 52 38 08",
+            "website": "https://fr-fr.facebook.com/lerefugedelaileron/",
+            # None quand l'etablissement n'a aucune distinction : le guide Michelin
+            # n'attribue pas d'etoile en Martinique.
+            "michelin_distinction": None,
+            "hotel_name": None,
+        },
+    },
+    {
+        "poi": {
+            "name": "Grill Riverain",
+            "category": Category.RESTAURANT,
+            "description": (
+                "Grillades et poissons au bord de mer de Grand'Rivière, à l'extrémité nord de l'île."
+            ),
+            "latitude": 14.87477,
+            "longitude": -61.1801,
+            "address": "Boulevard Sainte-Catherine, 97218 Grand'Rivière, Martinique",
+            "image_url": None,
+        },
+        "details": {
+            "cuisine": "Créole, poissons, grillades",
+            "opening_hours": None,
+            "phone": "+596 696 90 42 93",
+            "website": None,
+            # None quand l'etablissement n'a aucune distinction : le guide Michelin
+            # n'attribue pas d'etoile en Martinique.
+            "michelin_distinction": None,
+            "hotel_name": None,
+        },
+    },
+    {
+        "poi": {
+            "name": "La Case à Glaces",
+            "category": Category.RESTAURANT,
+            "description": (
+                "Restaurant et glacier aux Trois-Îlets, ouvert tous les jours de 8h à 22h."
+            ),
+            "latitude": 14.54074,
+            "longitude": -61.0651,
+            "address": "9 Rue du Mérou, 97229 Les Trois-Îlets, Martinique",
+            "image_url": None,
+        },
+        "details": {
+            "cuisine": "Française, créole",
+            "opening_hours": "Mo-Su 08:00-22:00",
+            "phone": "+596 596 67 23 21",
+            "website": None,
+            # None quand l'etablissement n'a aucune distinction : le guide Michelin
+            # n'attribue pas d'etoile en Martinique.
+            "michelin_distinction": None,
+            "hotel_name": None,
+        },
+    },
+    {
+        "poi": {
+            "name": "Restaurant 1643",
+            "category": Category.RESTAURANT,
+            "description": (
+                "Restaurant du Carbet, sur la route du Trou Caraïbes, au nord Caraïbe."
+            ),
+            "latitude": 14.73206,
+            "longitude": -61.17799,
+            "address": "Route du Trou Caraïbes, 97221 Le Carbet, Martinique",
+            "image_url": None,
+        },
+        "details": {
+            "cuisine": None,
+            "opening_hours": None,
+            "phone": "+596 596 78 17 81",
+            "website": None,
+            # None quand l'etablissement n'a aucune distinction : le guide Michelin
+            # n'attribue pas d'etoile en Martinique.
+            "michelin_distinction": None,
+            "hotel_name": None,
+        },
+    },
+    {
+        "poi": {
+            "name": "Le Petit Palais",
+            "category": Category.RESTAURANT,
+            "description": (
+                "Restaurant de cuisine française à Basse-Pointe, sur la côte atlantique nord."
+            ),
+            "latitude": 14.86945,
+            "longitude": -61.11496,
+            "address": "Ruelle Saint-Jean, 97216 Basse-Pointe, Martinique",
+            "image_url": None,
+        },
+        "details": {
+            "cuisine": "Française",
+            "opening_hours": None,
+            "phone": "+596 596 78 90 04",
+            "website": None,
+            # None quand l'etablissement n'a aucune distinction : le guide Michelin
+            # n'attribue pas d'etoile en Martinique.
+            "michelin_distinction": None,
+            "hotel_name": None,
+        },
+    },
+    {
+        "poi": {
+            "name": "Le Dôme",
+            "category": Category.RESTAURANT,
+            "description": (
+                "Table de Fort-de-France retenue dans la sélection du guide Michelin, avenue des Arawaks."
+            ),
+            "latitude": 14.61816,
+            "longitude": -61.04069,
+            "address": "Avenue des Arawaks, 97200 Fort-de-France, Martinique",
+            "image_url": None,
+        },
+        "details": {
+            "cuisine": None,
+            "opening_hours": None,
+            "phone": None,
+            "website": None,
+            # None quand l'etablissement n'a aucune distinction : le guide Michelin
+            # n'attribue pas d'etoile en Martinique.
+            "michelin_distinction": "Sélection du guide Michelin",
+            "hotel_name": None,
+        },
+    },
+    {
+        "poi": {
+            "name": "O Ti Zandoli",
+            "category": Category.RESTAURANT,
+            "description": (
+                "Table bistronomique de l'hôtel La Suite Villa, aux Trois-Îlets, retenue dans la sélection du guide Michelin."
+            ),
+            "latitude": 14.54687,
+            "longitude": -61.05068,
+            "address": "Rue des Palmiers, 97229 Les Trois-Îlets, Martinique",
+            "image_url": None,
+        },
+        "details": {
+            "cuisine": "Bistronomique",
+            "opening_hours": "Mo-Su 12:00-14:15,19:00-22:00",
+            "phone": "+596 596 59 88 00",
+            "website": "https://la-suite-villa.com/fr/restaurant/",
+            # None quand l'etablissement n'a aucune distinction : le guide Michelin
+            # n'attribue pas d'etoile en Martinique.
+            "michelin_distinction": "Sélection du guide Michelin",
+            "hotel_name": "La Suite Villa",
+        },
+    },
+    {
+        "poi": {
+            "name": "La Sirène",
+            "category": Category.RESTAURANT,
+            "description": (
+                "Restaurant de l'hôtel Bakoua, face à la baie de Fort-de-France, à la Pointe du Bout."
+            ),
+            "latitude": 14.55731,
+            "longitude": -61.05299,
+            "address": "Rue du Bakoua, 97229 Les Trois-Îlets, Martinique",
+            "image_url": None,
+        },
+        "details": {
+            "cuisine": "Créole, internationale",
+            "opening_hours": "Mo-Su 12:00-14:30,19:00-22:00",
+            "phone": "+596 596 66 02 02",
+            "website": "https://hotel-bakoua.fr/restaurants-bars/",
+            # None quand l'etablissement n'a aucune distinction : le guide Michelin
+            # n'attribue pas d'etoile en Martinique.
+            "michelin_distinction": None,
+            "hotel_name": "Hôtel Bakoua",
+        },
+    },
+    {
+        "poi": {
+            "name": "Ylanga",
+            "category": Category.RESTAURANT,
+            "description": (
+                "Restaurant de l'hôtel French Coco, à Tartane, sur la presqu'île de la Caravelle."
+            ),
+            "latitude": 14.76081,
+            "longitude": -60.91008,
+            "address": "33 Rue de la Distillerie, 97220 La Trinité, Martinique",
+            "image_url": None,
+        },
+        "details": {
+            "cuisine": "Créole, française",
+            "opening_hours": "Mo-Su 18:30-21:00",
+            "phone": "+596 596 38 10 10",
+            "website": "https://www.hotelfrenchcoco.com/fr/restaurant-bar.html",
+            # None quand l'etablissement n'a aucune distinction : le guide Michelin
+            # n'attribue pas d'etoile en Martinique.
+            "michelin_distinction": None,
+            "hotel_name": "French Coco",
+        },
+    },
+]
+
+
 def seed():
     """Peuple la base de données avec des plages et randonnées de Martinique."""
     db = SessionLocal()
@@ -610,6 +987,9 @@ def seed():
         # Les rhumeries n'ont pas de table de details : un simple PointOfInterest suffit.
         for rhumerie_data in RHUMERIES:
             ajouter(rhumerie_data, "Rhumerie", RumDistilleryDetails, "point_of_interest_id")
+
+        for restaurant_data in RESTAURANTS:
+            ajouter(restaurant_data, "Restaurant", RestaurantDetails, "point_of_interest_id")
 
         db.commit()
         total = db.query(PointOfInterest).count()
