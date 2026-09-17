@@ -349,7 +349,7 @@ RHUMERIES = [
             ),
             "latitude": 14.7002,
             "longitude": -61.1765,
-            "address": "Le Carbet, Martinique",
+            "address": "Route de Belfond, 97221 Le Carbet, Martinique",
             "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Chai_de_la_distillerie_Neisson.jpg/1280px-Chai_de_la_distillerie_Neisson.jpg",
         },
         "details": {
@@ -373,7 +373,7 @@ RHUMERIES = [
             ),
             "latitude": 14.4797,
             "longitude": -60.9648,
-            "address": "Sainte-Luce, Martinique",
+            "address": "Chemin Terre Patrice, 97228 Sainte-Luce, Martinique",
             "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/34/Trois_Rivieres_facade_enseigne_moulin_2015.jpg/1280px-Trois_Rivieres_facade_enseigne_moulin_2015.jpg",
         },
         "details": {
@@ -397,11 +397,11 @@ RHUMERIES = [
             ),
             "latitude": 14.7835,
             "longitude": -60.9973,
-            "address": "Sainte-Marie, Martinique",
+            "address": "97230 Sainte-Marie, Martinique",
             "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/Martinique-sainte-marie-rhumerie-saint-james.jpg/1280px-Martinique-sainte-marie-rhumerie-saint-james.jpg",
         },
         "details": {
-            "opening_hours": None,
+            "opening_hours": "Mo-Su 09:00-17:00",
             "phone": "+33 5 96 69 30 02",
             "website": "https://rhum-saintjames.com/",
             # Non documentes dans OpenStreetMap : a renseigner a la main.
@@ -422,7 +422,7 @@ RHUMERIES = [
             ),
             "latitude": 14.8628,
             "longitude": -61.1367,
-            "address": "Macouba, Martinique",
+            "address": "Chemin de Fonds Préville, 97218 Macouba, Martinique",
             "image_url": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Rhumerie_JM.JPG",
         },
         "details": {
@@ -446,7 +446,7 @@ RHUMERIES = [
             ),
             "latitude": 14.5089,
             "longitude": -60.9063,
-            "address": "Rivière-Pilote, Martinique",
+            "address": "2888 Route Nationale 8, 97211 Rivière-Pilote, Martinique",
             "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/La_Mauny_001.jpg/1280px-La_Mauny_001.jpg",
         },
         "details": {
@@ -473,12 +473,12 @@ RHUMERIES = [
             ),
             "latitude": 14.6021,
             "longitude": -60.9067,
-            "address": "Le François, Martinique",
+            "address": "97240 Le François, Martinique",
             "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a2/Les_chais_de_l%27habitation_Cl%C3%A9ment_en_Martinique.jpg/1280px-Les_chais_de_l%27habitation_Cl%C3%A9ment_en_Martinique.jpg",
         },
         "details": {
             "opening_hours": "Mo-Su 09:00-18:30",
-            "phone": None,
+            "phone": "+596 596 54 62 07",
             "website": "https://www.fondation-clement.org/",
             # Non documentes dans OpenStreetMap : a renseigner a la main.
             "tourist_score": None,
@@ -497,11 +497,11 @@ RHUMERIES = [
             ),
             "latitude": 14.7588,
             "longitude": -61.1651,
-            "address": "Saint-Pierre, Martinique",
+            "address": "Impasse Lakou Romen, 97250 Saint-Pierre, Martinique",
             "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Ch%C3%A2teau_Depaz.jpg/1280px-Ch%C3%A2teau_Depaz.jpg",
         },
         "details": {
-            "opening_hours": None,
+            "opening_hours": "Mo-Su 09:00-16:30",
             "phone": "+596 596 78 64 98",
             "website": "https://www.depaz.fr",
             # Non documentes dans OpenStreetMap : a renseigner a la main.
@@ -522,7 +522,7 @@ RHUMERIES = [
             ),
             "latitude": 14.6168,
             "longitude": -61.0494,
-            "address": "Fort-de-France, Martinique",
+            "address": "97200 Fort-de-France, Martinique",
             "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Distillerie_Dillon.JPG/1280px-Distillerie_Dillon.JPG",
         },
         "details": {
@@ -550,10 +550,10 @@ def seed():
         # que la table contenait une ligne, ce qui empechait d'ajouter une categorie
         # a une base existante sans la detruire.
         existants = {p.name: p for p in db.query(PointOfInterest).all()}
-        ajouts = ignores = details_ajoutes = details_completes = 0
+        ajouts = ignores = details_ajoutes = details_completes = adresses_maj = 0
 
         def ajouter(data, libelle, classe_details=None, champ=None):
-            nonlocal ajouts, ignores, details_ajoutes, details_completes
+            nonlocal ajouts, ignores, details_ajoutes, details_completes, adresses_maj
             nom = data["poi"]["name"]
             poi = existants.get(nom)
 
@@ -566,6 +566,12 @@ def seed():
                 print(f"  {libelle} ajoutée : {nom}")
             else:
                 ignores += 1
+                # L'adresse vient du script : une adresse enrichie doit arriver en base
+                # sans obliger a repartir d'une base neuve.
+                if poi.address != data["poi"]["address"]:
+                    poi.address = data["poi"]["address"]
+                    adresses_maj += 1
+                    print(f"    adresse mise à jour : {nom}")
 
             # Les details sont traites a part : une fiche peut exister sans eux, par
             # exemple quand la table de details a ete creee apres l'insertion de la fiche.
@@ -610,7 +616,7 @@ def seed():
         print(
             f"\n{ajouts} ajoutée(s), {ignores} déjà présente(s), "
             f"{details_ajoutes} fiche(s) de détails créée(s), "
-            f"{details_completes} complétée(s). "
+            f"{details_completes} complétée(s), {adresses_maj} adresse(s) mise(s) à jour. "
             f"{total} activités au total."
         )
 
