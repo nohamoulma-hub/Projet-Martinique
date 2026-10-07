@@ -1128,3 +1128,27 @@ vérifiable : ils restent à `None`, et l'assistant dit qu'il les ignore.
 Le modèle n'est pas testé en conditions réelles : aucune clé API n'est configurée sur ce
 poste. La boucle d'outils a été validée avec un faux client qui rejoue une conversation
 complète (recherche, enregistrement, conclusion).
+
+---
+
+## 2026-10-06 - Modification manuelle des dates d'un projet
+
+Un projet créé par l'assistant peut n'avoir aucune date. La page `detail-voyage.html`
+calculait alors une durée de 0 jour et n'affichait aucune journée : les activités du
+planning étaient enregistrées mais invisibles. Les dates ne se modifiaient qu'en repassant
+par l'assistant, ce qui consommait des tokens pour un simple changement de champ.
+
+**Bouton « Modifier les dates »** dans l'en-tête du projet. Il ouvre une modale pré-remplie
+et appelle la route existante `PUT /api/projets/{id}`. Aucune route ni migration ajoutée.
+La modale prévient si la nouvelle durée est plus courte que le dernier jour du planning,
+car les activités au-delà ne seraient plus affichées (elles restent en base).
+
+**Contrôle côté serveur** : le `PUT` refuse désormais une date de fin antérieure à la date
+de début (400). La comparaison porte sur les dates finales, pas seulement sur le corps de
+la requête : envoyer seulement une `end_date` trop tôt est aussi refusé. 2 tests ajoutés
+(82 au total).
+
+### Limite connue
+
+`daysBetween` compte les nuits et non les jours (du 20 au 28 donne 8 jours, pas 9). Un
+planning de 8 jours demande donc une fin à J+8. Comportement antérieur, non modifié.
