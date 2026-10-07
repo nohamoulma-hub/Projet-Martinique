@@ -104,6 +104,41 @@ def test_update_projet(client):
     assert response.json()["name"] == "Nouveau nom"
 
 
+def test_update_projet_dates(client):
+    """PUT /projets/{id} enregistre les dates d'un projet créé sans dates."""
+    token = _register_and_login(client, email="update_dates@test.com")
+    create_resp = client.post("/api/projets", json={"name": "Sans dates"}, headers=_auth_headers(token))
+    projet_id = create_resp.json()["id"]
+
+    response = client.put(f"/api/projets/{projet_id}", json={
+        "start_date": "2026-12-20",
+        "end_date": "2026-12-28",
+    }, headers=_auth_headers(token))
+    assert response.status_code == 200
+    assert response.json()["start_date"] == "2026-12-20"
+    assert response.json()["end_date"] == "2026-12-28"
+    assert response.json()["name"] == "Sans dates"
+
+
+def test_update_projet_fin_avant_debut(client):
+    """PUT /projets/{id} refuse une date de fin antérieure au début, même envoyée seule."""
+    token = _register_and_login(client, email="dates_invalides@test.com")
+    create_resp = client.post("/api/projets", json={
+        "name": "Dates",
+        "start_date": "2026-12-20",
+        "end_date": "2026-12-28",
+    }, headers=_auth_headers(token))
+    projet_id = create_resp.json()["id"]
+
+    response = client.put(f"/api/projets/{projet_id}", json={"end_date": "2026-12-10"}, headers=_auth_headers(token))
+    assert response.status_code == 400
+    assert "date de fin" in response.json()["detail"]
+
+    # Rien n'a été modifié
+    get_response = client.get(f"/api/projets/{projet_id}", headers=_auth_headers(token))
+    assert get_response.json()["end_date"] == "2026-12-28"
+
+
 def test_delete_projet(client):
     """DELETE /projets/{id} supprime le projet."""
     token = _register_and_login(client, email="delete_projet@test.com")
