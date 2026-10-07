@@ -116,6 +116,14 @@ def update_projet(
     # "name" dans le schéma correspond à "title" dans le modèle
     if "name" in update_data:
         project.title = update_data.pop("name")
+    # Contrôle sur les dates finales : une seule date peut être envoyée, l'autre est déjà en base
+    start = update_data.get("start_date", project.start_date)
+    end = update_data.get("end_date", project.end_date)
+    if start and end and end < start:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La date de fin doit être postérieure ou égale à la date de début",
+        )
     for field, value in update_data.items():
         setattr(project, field, value)
     db.commit()
