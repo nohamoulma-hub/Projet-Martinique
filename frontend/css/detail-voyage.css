@@ -57,13 +57,13 @@
   .projet-dates { font-size: 14px; color: rgba(255,255,255,.5); }
   .projet-dates strong { color: rgba(255,255,255,.8); }
   .projet-actions { display: flex; gap: 10px; align-items: center; padding-top: 4px; }
-  .btn-outline {
+  .btn-outline, .btn-dates {
     background: transparent; color: rgba(255,255,255,.7);
     border: 1px solid rgba(255,255,255,.2); border-radius: var(--rayon);
     padding: 9px 18px; font-family: var(--font-corps); font-size: 13px; font-weight: 600;
     cursor: pointer; transition: all .18s;
   }
-  .btn-outline:hover { border-color: rgba(255,255,255,.5); color: #fff; }
+  .btn-outline:hover, .btn-dates:hover { border-color: rgba(255,255,255,.5); color: #fff; }
   .btn-ia {
     background: var(--jaune); color: var(--nuit);
     border: none; border-radius: var(--rayon);
