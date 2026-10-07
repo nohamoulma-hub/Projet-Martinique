@@ -156,7 +156,9 @@ async function renderProjet(projet) {
   if (datesEl) {
     const startFmt = formatDateShort(projet.start_date);
     const endFmt = formatDateShort(projet.end_date);
-    datesEl.innerHTML = `<strong>${startFmt} au ${endFmt}</strong> · ${totalDays} jour${totalDays > 1 ? 's' : ''}`;
+    datesEl.innerHTML = (startFmt && endFmt)
+      ? `<strong>${startFmt} au ${endFmt}</strong> · ${totalDays} jour${totalDays > 1 ? 's' : ''}`
+      : '<strong>Dates non définies</strong> · cliquez sur « Modifier les dates » pour afficher le programme';
   }
 
   // Statut du projet
@@ -317,6 +319,105 @@ async function reloadProjet() {
   }
 }
 
+// Ouvre la modale de modification des dates du projet (PUT /projets/{id}, sans passer par l'IA)
+function openDatesModal() {
+  if (!projetData) return;
+  const existing = document.getElementById('modal-dates');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'modal-dates';
+  modal.className = 'modal-overlay';
+
+  modal.innerHTML = `
+    <div style="background:#fff;border-radius:16px;padding:28px;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.25);">
+      <h3 style="margin:0 0 20px;font-size:18px;">Dates du voyage</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <label style="font-size:14px;font-weight:500;">
+          Début
+          <input id="dates-debut" type="date" value="${projetData.start_date || ''}"
+            style="display:block;width:100%;margin-top:4px;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box;">
+        </label>
+        <label style="font-size:14px;font-weight:500;">
+          Fin
+          <input id="dates-fin" type="date" value="${projetData.end_date || ''}"
+            style="display:block;width:100%;margin-top:4px;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;box-sizing:border-box;">
+        </label>
+      </div>
+      <p id="dates-info" style="font-size:13px;color:#666;margin-top:10px;"></p>
+      <p id="dates-error" style="color:var(--rouge,#C8392B);font-size:13px;margin-top:10px;display:none;"></p>
+      <div style="display:flex;gap:10px;margin-top:20px;">
+        <button id="dates-cancel" style="flex:1;padding:12px;border:1px solid #ddd;background:#fff;border-radius:8px;cursor:pointer;">Annuler</button>
+        <button id="dates-submit" style="flex:2;padding:12px;background:var(--rouge,#C8392B);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;">Enregistrer</button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(modal);
+  document.getElementById('dates-cancel').addEventListener('click', () => modal.remove());
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+
+  const debutEl = document.getElementById('dates-debut');
+  const finEl = document.getElementById('dates-fin');
+  const infoEl = document.getElementById('dates-info');
+  const errEl = document.getElementById('dates-error');
+
+  // Les activités placées après le dernier jour ne seraient plus affichées : on prévient
+  const dernierJour = Math.max(0, ...(projetData.items || []).map(i => i.day_number || 0));
+  function majInfo() {
+    const jours = daysBetween(debutEl.value, finEl.value);
+    if (!debutEl.value || !finEl.value || jours < 0) { infoEl.textContent = ''; return; }
+    let texte = `Durée : ${jours} jour${jours > 1 ? 's' : ''}.`;
+    if (dernierJour > jours) {
+      texte += ` Attention : des activités sont prévues jusqu'au jour ${dernierJour}, elles ne seront plus affichées.`;
+    }
+    infoEl.textContent = texte;
+  }
+  debutEl.addEventListener('change', majInfo);
+  finEl.addEventListener('change', majInfo);
+  majInfo();
+
+  document.getElementById('dates-submit').addEventListener('click', async () => {
+    const start_date = debutEl.value;
+    const end_date = finEl.value;
+    errEl.style.display = 'none';
+
+    if (!start_date || !end_date) {
+      errEl.textContent = 'Veuillez renseigner les deux dates.';
+      errEl.style.display = 'block';
+      return;
+    }
+    if (end_date < start_date) {
+      errEl.textContent = 'La date de fin doit être postérieure ou égale à la date de début.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    const btn = document.getElementById('dates-submit');
+    btn.disabled = true;
+    btn.textContent = 'Enregistrement...';
+
+    try {
+      const res = await fetch(`${API_URL}/projets/${projetId}`, {
+        method: 'PUT',
+        headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ start_date, end_date }),
+      });
+      if (res.status === 401) { handleUnauthorized(); return; }
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.detail || 'Erreur lors de l\'enregistrement.');
+      }
+      modal.remove();
+      await renderProjet(await res.json());
+    } catch (err) {
+      errEl.textContent = err.message || 'Impossible de joindre le serveur.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Enregistrer';
+    }
+  });
+}
+
 // Ouvre la modale d'ajout d'activité pour un jour donné
 function openAddActiviteModal(dayNumber) {
   const existing = document.getElementById('modal-add-act');
@@ -424,6 +525,10 @@ async function addActiviteToProjet(activiteId, dayNumber, modal) {
 // Initialisation
 document.addEventListener('DOMContentLoaded', async () => {
   requireAuth();
+
+  // Branché ici et non dans renderProjet, appelé à chaque rechargement du projet
+  const datesBtn = document.querySelector('.btn-dates');
+  if (datesBtn) datesBtn.addEventListener('click', openDatesModal);
 
   const params = new URLSearchParams(window.location.search);
   projetId = params.get('id');
