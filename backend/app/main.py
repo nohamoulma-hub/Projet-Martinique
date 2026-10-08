@@ -1,5 +1,6 @@
 # Point d'entrée de l'API : crée l'application FastAPI et assemble les routeurs.
 # C'est ce fichier qu'uvicorn lance (uvicorn app.main:app).
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI, Request, status
@@ -9,20 +10,32 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
-from app.routers import activites, auth, health, meteo, planning, projets, utilisateurs
+from app.routers import (activites, auth, health, meteo, planning, projets, sargasses,
+                         utilisateurs)
+from app.services import collector_service
 
 # Toutes les routes API vivent sous /api. Un prefixe unique evite toute collision avec
 # un fichier statique du site (une route /meteo et une page meteo.html, par exemple) et
 # permet a nginx de n'avoir qu'une seule regle de proxy.
 API_PREFIX = "/api"
 
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    """Lance la collecte automatique (météo, sargasses, H2S) pendant la vie de l'API."""
+    taches = collector_service.start() if settings.collecte_auto else []
+    yield
+    await collector_service.stop(taches)
+
+
 app = FastAPI(
     title=settings.app_name,
-    description="API du site touristique Martinique : catalogue d'activités, météo, projets de voyage.",
+    description="API du site touristique Martinique : catalogue d'activités, météo, sargasses, projets de voyage.",
     version="1.0.0",
     docs_url=f"{API_PREFIX}/docs",
     redoc_url=f"{API_PREFIX}/redoc",
     openapi_url=f"{API_PREFIX}/openapi.json",
+    lifespan=lifespan,
 )
 
 # Libelles francais des champs, pour les messages d'erreur de validation.
@@ -90,7 +103,7 @@ app.add_middleware(
 )
 
 # Enregistrement de tous les routeurs v1, tous sous le prefixe /api
-for routeur in (health, activites, auth, utilisateurs, projets, meteo, planning):
+for routeur in (health, activites, auth, utilisateurs, projets, meteo, sargasses, planning):
     app.include_router(routeur.router, prefix=API_PREFIX)
 
 # Sert le frontend statique depuis /site pour éviter les conflits avec les routes API
