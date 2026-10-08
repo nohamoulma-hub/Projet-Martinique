@@ -54,6 +54,10 @@ services:
       # fonctionne normalement.
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       PLANNING_BUDGET_EUR: ${PLANNING_BUDGET_EUR:-5}
+      # Collecte automatique des nuages, du radar, des sargasses et des odeurs (H2S).
+      # Les images et données collectées vont dans le volume « cache » ci-dessous.
+      COLLECTE_AUTO: ${COLLECTE_AUTO:-true}
+      CACHE_DIR: /data/cache
     depends_on:
       db:
         condition: service_healthy
@@ -61,6 +65,9 @@ services:
       # Le code est monté depuis l'hôte : une modification est prise en compte
       # immédiatement grâce au --reload, sans reconstruire l'image.
       - ./backend:/app
+      # Cache de la collecte : quelques Mo, purgés au fil de l'eau. Hors du dossier monté
+      # pour ne pas encombrer le dépôt, et conservé quand le conteneur est recréé.
+      - cache:/data/cache
     # Les migrations sont appliquées au démarrage, puis le serveur se lance.
     command: >
       sh -c "alembic upgrade head &&
@@ -86,3 +93,4 @@ services:
 
 volumes:
   pgdata:
+  cache:
