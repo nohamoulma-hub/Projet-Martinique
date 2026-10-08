@@ -1152,3 +1152,62 @@ la requête : envoyer seulement une `end_date` trop tôt est aussi refusé. 2 te
 
 `daysBetween` compte les nuits et non les jours (du 20 au 28 donne 8 jours, pas 9). Un
 planning de 8 jours demande donc une fin à J+8. Comportement antérieur, non modifié.
+
+---
+
+## 2026-10-08 - Prototype de la page Météo et sargasses, correction d'Anse Céron
+
+**Anse Céron.** La description situait la plage « au nord de la presqu'île de la Caravelle »,
+alors qu'elle est au Prêcheur, sur la côte nord caraïbe (adresse et coordonnées étaient déjà
+justes). Corrigé dans `scripts/seed.py` et dans la carte de maquette de `catalogue.html`.
+`seed.py` ne mettait à jour que l'adresse et le prix d'une fiche existante : il met
+désormais aussi à jour la description, sur le même modèle, pour qu'une correction arrive en
+base sans repartir d'une base neuve. Au passage du script, seule Anse Céron a changé.
+
+**Prototype de `meteo.html` (hors dépôt).** Publié en artefact privé sur claude.ai, rien
+n'est intégré au frontend. Le prototype reprend la page actuelle et ajoute :
+- une carte Leaflet à deux onglets, Météo (Pluie et nuages, Températures, Vent) et
+  Sargasses (Carte des plages par plage ou par façade, Nappes au large) ;
+- les six idées sargasses retenues : pastilles par plage, façades de côte, nappes au large,
+  calendrier de risque sur 7 jours calé sur le projet de voyage, « Où me baigner
+  aujourd'hui ? » (remplace « Plages recommandées », qui faisait doublon) et jauge H₂S ;
+- un aperçu des alertes sur l'accueil, la fiche plage, le projet de voyage et l'assistant IA.
+
+Toutes les valeurs de sargasses et de H₂S sont fictives. La météo, les nuages et le radar
+sont réels.
+
+**Sources testées, toutes sans clé API.**
+- Esri World Imagery pour le fond. Conditions d'usage sur un site public à vérifier.
+- NASA GIBS, GOES-East GeoColor : une image toutes les 10 min, zoom natif 7, environ
+  50 min de délai de publication. La date « Default » des capacités WMTS n'est pas fiable
+  (elle a reculé de 40 min entre deux lectures) : il faut sonder les tuiles à rebours.
+- RainViewer pour le radar : zoom 7 maximum (le zoom 10 renvoie « Zoom Level Not
+  Supported ») et la couche satellite infrarouge n'existe plus.
+- Open-Meteo : grille de 304 points pour température et vent (l'API corrige la
+  température selon l'altitude, d'où 19 °C sur la Pelée contre 27 °C sur la côte), API
+  marine pour la houle devant chaque plage.
+
+**Nuages transparents.** Les tuiles GeoColor sont opaques. Pour superposer les nuages au
+fond Esri, on ne garde que les pixels clairs et peu saturés. Fait hors ligne avec Pillow
+pour le prototype ; en production, il faudra le faire côté backend ou dans une couche
+canvas Leaflet (CORS de GIBS à vérifier).
+
+**Trait de côte.** OpenStreetMap (`natural=coastline` via Overpass), simplifié à 573
+points et découpé en 6 façades qui reprennent les 6 zones de la page.
+
+### À traiter
+
+- Listes de plages par zone dans `meteo.html` : Fond Lahaye (Schœlcher) et Anse Latouche
+  (Le Carbet) sont rangées en Nord Atlantique alors qu'elles sont sur la côte caraïbe ;
+  Sainte-Marie (nord) et Rivière-Pilote (sud) sont en Sud Atlantique. Corrigé dans le
+  prototype seulement.
+- Le pied de page de `meteo.html` cite Météo France et l'Université des Antilles, alors
+  que la météo vient d'Open-Meteo et qu'aucune source de sargasses n'est branchée.
+- Seule `maquette.html` charge Google Fonts : les autres pages affichent Georgia et la
+  police système au lieu de Playfair Display et DM Sans.
+- Open-Meteo fournit aussi ressenti, indice UV, pression et visibilité : les valeurs
+  figées du hero peuvent devenir réelles.
+- Leaflet est une nouvelle librairie front, à valider avant intégration.
+- Sources sargasses (bulletins Météo-France, SaWS, NOAA) et H₂S (capteurs Madininair,
+  seuils ARS) : formats et licences à vérifier. En attendant, saisie manuelle des niveaux
+  par zone, avec une date de relevé visible.
