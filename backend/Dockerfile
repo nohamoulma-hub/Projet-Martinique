@@ -24,6 +24,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 RUN chown -R appuser:appuser /app
 
+# Dossier du cache de la collecte (volume « cache » du docker-compose). Créé ici au nom
+# d'appuser : un volume vide reprend à sa création les droits du dossier de l'image,
+# sans quoi il appartiendrait à root et la collecte ne pourrait pas y écrire.
+RUN mkdir -p /data/cache && chown -R appuser:appuser /data
+
 EXPOSE 8000
 
 # Tout ce qui precede demandait les droits root (installation des paquets). A partir
