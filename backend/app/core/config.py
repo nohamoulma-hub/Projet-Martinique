@@ -18,6 +18,12 @@ class Settings(BaseSettings):
     # Clé secrète pour signer les tokens JWT : doit rester dans .env, jamais dans le code.
     jwt_secret_key: str = "changeme"
     jwt_expire_hours: int = 24
+    # Collecte automatique en arrière-plan (nuages, radar, sargasses, H2S). Désactivée
+    # dans les tests, qui ne doivent jamais appeler une API externe.
+    collecte_auto: bool = True
+    # Dossier des images et données collectées. Dans Docker, un volume y est monté pour
+    # que le cache survive aux redémarrages sans encombrer le dépôt.
+    cache_dir: str = "./cache"
 
     @computed_field
     @property
