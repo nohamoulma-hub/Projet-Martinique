@@ -1,4 +1,12 @@
 # Configuration des fixtures pytest : base de données en mémoire isolée pour les tests.
+import os
+import tempfile
+
+# Avant d'importer l'application : pas de collecte automatique (aucun appel externe)
+# et un cache jetable, distinct de celui du site.
+os.environ["COLLECTE_AUTO"] = "false"
+os.environ["CACHE_DIR"] = tempfile.mkdtemp(prefix="cache-tests-")
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
