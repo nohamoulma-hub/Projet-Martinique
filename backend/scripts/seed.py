@@ -23,7 +23,7 @@ BEACHES = [
             "name": "Anse Céron",
             "category": Category.BEACH,
             "description": (
-                "Plage sauvage au nord de la presqu'île de la Caravelle, "
+                "Plage sauvage du Prêcheur, sur la côte nord caraïbe, "
                 "connue pour ses cocotiers et son caractère préservé. "
                 "Accessible en voiture depuis Saint-Pierre."
             ),
@@ -962,9 +962,11 @@ def seed():
         # a une base existante sans la detruire.
         existants = {p.name: p for p in db.query(PointOfInterest).all()}
         ajouts = ignores = details_ajoutes = details_completes = adresses_maj = prix_maj = 0
+        descriptions_maj = 0
 
         def ajouter(data, libelle, classe_details=None, champ=None):
             nonlocal ajouts, ignores, details_ajoutes, details_completes, adresses_maj, prix_maj
+            nonlocal descriptions_maj
             nom = data["poi"]["name"]
             poi = existants.get(nom)
 
@@ -989,6 +991,12 @@ def seed():
                     poi.price_eur = prix
                     prix_maj += 1
                     print(f"    prix mis à jour : {nom} ({prix} €)")
+                # Meme regle pour la description : une erreur corrigee dans le script
+                # (ex. Anse Céron situee a tort sur la Caravelle) doit arriver en base.
+                if poi.description != data["poi"]["description"]:
+                    poi.description = data["poi"]["description"]
+                    descriptions_maj += 1
+                    print(f"    description mise à jour : {nom}")
 
             # Les details sont traites a part : une fiche peut exister sans eux, par
             # exemple quand la table de details a ete creee apres l'insertion de la fiche.
@@ -1036,8 +1044,8 @@ def seed():
         print(
             f"\n{ajouts} ajoutée(s), {ignores} déjà présente(s), "
             f"{details_ajoutes} fiche(s) de détails créée(s), "
-            f"{details_completes} complétée(s), {adresses_maj} adresse(s) et "
-            f"{prix_maj} prix mis à jour. "
+            f"{details_completes} complétée(s), {adresses_maj} adresse(s), "
+            f"{descriptions_maj} description(s) et {prix_maj} prix mis à jour. "
             f"{total} activités au total."
         )
 
