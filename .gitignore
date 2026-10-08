@@ -3,3 +3,6 @@
 
 # Fichiers système macOS
 .DS_Store
+
+# Cache des données météo et sargasses collectées par le backend (hors Docker).
+backend/cache/
