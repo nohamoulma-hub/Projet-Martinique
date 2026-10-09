@@ -50,6 +50,109 @@ function getDateForDay(startDate, dayNumber) {
   return d.toISOString().split('T')[0];
 }
 
+// Dates du séjour, du premier au dernier jour inclus (AAAA-MM-JJ)
+function tripDates(projet) {
+  if (!projet.start_date || !projet.end_date) return [];
+  const dates = [];
+  for (let d = new Date(`${projet.start_date}T12:00:00`); d <= new Date(`${projet.end_date}T12:00:00`); d.setDate(d.getDate() + 1)) {
+    dates.push(d.toLocaleDateString('en-CA'));
+  }
+  return dates;
+}
+
+// Date du jour en Martinique, quel que soit le fuseau du visiteur
+function todayInMartinique() {
+  return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Martinique' });
+}
+
+// Météo prévue (Open-Meteo, 7 jours) et sargasses (NOAA, puis estimation du site)
+async function renderTripConditions(projet) {
+  const [forecast, sargassum] = await Promise.all([fetchApi('/meteo/previsions'), fetchApi('/sargasses')]);
+  renderTripWeather(projet, forecast);
+  renderTripSargassum(projet, sargassum);
+}
+
+// Prévisions des jours du séjour compris dans les 7 prochains jours
+function renderTripWeather(projet, forecast) {
+  const note = document.getElementById('tripWeatherNote');
+  const strip = document.getElementById('tripWeatherStrip');
+  if (!note || !strip) return;
+  strip.innerHTML = '';
+  const dates = tripDates(projet);
+  if (!dates.length) {
+    note.textContent = 'Ajoutez des dates au projet pour voir la météo prévue.';
+    return;
+  }
+  if (!forecast) {
+    note.textContent = 'Prévisions indisponibles pour le moment.';
+    return;
+  }
+  const days = forecast.days.filter((d) => dates.includes(d.date)).slice(0, 5);
+  if (!days.length) {
+    if (projet.end_date < todayInMartinique()) {
+      note.textContent = 'Ce séjour est terminé.';
+    } else {
+      const from = new Date(`${projet.start_date}T12:00:00`);
+      from.setDate(from.getDate() - 6);
+      note.textContent = `Les prévisions s'afficheront à partir du ${from.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}, 7 jours avant le départ.`;
+    }
+    return;
+  }
+  note.textContent = 'Fort-de-France · prévisions Open-Meteo';
+  strip.innerHTML = days.map((day) => `<div class="meteo-day${day.date === forecast.days[0].date ? ' today' : ''}" title="${day.weather_description}">
+      <div class="meteo-day-name">${formatDayFr(day.date, { weekday: 'short' }).replace('.', '')}</div>
+      <div class="meteo-day-icon">${weatherIcon(day.weather_code, 22)}</div>
+      <div class="meteo-day-temp">${Math.round(day.temperature_max)}°</div></div>`).join('');
+}
+
+// Niveau de sargasses de chaque plage du programme, le jour où elle est prévue
+function renderTripSargassum(projet, data) {
+  const recap = document.getElementById('recapSargassum');
+  const card = document.getElementById('tripSargassumCard');
+  if (!recap || !card) return;
+  card.hidden = true;
+  const beaches = (projet.items || []).filter((item) => item.activity && item.activity.category === 'beach' && item.day_number);
+  if (!data) { recap.textContent = '--'; return; }
+  if (!beaches.length || !projet.start_date) { recap.textContent = 'Aucune plage prévue'; recap.style.color = ''; return; }
+
+  const today = todayInMartinique();
+  const visits = beaches.map((item) => {
+    const date = getDateForDay(projet.start_date, item.day_number);
+    const info = data.beaches[item.activity.id];
+    const zone = info && data.zones.find((z) => z.id === info.zone);
+    // Estimation propre à la plage, sinon celle de sa façade
+    const forecast = info && info.forecast && info.forecast.length ? info.forecast : (zone ? zone.forecast : []);
+    let level = null;
+    if (date === today) level = info ? info.level : null;
+    else level = (forecast.find((f) => f.date === date) || {}).level || null;
+    return { name: item.activity.name, date, level };
+  });
+  const known = visits.filter((v) => v.level);
+  if (!known.length) {
+    recap.textContent = 'Pas encore connu';
+    recap.style.color = '';
+    return;
+  }
+  const worst = known.reduce((a, b) => (sargassumRank(b.level) > sargassumRank(a.level) ? b : a));
+  recap.textContent = sargassumLabel(worst.level);
+  recap.style.color = SARGASSUM_LEVELS[worst.level].color;
+
+  const exposed = known.filter((v) => sargassumRank(v.level) >= 2);
+  if (!exposed.length) return;
+  card.style.setProperty('--niveau', SARGASSUM_LEVELS[worst.level].color);
+  document.getElementById('tripSargassumBody').innerHTML = `
+    <div class="alerte-sejour" style="--niveau:${SARGASSUM_LEVELS[worst.level].color}">
+      <b>${exposed.length > 1 ? `${exposed.length} plages de votre programme sont exposées` : 'Une plage de votre programme est exposée'}</b>
+      <ul>${exposed.map((v) => `<li style="--jour:${SARGASSUM_LEVELS[v.level].color}"><i></i>${v.name}, ${formatDayFr(v.date, { weekday: 'long', day: 'numeric' })} : ${sargassumLabel(v.level).toLowerCase()}</li>`).join('')}</ul>
+    </div>
+    <p class="alerte-note">Aujourd'hui : relevé NOAA. Jours suivants : estimation du site, sur 4 jours.</p>
+    <button type="button" class="btn-secondaire" id="askOtherBeach">Proposer une autre plage</button>`;
+  document.getElementById('askOtherBeach').addEventListener('click', () => {
+    window.location.href = `planning-ia.html?projet_id=${projetId}`;
+  });
+  card.hidden = false;
+}
+
 // Traduit la catégorie API en classe CSS et label
 function catInfo(category) {
   const map = {
@@ -215,6 +318,9 @@ async function renderProjet(projet) {
     recapRows[2].querySelector('.recap-val').textContent = `${actCount}`;
     recapRows[3].querySelector('.recap-val').textContent = `${daysWithActivities} / ${totalDays}`;
   }
+
+  // Météo prévue et sargasses sur les dates du séjour
+  renderTripConditions(projet);
 
   // Initiales dans la nav
   await loadNavAvatar();
