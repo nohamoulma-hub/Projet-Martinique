@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Anse Céron : détail de la plage — Martinique</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap">
   <link rel="stylesheet" href="css/detail.css">
   <link rel="stylesheet" href="css/nav.css">
   <script src="js/etat-connexion.js"></script>
@@ -180,13 +183,12 @@
       </div>
     </div>
 
-    <div class="alerte-card">
+    <!-- Risque de sargasses : rempli par js/detail.js pour les plages uniquement -->
+    <div class="alerte-card" id="sargassumCard" hidden>
       <div class="alerte-header">
-        <span>⚠️</span> Alerte sargasses
+        <i class="alerte-point"></i><span id="sargassumTitle">Sargasses</span>
       </div>
-      <div class="alerte-body">
-        Cette plage est exposée aux arrivées de sargasses en période estivale (juil. à oct.). Consultez les conditions actuelles avant votre visite.
-      </div>
+      <div class="alerte-body" id="sargassumBody"></div>
     </div>
 
   </aside>
@@ -243,6 +245,7 @@
 </footer>
 
 <script src="js/auth-utils.js"></script>
+<script src="js/meteo-utils.js"></script>
 <script src="js/detail.js"></script>
 
 </body>
