@@ -255,24 +255,33 @@
   .dot-r { width: 8px; height: 8px; border-radius: 50%; background: var(--card-border); }
   .dot-r.on { background: var(--rouge); }
 
-  /* Alerte sargasses */
+  /* Risque de sargasses : la couleur suit le niveau du jour (variable --niveau posée en JS) */
   .alerte-card {
+    --niveau: #8a7d6b;
     border-radius: 8px; overflow: hidden;
-    border: 1px solid rgba(200,57,43,.25);
-    background: rgba(200,57,43,.06);
+    border: 1px solid color-mix(in srgb, var(--niveau) 30%, transparent);
+    background: color-mix(in srgb, var(--niveau) 6%, #fff);
     margin-bottom: 16px;
   }
+  .alerte-card[hidden] { display: none; }
   .alerte-header {
-    background: rgba(200,57,43,.15);
+    background: color-mix(in srgb, var(--niveau) 14%, transparent);
     padding: 10px 16px;
     display: flex; align-items: center; gap: 8px;
-    font-size: 12px; font-weight: 600; color: var(--rouge);
+    font-size: 12px; font-weight: 600; color: color-mix(in srgb, var(--niveau) 80%, #000);
     letter-spacing: .3px; text-transform: uppercase;
   }
+  .alerte-point { width: 9px; height: 9px; border-radius: 50%; background: var(--niveau); flex: none; }
   .alerte-body {
     padding: 12px 16px;
     font-size: 13px; color: var(--texte); line-height: 1.55;
+    display: grid; gap: 8px;
   }
+  .alerte-body p { margin: 0; }
+  .alerte-jours { display: flex; flex-wrap: wrap; gap: 6px; }
+  .alerte-jour { font-size: 11px; padding: 3px 8px; border-radius: 999px; background: color-mix(in srgb, var(--jour) 14%, #fff); color: color-mix(in srgb, var(--jour) 75%, #000); font-weight: 600; }
+  .alerte-source { font-size: 11px; color: var(--doux); }
+  .alerte-source a, .alerte-body a { color: var(--rouge); font-weight: 600; text-decoration: none; }
 
   /* CTA voyage */
   .cta-voyage {
