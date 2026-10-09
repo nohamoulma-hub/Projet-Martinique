@@ -463,12 +463,49 @@ function applyTypeAccent(category) {
   }
 }
 
-// Affiche ou masque le bloc alerte sargasses selon le type d'activite
-function handleAlerteCard(category) {
-  const alerteCard = document.querySelector('.alerte-card');
-  if (!alerteCard) return;
-  // Le bloc sargasses n'est pertinent que pour les plages
-  alerteCard.style.display = category === 'beach' ? '' : 'none';
+// Distance en km entre deux points (formule de haversine)
+function distanceKm(lat1, lon1, lat2, lon2) {
+  const rad = Math.PI / 180;
+  const h = Math.sin((lat2 - lat1) * rad / 2) ** 2
+    + Math.cos(lat1 * rad) * Math.cos(lat2 * rad) * Math.sin((lon2 - lon1) * rad / 2) ** 2;
+  return 2 * 6371 * Math.asin(Math.sqrt(h));
+}
+
+// Bloc sargasses d'une plage : niveau du jour (NOAA), estimation des 4 jours suivants
+// et plage moins exposée la plus proche. Masqué pour les autres activités.
+async function loadSargassumCard(activite) {
+  const card = document.getElementById('sargassumCard');
+  if (!card || activite.category !== 'beach') return;
+  const data = await fetchApi('/sargasses');
+  const info = data && data.beaches[activite.id];
+  if (!info || !info.level) return;
+
+  const zone = data.zones.find((z) => z.id === info.zone);
+  card.style.setProperty('--niveau', SARGASSUM_LEVELS[info.level].color);
+  document.getElementById('sargassumTitle').textContent = `Sargasses : ${sargassumLabel(info.level).toLowerCase()} aujourd'hui`;
+
+  const lines = [`<p>Risque d'échouement relevé par la NOAA le ${formatDayFr(data.risk_date, { day: 'numeric', month: 'long' })}${zone ? `, façade ${zone.name}` : ''}.</p>`];
+  // Estimation propre à la plage, sinon celle de sa façade
+  const forecast = (info.forecast && info.forecast.length) ? info.forecast : (zone ? zone.forecast : []);
+  if (forecast.length) {
+    lines.push(`<div class="alerte-jours">${forecast.map((f) =>
+      `<span class="alerte-jour" style="--jour:${SARGASSUM_LEVELS[f.level].color}">${formatDayFr(f.date, { weekday: 'short' })} ${sargassumLabel(f.level).toLowerCase()}</span>`).join('')}</div>`);
+  }
+
+  // Plage du catalogue moins exposée, la plus proche
+  if (sargassumRank(info.level) > 0) {
+    const list = await fetchApi('/activites?categorie=beach');
+    const better = (list ? list.items : [])
+      .filter((b) => b.id !== activite.id && data.beaches[b.id] && sargassumRank(data.beaches[b.id].level) < sargassumRank(info.level))
+      .map((b) => ({ ...b, km: distanceKm(activite.latitude, activite.longitude, b.latitude, b.longitude) }))
+      .sort((a, b) => a.km - b.km)[0];
+    if (better) {
+      lines.push(`<p>Moins exposée et la plus proche : <a href="detail.html?id=${better.id}">${better.name}</a> (${sargassumLabel(data.beaches[better.id].level).toLowerCase()}), à ${Math.round(better.km)} km.</p>`);
+    }
+  }
+  lines.push('<p class="alerte-source">Jours suivants : estimation du site. <a href="meteo.html#sargasses">Voir la carte des sargasses</a></p>');
+  document.getElementById('sargassumBody').innerHTML = lines.join('');
+  card.hidden = false;
 }
 
 // Affiche le checkmark a cote du bouton "Ajouter" et attache la bulle de projets
@@ -590,8 +627,8 @@ async function loadActivite(id) {
     // Couleur d'accent selon le type (beach = bleu, hike = vert)
     applyTypeAccent(activite.category);
 
-    // Masque l'alerte sargasses pour les randonnees
-    handleAlerteCard(activite.category);
+    // Risque de sargasses, pour les plages uniquement
+    loadSargassumCard(activite);
 
     // Description
     const descSection = document.querySelector('.description');
