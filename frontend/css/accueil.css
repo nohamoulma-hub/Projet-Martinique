@@ -371,7 +371,8 @@
     .section-live .section-tag   { color: var(--jaune); }
     .live-grille {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      /* 240px : les 4 cartes tiennent sur une ligne, sans carte orpheline */
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 16px;
       max-width: 1100px;
       margin: 0 auto;
@@ -421,9 +422,24 @@
       color: rgba(255,255,255,0.4);
       margin-top: 6px;
     }
-    .live-alerte { border-color: rgba(200,57,43,0.4); }
-    .live-alerte .live-dot   { background: var(--rouge); box-shadow: 0 0 6px var(--rouge); }
-    .live-alerte .live-valeur { color: #FF8A80; }
+    /* Carte sargasses : sa couleur suit le niveau du jour (variable --niveau posée en JS) */
+    .live-alerte { --niveau: #8a7d6b; border-color: color-mix(in srgb, var(--niveau) 45%, transparent); }
+    .live-alerte .live-dot   { background: var(--niveau); box-shadow: 0 0 6px var(--niveau); }
+    .live-alerte .live-valeur { color: color-mix(in srgb, var(--niveau) 55%, #fff); }
+
+    /* Bandeau d'alerte sargasses, au-dessus des cartes live */
+    .live-bandeau {
+      position: relative;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      max-width: 1100px; margin: 0 auto 16px;
+      padding: 14px 20px; border-radius: 8px;
+      background: color-mix(in srgb, var(--niveau, #E07B20) 16%, transparent);
+      border: 1px solid color-mix(in srgb, var(--niveau, #E07B20) 45%, transparent);
+      color: var(--blanc); text-decoration: none; font-size: 14px; font-weight: 500;
+    }
+    .live-bandeau[hidden] { display: none; }
+    .live-bandeau i { width: 10px; height: 10px; border-radius: 50%; background: var(--niveau, #E07B20); flex: none; }
+    .live-bandeau span { margin-left: auto; color: var(--jaune); font-weight: 600; white-space: nowrap; }
 
     /* ─── Section "Préparez votre voyage" ─── */
     .section-prep {
