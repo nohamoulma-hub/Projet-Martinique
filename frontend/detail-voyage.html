@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Martinique en famille : mon projet de voyage</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap">
   <link rel="stylesheet" href="css/detail-voyage.css">
   <link rel="stylesheet" href="css/nav.css">
   <script src="js/etat-connexion.js"></script>
@@ -227,43 +230,24 @@
         <div class="recap-row"><span class="recap-label">Voyageurs</span><span class="recap-val">4 personnes</span></div>
         <div class="recap-row"><span class="recap-label">Activités</span><span class="recap-val">14 / 20 prévues</span></div>
         <div class="recap-row"><span class="recap-label">Jours planifiés</span><span class="recap-val jaune">3 / 10</span></div>
-        <div class="recap-row"><span class="recap-label">Sargasses</span><span class="recap-val vert">Faible en sept.</span></div>
+        <div class="recap-row"><span class="recap-label">Sargasses</span><span class="recap-val" id="recapSargassum">--</span></div>
       </div>
     </div>
 
     <!-- Météo -->
     <div class="side-card">
       <div class="side-card-head">Météo prévue</div>
+      <!-- Rempli par js/detail-voyage.js avec les prévisions des jours du séjour -->
       <div class="side-card-body" style="gap: 8px;">
-        <p style="font-size: 11px; color: var(--doux);">Semaine du 12 sept. · Prévisions approximatives</p>
-        <div class="meteo-strip">
-          <div class="meteo-day today">
-            <div class="meteo-day-name">Sam</div>
-            <div class="meteo-day-icon">⛅</div>
-            <div class="meteo-day-temp">29°</div>
-          </div>
-          <div class="meteo-day">
-            <div class="meteo-day-name">Dim</div>
-            <div class="meteo-day-icon">🌤</div>
-            <div class="meteo-day-temp">30°</div>
-          </div>
-          <div class="meteo-day">
-            <div class="meteo-day-name">Lun</div>
-            <div class="meteo-day-icon">🌧</div>
-            <div class="meteo-day-temp">27°</div>
-          </div>
-          <div class="meteo-day">
-            <div class="meteo-day-name">Mar</div>
-            <div class="meteo-day-icon">⛅</div>
-            <div class="meteo-day-temp">28°</div>
-          </div>
-          <div class="meteo-day">
-            <div class="meteo-day-name">Mer</div>
-            <div class="meteo-day-icon">☀️</div>
-            <div class="meteo-day-temp">31°</div>
-          </div>
-        </div>
+        <p class="meteo-note" id="tripWeatherNote">Chargement des prévisions…</p>
+        <div class="meteo-strip" id="tripWeatherStrip"></div>
       </div>
+    </div>
+
+    <!-- Sargasses : affiché quand une plage du programme est exposée un jour prévu -->
+    <div class="side-card" id="tripSargassumCard" hidden>
+      <div class="side-card-head">Sargasses pendant le séjour</div>
+      <div class="side-card-body" id="tripSargassumBody"></div>
     </div>
 
     <!-- IA -->
@@ -278,6 +262,7 @@
 </div>
 
 <script src="js/auth-utils.js"></script>
+<script src="js/meteo-utils.js"></script>
 <script src="js/detail-voyage.js"></script>
 
 </body>
