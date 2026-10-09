@@ -1211,3 +1211,80 @@ points et découpé en 6 façades qui reprennent les 6 zones de la page.
 - Sources sargasses (bulletins Météo-France, SaWS, NOAA) et H₂S (capteurs Madininair,
   seuils ARS) : formats et licences à vérifier. En attendant, saisie manuelle des niveaux
   par zone, avec une date de relevé visible.
+
+---
+
+## 2026-10-08 - Météo et sargasses en temps réel
+
+Intégration au site du prototype validé le jour même. Les sargasses ne sont plus hors v1.
+
+### Ce qui a été construit
+
+**Backend.** Une collecte automatique (`collector_service`) relève chaque source à son
+rythme et écrit dans un cache sur disque (volume Docker `cache`). Les routes lisent ce
+cache : une page vue ne déclenche aucun appel externe, et les quotas gratuits restent loin.
+- `meteo_animation_service` : nuages GOES-East (NASA GIBS) rendus transparents et radar
+  RainViewer, sur les 2 dernières heures, une image toutes les 10 minutes.
+- `meteo_service` étendu : ressenti, UV, pression, visibilité, température de la mer,
+  ensoleillement et pluie sur 7 jours ; prévisions détaillées en matin, après-midi,
+  soirée ; grille de températures (168 points) ; météo et houle devant chaque plage.
+- `sargasses_service` : risque du jour par façade et par plage (NOAA SIR), nappes au large
+  (indice AFAI sur 7 jours) et estimation de leur dérive sur 4 jours.
+- `h2s_service` : bulletin quotidien des capteurs d'hydrogène sulfuré de Madininair.
+- `coastline` : trait de côte OpenStreetMap découpé en 6 façades, avec les listes de
+  plages corrigées.
+- 9 routes ajoutées (30 au total), 30 tests ajoutés (112 au total).
+- L'assistant de planning reçoit le risque de sargasses des plages et une règle pour
+  éviter une plage en niveau fort.
+
+**Frontend.** `meteo.html` réécrite : hero et prévisions réels, jours cliquables (matin,
+après-midi, soirée), carte Leaflet à onglets (Météo : pluie et nuages, températures ;
+Sargasses : plages par plage ou par façade, nappes au large), façades, conseil du jour,
+calendrier sur 7 jours calé sur le projet de voyage, jauge H2S, « Où me baigner
+aujourd'hui ? ». Alertes réelles sur l'accueil, la fiche plage et le projet de voyage.
+Fichier partagé `js/meteo-utils.js` (icônes SVG, niveaux, appels), sur le modèle de
+`auth-utils.js`.
+
+### Décisions
+
+- **Tout gratuit, sans clé.** Esri a été remplacé par Sentinel-2 cloudless (EOX) : le
+  service historique d'Esri relève de conditions floues pour un site public. Les offres
+  gratuites d'Open-Meteo, RainViewer et EOX sont réservées à un usage non commercial.
+- **Animation sur 2 heures** et non 24 : décision prise à la validation, la météo passée n'étant
+  pas utile au voyageur. Le radar gratuit ne garde de toute façon que 2 heures.
+- **Nuages en retard.** GIBS publie avec environ 45 minutes de délai, et parfois tuile par
+  tuile : un horaire n'est retenu que si ses 9 tuiles existent, et les images radar les
+  plus récentes gardent les derniers nuages disponibles, heure affichée.
+- **Nuit.** Le seuil qui sépare les nuages de la mer s'abaisse selon la hauteur du soleil :
+  l'image GeoColor nocturne est plus sombre.
+- **Indice AFAI sur 7 jours** et non 3 : le 8 octobre, seuls 6 % des pixels sur 3 jours
+  étaient lisibles (nuages), contre 77 % sur 7 jours. Les pixels à moins de 3 km d'une
+  côte (Martinique, Dominique, Sainte-Lucie) sont écartés : le signal y est faussé.
+- **Estimation de dérive maison** (option retenue à la validation) : courant (Météo-France SMOC
+  via Open-Meteo) plus 1,5 % du vent. Un radeau qui touche l'île s'y échoue. Les algues
+  déjà échouées restent : le niveau du jour ne baisse que d'un cran tous les deux jours.
+  Chaque plage part de son propre niveau, pour ne pas hériter de celui de sa façade.
+- **Pas de saisie manuelle** : NOAA (risque), USF/NOAA (nappes) et Madininair (H2S)
+  couvrent tout automatiquement. Le bulletin Météo-France n'existe qu'en image et en texte.
+- **Polices.** Seule `maquette.html` chargeait Playfair Display et DM Sans : le lien a été
+  ajouté aux 8 autres pages.
+- **Style.** Pas d'emoji dans les nouvelles parties : couleurs et icônes SVG suffisent.
+  La probabilité de pluie s'affiche avec une goutte SVG, dans le style des nuages.
+- **Couleurs des odeurs.** Les seuils H2S restent ceux de Madininair, mais leurs couleurs
+  officielles (jaune pur, vert vif) sont remplacées par la palette Madras, jugée plus
+  agréable à la relecture : vert, vert clair, jaune, orange, rouge.
+
+### Corrigé au passage
+
+- Listes de plages par zone (Fond Lahaye et Anse Latouche sont sur la côte caraïbe).
+- Pied de page de `meteo.html` : il citait Météo France et l'Université des Antilles.
+- Cartes « en direct » de l'accueil : mer, soleil, sargasses et pluie étaient figées.
+- Barre de prévision de la carte des nappes : sa largeur variait avec le texte affiché.
+
+### Limites connues
+
+- Les seuils de l'estimation de dérive (nombre de pixels échoués par niveau) sont
+  arbitraires : à recaler en comparant avec les bulletins Météo-France.
+- La première collecte des nuages prend quelques minutes après un démarrage à froid ;
+  les routes répondent 503 en attendant, et les pages l'indiquent.
+- Les photos Wikimedia des plages restent sans crédit affiché, comme sur le reste du site.
