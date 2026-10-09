@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Martinique — L'Île aux Fleurs</title>
+  <title>Martinique • L'Île aux Fleurs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap">
   <link rel="stylesheet" href="css/accueil.css">
   <link rel="stylesheet" href="css/nav.css">
   <script src="js/etat-connexion.js"></script>
@@ -113,14 +116,14 @@
         </div>
       </a>
 
-      <a href="catalogue.html" class="rubrique-card rc-sargasses">
+      <a href="meteo.html#sargasses" class="rubrique-card rc-sargasses">
         <div class="rubrique-visuel">
           <div class="rubrique-visuel-bg" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/b/b5/Sargasses_plage_de_Saint-Pierre.jpg');background-size:cover;background-position:center;"></div>
           <span class="rubrique-badge badge-live">Temps réel</span>
         </div>
         <div class="rubrique-corps">
           <h3 class="rubrique-titre">Sargasses</h3>
-          <p class="rubrique-desc">Carte satellite des arrivages selon Météo France. Zones à éviter actualisées chaque jour.</p>
+          <p class="rubrique-desc">Risque d'échouement par plage et par façade, d'après les relevés satellite de la NOAA. Mis à jour automatiquement.</p>
         </div>
       </a>
 
@@ -202,45 +205,50 @@
     <div class="section-header">
       <span class="section-tag">Conditions actuelles</span>
       <h2 class="section-titre" style="color:var(--blanc)">Martinique en ce moment</h2>
-      <p class="section-sous">Ces données seront connectées à Météo France en phase 3.</p>
+      <p class="section-sous">Relevés en temps réel : Open-Meteo pour la météo, NOAA pour les sargasses.</p>
       <span class="trait"></span>
     </div>
 
+    <!-- Bandeau d'alerte : affiché seulement quand une façade est en alerte modérée ou forte -->
+    <a href="meteo.html#sargasses" class="live-bandeau" id="sargassumBanner" hidden></a>
+
+    <!-- Valeurs remplies par js/accueil.js : « -- » tant que l'API n'a pas répondu, jamais
+         de chiffre inventé -->
     <div class="live-grille">
-      <div class="live-card">
+      <div class="live-card" id="liveSea">
         <div class="live-card-header">
           <div class="live-dot"></div>
           <span class="live-label">Température mer</span>
         </div>
-        <div class="live-valeur">27<span class="live-unite">°C</span></div>
-        <div class="live-sous">Parfaite pour la baignade</div>
+        <div class="live-valeur">--</div>
+        <div class="live-sous">Baie de Fort-de-France</div>
       </div>
 
-      <div class="live-card">
+      <div class="live-card" id="liveSun">
         <div class="live-card-header">
           <div class="live-dot"></div>
           <span class="live-label">Ensoleillement</span>
         </div>
-        <div class="live-valeur">8<span class="live-unite">h</span></div>
-        <div class="live-sous">Aujourd'hui · Fort-de-France</div>
+        <div class="live-valeur">--</div>
+        <div class="live-sous">Prévu aujourd'hui · Fort-de-France</div>
       </div>
 
-      <div class="live-card live-alerte">
+      <div class="live-card live-alerte" id="liveSargassum">
         <div class="live-card-header">
           <div class="live-dot"></div>
           <span class="live-label">Sargasses</span>
         </div>
-        <div class="live-valeur" style="font-size:26px">Modéré</div>
-        <div class="live-sous">Côte atlantique · Mise à jour : aujourd'hui</div>
+        <div class="live-valeur" style="font-size:26px">--</div>
+        <div class="live-sous">Relevé en cours</div>
       </div>
 
-      <div class="live-card">
+      <div class="live-card" id="liveRain">
         <div class="live-card-header">
           <div class="live-dot"></div>
           <span class="live-label">Pluies (7 jours)</span>
         </div>
-        <div class="live-valeur">14<span class="live-unite">mm</span></div>
-        <div class="live-sous">Cascades : risque faible</div>
+        <div class="live-valeur">--</div>
+        <div class="live-sous">Cumul à Fort-de-France</div>
       </div>
     </div>
     <div style="text-align:center; margin-top:40px;">
@@ -340,6 +348,7 @@
   </footer>
 
   <script src="js/auth-utils.js"></script>
+  <script src="js/meteo-utils.js"></script>
   <script src="js/accueil.js"></script>
 
 </body>
