@@ -20,41 +20,66 @@ function weatherEmoji(code) {
   return '🌡️';
 }
 
-// Charge les données météo depuis GET /meteo et met à jour les .live-valeur
+// Remplit une carte live : valeur (avec son unité) et sous-titre
+function setLiveCard(id, value, unit, subtitle) {
+  const card = document.getElementById(id);
+  if (!card) return;
+  card.querySelector('.live-valeur').innerHTML = value == null
+    ? '--'
+    : `${value}${unit ? `<span class="live-unite">${unit}</span>` : ''}`;
+  if (subtitle) card.querySelector('.live-sous').textContent = subtitle;
+}
+
+// Charge la météo (GET /meteo) : température de la mer, ensoleillement, pluie sur 7 jours
 async function loadMeteoLive() {
-  try {
-    const res = await fetch(`${API_URL}/meteo`);
-    if (!res.ok) return; // En cas d'erreur, on garde les valeurs statiques de la maquette
-    const data = await res.json();
+  const data = await fetchApi('/meteo');
+  if (!data) return; // les cartes restent à « -- » plutôt que d'afficher un chiffre inventé
 
-    // Les cartes live sont dans .live-card
-    // Carte 0 : Température mer -> on affiche la temperature de l'air (sea_temperature non dispo)
-    const liveCards = document.querySelectorAll('.live-card');
-    if (!liveCards.length) return;
+  if (data.sea_temperature != null) {
+    const comfort = data.sea_temperature >= 26 ? 'Idéale pour la baignade' : data.sea_temperature >= 24 ? 'Agréable' : 'Fraîche';
+    setLiveCard('liveSea', Math.round(data.sea_temperature), '°C', `${comfort} · baie de Fort-de-France`);
+  }
+  if (data.sunshine_hours != null) {
+    setLiveCard('liveSun', Math.round(data.sunshine_hours), 'h');
+  }
+  if (data.rain_7d_mm != null) {
+    setLiveCard('liveRain', Math.round(data.rain_7d_mm), 'mm');
+  }
+}
 
-    // Carte 0 : Température (air, car sea_temperature pas dans l'API)
-    const tempCard = liveCards[0];
-    const tempValeur = tempCard.querySelector('.live-valeur');
-    if (tempValeur && data.temperature !== undefined) {
-      tempValeur.innerHTML = `${Math.round(data.temperature)}<span class="live-unite">${data.temperature_unit || '°C'}</span>`;
-      const sous = tempCard.querySelector('.live-sous');
-      if (sous) sous.textContent = data.weather_description || '';
-    }
+// Charge le risque de sargasses (GET /sargasses) : carte live et bandeau d'alerte
+async function loadSargassumLive() {
+  const data = await fetchApi('/sargasses');
+  const card = document.getElementById('liveSargassum');
+  if (!data || !data.global_level || !card) {
+    if (card) card.querySelector('.live-sous').textContent = 'Données indisponibles pour le moment';
+    return;
+  }
+  const level = data.global_level;
+  const coasts = new Set(data.zones.filter((z) => z.level === level).map((z) => z.coast));
+  const where = coasts.size === 2 ? 'Côtes caraïbe et atlantique' : coasts.has('atlantique') ? 'Côte atlantique' : 'Côte caraïbe';
+  const color = SARGASSUM_LEVELS[level].color;
+  card.style.setProperty('--niveau', color);
+  setLiveCard('liveSargassum', sargassumLabel(level), '',
+    `${where} · NOAA, ${formatDayFr(data.risk_date, { day: 'numeric', month: 'long' })}`);
 
-    // Carte 1 : Ensoleillement -> pas disponible dans l'API, on laisse la valeur statique
-
-    // Carte 2 : Sargasses -> hors scope v1, valeur statique
-
-    // Carte 3 : Pluies -> pas disponible dans l'API, on laisse la valeur statique
-
-  } catch (_) {
-    // Pas de réseau ou API indisponible : les données statiques restent affichées
+  // Bandeau seulement pour une alerte modérée ou forte
+  const banner = document.getElementById('sargassumBanner');
+  if (banner && sargassumRank(level) >= 2) {
+    banner.style.setProperty('--niveau', color);
+    const phrase = level === 'fort' ? 'Alerte forte aux sargasses' : 'Alerte modérée aux sargasses';
+    banner.innerHTML = `<i></i>${phrase} · ${where.toLowerCase()}<span>Voir la carte</span>`;
+    banner.hidden = false;
   }
 }
 
 // Initialisation
 document.addEventListener('DOMContentLoaded', async () => {
   loadMeteoLive();
+  loadSargassumLive();
+  // Les relevés sont collectés en continu par le serveur : la page les relit régulièrement
+  setInterval(loadMeteoLive, 10 * 60000);
+  setInterval(loadSargassumLive, 30 * 60000);
   await updateNav();
   // Si l'utilisateur est connecté, masquer le bouton "Se connecter" dans le hero
   if (getToken()) {
