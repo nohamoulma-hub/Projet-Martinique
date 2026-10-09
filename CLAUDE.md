@@ -16,7 +16,8 @@ interface pensée pour une navigation simple et fluide.
 
 ## **STACK TECHNIQUE**
 
-- Frontend  : HTML, CSS, JavaScript (vanilla, pas de framework)
+- Frontend  : HTML, CSS, JavaScript (vanilla, pas de framework). Seule librairie : Leaflet
+  1.9.4 (cartes de la page Météo), chargée depuis unpkg avec empreinte d'intégrité
 - Backend   : Python + FastAPI
 - ORM       : SQLAlchemy
 - Migrations: Alembic
@@ -52,14 +53,20 @@ Projet-Martinique/
   `HikeDetails`, `RumDistilleryDetails`, `RestaurantDetails`, `TravelProject`,
   `TravelProjectItem`, `Conversation`, `ConversationMessage`
 - ✅ PostgreSQL 18 en conteneur, 6 migrations Alembic appliquées
-- ✅ 5 schémas Pydantic : `auth`, `meteo`, `point_of_interest`, `travel_project`, `user`
-- ✅ 6 routers, soit 12 routes : catalogue (avec filtre par commune et rayon), liste des
-  communes, détail d'activité, inscription, connexion,
-  profil, projets de voyage avec ajout et retrait d'activités, météo, health
-- ✅ 4 services : `auth_service` (JWT, bcrypt), `meteo_service` (API externe),
+- ✅ 6 schémas Pydantic : `auth`, `meteo`, `point_of_interest`, `sargasses`,
+  `travel_project`, `user`
+- ✅ 8 routers, soit 30 routes : catalogue (avec filtre par commune et rayon), liste des
+  communes, détail d'activité, inscription, connexion, profil, projets de voyage avec
+  ajout et retrait d'activités, assistant de planning, health, météo (conditions,
+  prévisions détaillées, carte animée, températures, plages, trait de côte) et
+  sargasses (risque, nappes, odeurs H2S)
+- ✅ 11 services : `auth_service` (JWT, bcrypt), `meteo_service` (Open-Meteo),
   `communes_service` (coordonnées des 34 communes, calcul de distance),
-  `planning_service` (assistant IA : prompt, outils, garde-fous)
-- ✅ 80 tests pytest, tous au vert
+  `planning_service` (assistant IA : prompt, outils, garde-fous), et pour la météo et
+  les sargasses : `meteo_animation_service`, `sargasses_service`, `h2s_service`,
+  `coastline` (trait de côte, 6 façades), `collector_service` (collecte automatique),
+  `cache_service` (stockage des données collectées)
+- ✅ 112 tests pytest, tous au vert
 - ✅ Données de démonstration : 40 points d'intérêt (9 plages, 7 randonnées,
   8 rhumeries, 16 restaurants), insérés par `scripts/seed.py`
 - ❌ Aucune donnée pour les catégories logements, événements (hors v1)
@@ -69,6 +76,11 @@ Projet-Martinique/
 - ✅ 9 pages HTML avec CSS et JS séparés
 - ✅ Toutes connectées à l'API via `fetch()`
 - ✅ Routes protégées : token JWT stocké côté client, géré par `js/auth-utils.js`
+- ✅ Page Météo en temps réel : carte Leaflet à onglets (Météo, Sargasses), prévisions
+  dépliables, calendrier d'échouement, odeurs H2S, « Où me baigner aujourd'hui ? »
+- ✅ Alertes sargasses réelles sur l'accueil, la fiche plage et le projet de voyage.
+  Icônes, niveaux et appels communs dans `js/meteo-utils.js` (fichier partagé, comme
+  `js/auth-utils.js`)
 
 ## **ENVIRONNEMENT DE DÉVELOPPEMENT**
 
@@ -172,6 +184,33 @@ Règles à ne pas contourner, toutes appliquées côté serveur :
 - Le texte du voyageur est encadré par `<message_du_voyageur>` : il est lu comme une
   donnée, jamais comme une consigne.
 
+## **MÉTÉO ET SARGASSES EN TEMPS RÉEL**
+
+Développé depuis le 08/10/2026. Toutes les sources sont gratuites et sans clé API, pour
+un usage non commercial, et doivent être citées sur le site :
+
+| Donnée | Source | Rythme de collecte |
+|---|---|---|
+| Conditions, prévisions, températures, mer | Open-Meteo (CC BY 4.0) | 10 min à 1 h |
+| Nuages animés (2 h) | NASA GIBS, GOES-East GeoColor | 10 min |
+| Pluie animée (2 h) | RainViewer (zoom 7 maximum) | 10 min |
+| Fond de carte | Sentinel-2 cloudless par EOX | (tuiles servies par EOX) |
+| Risque d'échouement du jour | NOAA AOML, Sargassum Inundation Risk | 6 h |
+| Nappes au large | Indice AFAI de l'USF, diffusé par la NOAA (ERDDAP) | 6 h |
+| Odeurs (H2S) | API Madininair (licence Etalab 2.0) | 1 h |
+| Trait de côte | OpenStreetMap (ODbL) | figé dans `coastline.py` |
+
+Règles :
+
+- Aucune page n'appelle ces services directement : `collector_service` les relève en
+  arrière-plan et écrit dans le cache (volume Docker `cache`), l'API lit le cache. Une
+  route dont la donnée n'est pas encore collectée répond 503 avec un message en français.
+- Les niveaux de sargasses suivent l'échelle NOAA : faible, vigilance, modéré, fort.
+  Aujourd'hui = relevé NOAA ; les 4 jours suivants = estimation du site (dérive des
+  nappes avec les courants et le vent prévus), toujours présentée comme telle.
+- Les seuils et messages H2S sont ceux de Madininair et de l'ARS, cités tels quels.
+- `COLLECTE_AUTO=false` coupe la collecte (fait automatiquement dans les tests).
+
 ## **JOURNAL DU PROJET**
 
 Le fichier `backend/JOURNAL.md` contient l'historique chronologique de toutes
@@ -181,9 +220,10 @@ techniques importantes qu'il a prises.
 
 ## **CE QU'IL NE FAUT PAS FAIRE**
 
-- ❌ Implémenter des fonctionnalités hors v1 (sargasses, comparateur de vols,
-  logements, événements). L'assistant IA de planning, lui, est développé depuis
-  le 17/09/2026 : voir `app/services/planning_service.py`.
+- ❌ Implémenter des fonctionnalités hors v1 (comparateur de vols, logements,
+  événements). L'assistant IA de planning est développé depuis le 17/09/2026
+  (voir `app/services/planning_service.py`), la météo et les sargasses en temps réel
+  depuis le 08/10/2026 (voir la section dédiée ci-dessus).
 - ❌ Modifier les modèles SQLAlchemy existants
 - ❌ Modifier le schéma de base de données sans créer une migration Alembic
 - ❌ Installer une nouvelle librairie sans demander d'abord
