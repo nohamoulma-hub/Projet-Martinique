@@ -27,7 +27,7 @@ ZONES = [
      "beaches": "Pointe Faula (Le Vauclin), Le François",
      "label": [14.50, -60.775, "right"]},
     {"id": "centre-atlantique", "name": "Centre Atlantique", "coast": "atlantique",
-     "beaches": "Anse Tartane, Le Robert, La Trinité",
+     "beaches": "Tartane, Le Robert, La Trinité",
      "label": [14.715, -60.765, "right"]},
     {"id": "nord-atlantique", "name": "Nord Atlantique", "coast": "atlantique",
      "beaches": "Anse Azérot (Sainte-Marie), Le Marigot, Le Lorrain",
