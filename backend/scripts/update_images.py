@@ -25,7 +25,9 @@ IMAGES = {
     "Grande Anse des Salines": "/assets/images/wikimedia/martinique_11_les_salines_beach.jpg",
     "Plage du Diamant": "/assets/images/wikimedia/plage_du_diamant.jpg",
     "Anse à l'Ane": "/assets/images/wikimedia/anse_a_l_ane.jpg",
-    "Anse Tartane": "/assets/images/wikimedia/plage_de_tartane_martinique.jpg",
+    # Pas de photo libre de l'Anse Bonneville : celle de Tartane montre la baie côté
+    # bourg et va à la Plage du Bourg de Tartane (plages_martinique_tour.json)
+    "Plage de l'Anse Bonneville": None,
     "Plage de l'Anse Mitan": "/assets/images/wikimedia/anse_mitan_beach_1_2008.jpg",
     "Montagne Pelée - Sommet (Aileron)": "/assets/images/wikimedia/montagne_pelee.jpg",
     "Presqu'île de la Caravelle": "/assets/images/wikimedia/presqu_ile_de_la_caravelle_mancenilliers.jpg",
