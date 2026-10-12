@@ -13,7 +13,7 @@ La stack doit être démarrée (`docker compose up -d`) pour que `exec` fonction
 
 | Script | Rôle | Écrit où | Rejouable sans risque |
 |---|---|---|---|
-| `seed.py` | Insère les 40 activités de démonstration | base | oui, ignore celles déjà présentes |
+| `seed.py` | Insère les 101 activités (dont 61 plages de `plages_martinique_tour.json`) | base | oui, ignore celles déjà présentes |
 | `update_images.py` | Assigne la photo de couverture de chaque activité | base | oui |
 | `seed_gallery.py` | Remplit la galerie photos des pages de détail | base | oui, remplace les photos existantes |
 | `optimize_images.py` | Allège les photos trop lourdes | fichiers | oui, mais **cassé sous Docker**, voir plus bas |
@@ -27,9 +27,20 @@ se réinscrire à la main depuis la page `auth.html`.
 
 ## seed.py
 
-Insère les 40 activités de démonstration : 9 plages, 7 randonnées, 8 rhumeries et
-16 restaurants, avec leurs coordonnées GPS réelles. Chaque catégorie a sa table de détail
+Insère les 101 activités : 70 plages, 7 randonnées, 8 rhumeries et 16 restaurants, avec
+leurs coordonnées GPS réelles. Chaque catégorie a sa table de détail
 (`beach_details`, `hike_details`, `rum_distillery_details`, `restaurant_details`).
+
+**61 plages viennent de `plages_martinique_tour.json`**, relevées le 12/10/2026 sur
+martinique-tour.com (site de l'office de tourisme) : nom, commune et position de chaque
+fiche, positions vérifiées contre le trait de côte d'OpenStreetMap. La description reprend
+les faits de la fiche (sable, eau, mer, végétation), pas son texte, et laisse de côté les
+avis. La fréquentation n'y figure pas : elle vaut 0, affiché « Non renseigné ». Pour
+ajouter ou corriger une de ces plages, modifier le fichier JSON puis relancer le script.
+
+**Renommages.** Le dictionnaire `RENOMMAGES` renomme une fiche existante au lieu d'en créer
+une nouvelle, pour qu'elle garde son id (et sa place dans les projets de voyage). Ex. :
+« Anse Tartane » est devenue « Plage de l'Anse Bonneville ».
 
 Les données des restaurants viennent d'OpenStreetMap (noms, coordonnées, téléphones,
 horaires), les adresses du géocodage inverse, et les distinctions de la sélection du guide
