@@ -55,18 +55,20 @@ Projet-Martinique/
 - ✅ PostgreSQL 18 en conteneur, 6 migrations Alembic appliquées
 - ✅ 6 schémas Pydantic : `auth`, `meteo`, `point_of_interest`, `sargasses`,
   `travel_project`, `user`
-- ✅ 8 routers, soit 30 routes : catalogue (avec filtre par commune et rayon), liste des
-  communes, détail d'activité, inscription, connexion, profil, projets de voyage avec
-  ajout et retrait d'activités, assistant de planning, health, météo (conditions,
+- ✅ 8 routers, soit 31 routes : catalogue (avec filtre par commune et rayon), liste des
+  communes, détail d'activité, activités à proximité (temps de trajet), inscription,
+  connexion, profil, projets de voyage avec ajout et retrait d'activités, assistant de
+  planning, health, météo (conditions,
   prévisions détaillées, carte animée, températures, plages, trait de côte) et
   sargasses (risque, nappes, odeurs H2S)
-- ✅ 11 services : `auth_service` (JWT, bcrypt), `meteo_service` (Open-Meteo),
+- ✅ 12 services : `auth_service` (JWT, bcrypt), `meteo_service` (Open-Meteo),
   `communes_service` (coordonnées des 34 communes, calcul de distance),
   `planning_service` (assistant IA : prompt, outils, garde-fous), et pour la météo et
   les sargasses : `meteo_animation_service`, `sargasses_service`, `h2s_service`,
   `coastline` (trait de côte, 6 façades), `collector_service` (collecte automatique),
-  `cache_service` (stockage des données collectées)
-- ✅ 112 tests pytest, tous au vert
+  `cache_service` (stockage des données collectées), `trajets_service` (temps de
+  trajet en voiture entre activités)
+- ✅ 121 tests pytest, tous au vert
 - ✅ Données de démonstration : 40 points d'intérêt (9 plages, 7 randonnées,
   8 rhumeries, 16 restaurants), insérés par `scripts/seed.py`
 - ❌ Aucune donnée pour les catégories logements, événements (hors v1)
@@ -199,6 +201,7 @@ un usage non commercial, et doivent être citées sur le site :
 | Nappes au large | Indice AFAI de l'USF, diffusé par la NOAA (ERDDAP) | 6 h |
 | Odeurs (H2S) | API Madininair (licence Etalab 2.0) | 1 h |
 | Trait de côte | OpenStreetMap (ODbL) | figé dans `coastline.py` |
+| Temps de trajet entre activités | OSRM de la FOSSGIS (routes OpenStreetMap) | vérifié chaque heure, recalculé si une activité bouge ou après 7 jours |
 
 Règles :
 
