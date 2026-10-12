@@ -197,6 +197,11 @@
   .card-footer { padding: 12px 20px; border-top: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
   .card-location { font-size: 11px; color: var(--doux); display: flex; align-items: center; gap: 4px; }
   .card-cta { font-size: 12px; font-weight: 500; color: var(--rouge); text-decoration: none; letter-spacing: .3px; }
+  /* Le lien s'etend a toute la vignette : cliquable partout, sans imbriquer de liens */
+  .card { position: relative; }
+  .card-cta::after { content: ''; position: absolute; inset: 0; z-index: 1; }
+  .card-cta:focus-visible { outline: none; }
+  .card:has(.card-cta:focus-visible) { outline: 2px solid var(--rouge); outline-offset: 3px; }
 
   /* Trait madras */
   .trait { display: block; width: 36px; height: 3px; margin-bottom: 32px;
