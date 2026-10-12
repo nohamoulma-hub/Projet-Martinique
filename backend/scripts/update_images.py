@@ -11,29 +11,30 @@ from app.core.database import SessionLocal
 from app.models.point_of_interest import PointOfInterest
 
 # Photo de couverture de chaque activité.
-# Deux sources : photos personnelles servies en local (/assets/...) et
-# photos Wikimedia Commons (licence Creative Commons) pour les lieux non encore photographiés.
+# Deux sources, toutes servies en local (/assets/...) : photos personnelles, et copies
+# de photos Wikimedia Commons (licence libre, crédits dans CREDITS_PHOTOS.md) pour les
+# lieux non encore photographiés.
 IMAGES = {
     # Photos personnelles locales
     "Anse Noire": "/assets/images/anse_noir/anse_noir_1.jpeg",
     "Anse Dufour": "/assets/images/anse_dufour/anse_dufour_1.jpeg",
     "Anse Couleuvre": "/assets/images/anse_couleuvre/anse_couleuvre_1.jpeg",
     "Cascade Couleuvre": "/assets/images/photos_vignettes/cascade_couleuvre.JPG",
-    # Photos Wikimedia Commons
-    "Anse Céron": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Anse_C%C3%A9ron.JPG",
-    "Grande Anse des Salines": "https://upload.wikimedia.org/wikipedia/commons/9/95/Martinique-11-Les_Salines_Beach.jpg",
-    "Plage du Diamant": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Plage_du_Diamant.jpg",
-    "Anse à l'Ane": "https://upload.wikimedia.org/wikipedia/commons/d/db/Anse_%C3%A0_l%27%C3%A2ne.jpg",
-    "Anse Tartane": "https://upload.wikimedia.org/wikipedia/commons/4/44/Plage_de_Tartane%2C_Martinique.JPG",
-    "Plage de l'Anse Mitan": "https://upload.wikimedia.org/wikipedia/commons/0/06/Anse_Mitan_beach_%281%29_2008.jpg",
-    "Montagne Pelée - Sommet (Aileron)": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Montagne_Pel%C3%A9e.JPG",
-    "Presqu'île de la Caravelle": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Presqu%27%C3%AEle_de_la_Caravelle_-_mancenilliers.jpg",
-    "Pitons du Carbet - Grand Piton (1 196 m)": "https://upload.wikimedia.org/wikipedia/commons/9/9c/Pitons_du_Carbet.jpg",
-    "Morne Larcher": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Morne_larcher.jpg",
-    "Sentier des Caps (Sainte-Anne)": "https://upload.wikimedia.org/wikipedia/commons/0/02/Trace_des_Caps%2C_Sainte-Anne.jpg",
+    # Copies locales de photos Wikimedia Commons
+    "Anse Céron": "/assets/images/wikimedia/anse_ceron.jpg",
+    "Grande Anse des Salines": "/assets/images/wikimedia/martinique_11_les_salines_beach.jpg",
+    "Plage du Diamant": "/assets/images/wikimedia/plage_du_diamant.jpg",
+    "Anse à l'Ane": "/assets/images/wikimedia/anse_a_l_ane.jpg",
+    "Anse Tartane": "/assets/images/wikimedia/plage_de_tartane_martinique.jpg",
+    "Plage de l'Anse Mitan": "/assets/images/wikimedia/anse_mitan_beach_1_2008.jpg",
+    "Montagne Pelée - Sommet (Aileron)": "/assets/images/wikimedia/montagne_pelee.jpg",
+    "Presqu'île de la Caravelle": "/assets/images/wikimedia/presqu_ile_de_la_caravelle_mancenilliers.jpg",
+    "Pitons du Carbet - Grand Piton (1 196 m)": "/assets/images/wikimedia/pitons_du_carbet.jpg",
+    "Morne Larcher": "/assets/images/wikimedia/morne_larcher.jpg",
+    "Sentier des Caps (Sainte-Anne)": "/assets/images/wikimedia/trace_des_caps_sainte_anne.jpg",
     # Photo de substitution : le badge "à modifier" s'affiche sur cette vignette
     # dans le catalogue tant qu'une vraie photo du lieu n'est pas disponible.
-    "Gorges de la Falaise": "https://upload.wikimedia.org/wikipedia/commons/6/6f/Cascade_du_Saut_du_Gendarme_%28Fonds-Saint-Denis%2C_Martinique%29_-_01.jpg",
+    "Gorges de la Falaise": "/assets/images/wikimedia/cascade_du_saut_du_gendarme_fonds_saint_denis_martinique_01.jpg",
 }
 
 
