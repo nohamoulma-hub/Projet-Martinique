@@ -17,6 +17,10 @@ ROUTING_URL = "https://routing.openstreetmap.de/routed-car/table/v1/driving/"
 USER_AGENT = "Projet-Martinique (site touristique, usage non commercial)"
 # Les routes changent peu : une matrice de moins d'une semaine reste valable
 MAX_AGE_SECONDS = 7 * 24 * 3600
+# Le serveur limite une table à 100 x 100 cases : 50 départs x 101 arrivées passent
+MAX_SOURCES = 50
+# Une requête par seconde au plus, selon les conditions de la FOSSGIS
+PAUSE_SECONDS = 1.1
 
 
 def signature(points: list[dict]) -> str:
@@ -26,19 +30,31 @@ def signature(points: list[dict]) -> str:
 
 
 def fetch_matrix(points: list[dict]) -> dict:
-    """Durées (min) et distances (km) par la route entre toutes les activités."""
+    """Durées (min) et distances (km) par la route entre toutes les activités.
+
+    Le serveur refuse une table de plus de 100 x 100 : les lignes sont demandées par
+    blocs de MAX_SOURCES points de départ, vers toutes les destinations.
+    """
     coords = ";".join(f"{p['longitude']},{p['latitude']}" for p in points)
-    response = httpx.get(ROUTING_URL + coords, params={"annotations": "duration,distance"},
-                         headers={"User-Agent": USER_AGENT}, timeout=60)
-    response.raise_for_status()
-    data = response.json()
-    if data.get("code") != "Ok":
-        raise RuntimeError(f"Calcul d'itinéraires refusé : {data.get('code')}")
+    durations, distances = [], []
+    for start in range(0, len(points), MAX_SOURCES):
+        if start:
+            time.sleep(PAUSE_SECONDS)
+        sources = ";".join(str(i) for i in range(start, min(start + MAX_SOURCES, len(points))))
+        response = httpx.get(ROUTING_URL + coords,
+                             params={"annotations": "duration,distance", "sources": sources},
+                             headers={"User-Agent": USER_AGENT}, timeout=60)
+        response.raise_for_status()
+        data = response.json()
+        if data.get("code") != "Ok":
+            raise RuntimeError(f"Calcul d'itinéraires refusé : {data.get('code')}")
+        durations += data["durations"]
+        distances += data["distances"]
     # Une case vide (null) signifie qu'aucune route ne relie les deux points
     return {
         "ids": [p["id"] for p in points],
-        "durations_min": [[None if v is None else round(v / 60) for v in row] for row in data["durations"]],
-        "distances_km": [[None if v is None else round(v / 1000, 1) for v in row] for row in data["distances"]],
+        "durations_min": [[None if v is None else round(v / 60) for v in row] for row in durations],
+        "distances_km": [[None if v is None else round(v / 1000, 1) for v in row] for row in distances],
     }
 
 
