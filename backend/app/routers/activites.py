@@ -109,7 +109,7 @@ def list_activites(
 @router.get("/{activite_id}/proximite", response_model=list[ActiviteProche], summary="Activités à proximité")
 def list_proximite(
     activite_id: int,
-    limite: int = Query(3, ge=1, le=12, description="Nombre d'activités renvoyées"),
+    limite: int = Query(3, ge=1, le=100, description="Nombre d'activités renvoyées"),
     categorie: Category | None = Query(None, description="Limiter à une catégorie"),
     db: Session = Depends(get_db),
 ):
