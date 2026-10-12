@@ -1377,3 +1377,58 @@ Les autres points relevés ce jour-là sont traités dans l'entrée du 12/10/202
 
 - Les crédits photos ne sont toujours visibles que dans le dépôt : les licences CC BY et
   CC BY-SA demandent une mention accessible depuis le site avant la mise en ligne.
+
+## 2026-10-12 (suite) - 61 plages ajoutées depuis Martinique Tour
+
+### Construit
+
+- **70 plages au catalogue** (9 auparavant), 101 activités au total. Les 61 nouvelles sont
+  dans `scripts/plages_martinique_tour.json`, chargé par `seed.py`.
+- **28 nouvelles plages ont une photo** libre de Wikimedia Commons (27 fichiers, plus la photo
+  de Tartane réattribuée), copiées en local et créditées dans `CREDITS_PHOTOS.md`.
+- **« Anse Tartane » renommée « Plage de l'Anse Bonneville »**, en gardant son id.
+- **Fréquentation « Non renseigné »** sur la fiche quand elle vaut 0, et équipements absents
+  affichés de la même façon.
+
+### Décisions
+
+- **Liste complète.** La page de l'office de tourisme annonce 75 fiches, mais sa liste paginée
+  change d'ordre d'une requête à l'autre : la pagination n'en donnait que 54. Le plan du site
+  (sitemap) donne les 70 fiches « plage » ; les 5 autres entrées sont 4 sites qui ne sont pas
+  des plages (sentier sous-marin Lakay, Étang des Salines, Savane des Pétrifications, Œil
+  Bleu) et une fiche publiée sous deux adresses (Cap Chevalier). 9 plages existaient déjà.
+- **Vérification des positions.** Chaque point est à 64 m au plus du trait de côte précis
+  d'OpenStreetMap ; 57 sur 70 tombent à moins de 400 m d'un objet « plage » OSM ; la commune
+  a été contrôlée par géocodage inverse.
+- **Textes.** Seuls les faits de chaque fiche sont repris (taille, sable, eau, mer,
+  végétation, plongée, équipements), reformulés ; les avis (« sans grand intérêt ») sont
+  écartés, les avertissements de baignade (courants, baignade interdite) conservés.
+- **Fréquentation à 0** (choix de l'utilisateur) : le site ne la donne pas, et la colonne est
+  obligatoire. Rien n'est inventé.
+- **Tartane.** L'utilisateur voyait l'Anse l'Étang sur Google Maps. OpenStreetMap (baie
+  « Anse Bonneville » à 90 m, plage des Surfeurs, quartier de l'Anse Bonneville) et la fiche
+  de l'office de tourisme (à 120 m) placent notre point sur l'Anse Bonneville ; l'Anse
+  l'Étang est à 700 m et devient une fiche à part. La photo « Plage de Tartane » montre la
+  baie côté bourg : elle passe à la Plage du Bourg de Tartane, l'Anse Bonneville n'en a plus.
+- **Photos.** Candidates cherchées par position (500 m), par nom et dans les catégories
+  Commons des plages ; chaque photo retenue a été regardée. Écartées : la Pointe du Bout (une
+  rue commerçante), la Pointe La Rose (pas la plage), Grand Macabou (des cactus), la Paillote
+  (la plage du bourg de Saint-Pierre). Une photo intitulée « Pointe du bout » montrait l'hôtel
+  Bakoua : elle illustre la Plage du Bakoua.
+- **Trajets.** Le serveur OSRM refuse une table de plus de 100 x 100 : la matrice est
+  demandée par blocs de 50 points de départ, une requête par seconde au plus.
+- **Quota Open-Meteo.** Chaque plage compte pour un appel : le relevé des 70 plages passe à
+  toutes les 2 heures (environ 6 300 appels par jour au total au lieu de 7 950, sur 10 000).
+- **Page Météo.** « Où me baigner » lit toutes les pages de résultats, et la liste des plages
+  plus exposées s'arrête aux 8 plus proches (« et N autres »).
+
+### Tests
+
+1 test ajouté, 122 au total : matrice des trajets demandée par blocs.
+
+### Reste ouvert
+
+- 33 plages sans photo libre identifiable.
+- Fréquentation des 61 nouvelles plages à renseigner.
+- Les vignettes du catalogue n'affichent pas la fréquentation : la liste de l'API ne renvoie
+  pas les détails des plages (constat antérieur à ce travail).
