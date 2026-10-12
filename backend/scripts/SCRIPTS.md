@@ -17,7 +17,7 @@ La stack doit être démarrée (`docker compose up -d`) pour que `exec` fonction
 | `update_images.py` | Assigne la photo de couverture de chaque activité | base | oui |
 | `seed_gallery.py` | Remplit la galerie photos des pages de détail | base | oui, remplace les photos existantes |
 | `optimize_images.py` | Allège les photos trop lourdes | fichiers | oui, mais **cassé sous Docker**, voir plus bas |
-| `verifier_photos.py` | Teste toutes les URL de photos distantes | rien | oui |
+| `verifier_photos.py` | Teste les URL de photos distantes (aucune depuis le 12/10/2026) | rien | oui |
 | `reset_password.py` | Réinitialise le mot de passe d'un compte | base | oui |
 
 Aucun de ces scripts ne crée de compte utilisateur. Après un `docker compose down -v`, il faut
@@ -52,9 +52,12 @@ valeurs du script. Une valeur déjà en base n'est jamais écrasée : le script 
 corrige pas. Pour changer une valeur existante, passer par SQL. C'est ce qui a permis d'ajouter les informations pratiques des
 rhumeries (horaires, téléphone, site web) après leur création, sans les recréer.
 
-**Il met aussi à jour les adresses.** L'adresse d'une fiche existante est réalignée sur celle
-du script, car c'est lui qui en est la source. Les adresses postales des rhumeries ont été
-relevées par géocodage inverse sur OpenStreetMap, à partir de leurs coordonnées GPS.
+**Il met aussi à jour les adresses, descriptions, positions et photos.** Ces champs d'une
+fiche existante sont réalignés sur le script, car c'est lui qui en est la source (la photo
+seulement quand le script en donne une, soit pour les rhumeries). Les adresses postales des
+rhumeries ont été relevées par géocodage inverse sur OpenStreetMap, à partir de leurs
+coordonnées GPS. Les positions des plages (objet « plage ») et des départs de randonnée
+(parking ou début du sentier) ont été relevées dans OpenStreetMap le 09/10/2026.
 
 Les horaires, téléphones et sites web des rhumeries proviennent d'OpenStreetMap, complétés à
 la main pour La Mauny, Dillon, Depaz, Saint-James et Clément. La
@@ -73,11 +76,13 @@ catalogue et de l'accueil.
 docker compose exec backend python scripts/update_images.py
 ```
 
-Deux sources de photos cohabitent dans ce script :
+Deux sources de photos cohabitent dans ce script, toutes servies en local
+(`/assets/images/...`) :
 
-- les photos personnelles servies en local (`/assets/images/...`),
-- des photos Wikimedia Commons sous licence Creative Commons, pour les lieux qui n'ont pas
-  encore été photographiés.
+- les photos personnelles,
+- des copies de photos Wikimedia Commons sous licence libre (dossier
+  `assets/images/wikimedia/`), pour les lieux qui n'ont pas encore été photographiés.
+  Auteurs et licences dans `CREDITS_PHOTOS.md`.
 
 Gorges de la Falaise utilise une photo de substitution : le badge « à modifier » reste affiché
 sur sa vignette tant qu'une vraie photo du lieu n'a pas été ajoutée.
@@ -97,11 +102,11 @@ docker compose exec backend python scripts/seed_gallery.py
 
 **Remplace** les photos existantes de chaque activité concernée au lieu de les ajouter, donc
 aucun doublon possible. Onze activités sont couvertes : trois plages (Anse Noire, Anse Dufour,
-Anse Couleuvre) dont les photos sont locales, et les huit rhumeries, dont les photos viennent de
-Wikimedia Commons.
+Anse Couleuvre) avec des photos personnelles, et les huit rhumeries, avec des copies locales
+de photos Wikimedia Commons.
 
-Deux dictionnaires alimentent le script : `GALLERIES` pour les photos locales et
-`GALLERIES_RHUMERIES` pour les photos distantes. À relancer après avoir modifié l'un des deux.
+Deux dictionnaires alimentent le script : `GALLERIES` pour les photos personnelles et
+`GALLERIES_RHUMERIES` pour celles de Wikimedia. À relancer après avoir modifié l'un des deux.
 
 ---
 
@@ -113,9 +118,10 @@ Teste que toutes les URL de photos distantes enregistrées en base répondent en
 docker compose exec backend python scripts/verifier_photos.py
 ```
 
-Les photos des rhumeries sont hébergées par Wikimedia Commons : ce script détecte un lien mort,
-par exemple si un fichier y est renommé ou supprimé. Il ne teste que les URL commençant par
-`http` ; les fichiers locaux de `/assets/` sont servis par nginx et ne sont pas concernés.
+Depuis le 12/10/2026, toutes les photos sont servies en local : le script ne trouve plus
+aucune URL à tester. Il reste utile si une photo distante est ajoutée un jour. Il ne teste
+que les URL commençant par `http` ; les fichiers locaux de `/assets/` sont servis par nginx
+et ne sont pas concernés.
 
 Un échec `HTTP 429` signale une limitation de débit de Wikimedia sur ton adresse IP, pas un lien
 mort. Le script espace déjà ses requêtes et retente, mais relance-le plus tard en cas de doute.
