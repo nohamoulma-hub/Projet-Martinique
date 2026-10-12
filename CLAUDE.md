@@ -68,9 +68,11 @@ Projet-Martinique/
   `coastline` (trait de côte, 6 façades), `collector_service` (collecte automatique),
   `cache_service` (stockage des données collectées), `trajets_service` (temps de
   trajet en voiture entre activités)
-- ✅ 121 tests pytest, tous au vert
-- ✅ Données de démonstration : 40 points d'intérêt (9 plages, 7 randonnées,
-  8 rhumeries, 16 restaurants), insérés par `scripts/seed.py`
+- ✅ 122 tests pytest, tous au vert
+- ✅ Données : 101 points d'intérêt (70 plages, 7 randonnées, 8 rhumeries,
+  16 restaurants), insérés par `scripts/seed.py`. 61 des plages viennent de
+  martinique-tour.com (`scripts/plages_martinique_tour.json`) ; leur fréquentation n'y
+  figure pas et vaut 0, affiché « Non renseigné »
 - ❌ Aucune donnée pour les catégories logements, événements (hors v1)
 - ❌ Aucune photo pour les restaurants : aucune image libre de droit trouvée
 
@@ -193,7 +195,7 @@ un usage non commercial, et doivent être citées sur le site :
 
 | Donnée | Source | Rythme de collecte |
 |---|---|---|
-| Conditions, prévisions, températures, mer | Open-Meteo (CC BY 4.0) | 10 min à 1 h |
+| Conditions, prévisions, températures, mer | Open-Meteo (CC BY 4.0) | 10 min à 2 h (plages : 2 h, quota de 10 000 appels par jour) |
 | Nuages animés (2 h) | NASA GIBS, GOES-East GeoColor | 10 min |
 | Pluie animée (2 h) | RainViewer (zoom 7 maximum) | 10 min |
 | Fond de carte | Sentinel-2 cloudless par EOX | (tuiles servies par EOX) |
