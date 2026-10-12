@@ -204,24 +204,33 @@
   .access-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--doux); margin-bottom: 4px; }
   .access-value { font-size: 14px; color: var(--texte); font-weight: 500; }
 
-  /* Carte placeholder */
-  .map-placeholder {
-    height: 260px; border-radius: 8px; overflow: hidden;
-    background: linear-gradient(135deg, #1a3a4a, #0d2535);
-    position: relative; border: 1px solid var(--card-border);
-    display: flex; align-items: center; justify-content: center;
-    flex-direction: column; gap: 10px; color: rgba(255,255,255,.35);
+  /* Carte satellite du lieu (Leaflet, meme fond que la page Meteo) */
+  .carte-lieu {
+    height: 320px; border-radius: 8px; overflow: hidden;
+    background: #0D2535; border: 1px solid var(--card-border);
+    position: relative; z-index: 0;
   }
-  .map-placeholder .map-icon { font-size: 36px; }
-  .map-placeholder span { font-size: 13px; }
-  .map-coords { font-size: 11px; color: rgba(255,255,255,.2); font-family: monospace; }
-  /* Grille stylisée pour imiter une carte */
-  .map-placeholder::before {
-    content: ''; position: absolute; inset: 0; opacity: .08;
-    background:
-      repeating-linear-gradient(0deg, transparent, transparent 30px, rgba(255,255,255,1) 30px, rgba(255,255,255,1) 31px),
-      repeating-linear-gradient(90deg, transparent, transparent 30px, rgba(255,255,255,1) 30px, rgba(255,255,255,1) 31px);
+  .map-coords {
+    margin-top: 8px; font-size: 12px; color: var(--doux);
+    font-variant-numeric: tabular-nums;
   }
+  .carte-lieu .leaflet-container, .carte-lieu.leaflet-container { font-family: var(--font-corps); }
+  .carte-lieu .leaflet-bar { border: 1px solid rgba(255,255,255,.1); box-shadow: 0 4px 14px rgba(0,0,0,.3); }
+  .carte-lieu .leaflet-bar a { background: var(--nuit); color: var(--sable); border-bottom-color: rgba(255,255,255,.1); }
+  .carte-lieu .leaflet-bar a:hover, .carte-lieu .leaflet-bar a:focus { background: #16304a; color: var(--jaune); }
+  .carte-lieu .leaflet-bar a.leaflet-disabled { background: var(--nuit); color: rgba(245,237,216,.25); }
+  .carte-lieu .leaflet-control-attribution { background: rgba(13,31,45,.75); color: rgba(245,237,216,.7); font-size: 10px; }
+  .carte-lieu .leaflet-control-attribution a { color: var(--jaune); }
+  .carte-lieu .leaflet-tooltip {
+    font-family: var(--font-corps); font-size: 13px; font-weight: 600;
+    background: var(--nuit); color: var(--sable); border: none; border-radius: 6px;
+    padding: 5px 10px; box-shadow: 0 4px 14px rgba(0,0,0,.3);
+  }
+  .carte-lieu .leaflet-tooltip-top::before { border-top-color: var(--nuit); }
+  /* Epingle : couleur de la categorie, transmise par --pin */
+  .epingle { background: none; border: none; }
+  .epingle svg { display: block; filter: drop-shadow(0 3px 4px rgba(0,0,0,.45)); }
+  @media (max-width: 600px) { .carte-lieu { height: 260px; } }
 
   /* Sidebar */
   .sidebar { position: sticky; top: 80px; }
@@ -322,19 +331,30 @@
     transition: transform .2s, box-shadow .2s;
   }
   .mini-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.08); }
-  .mini-visual { height: 110px; position: relative; }
-  .mini-visual-bg { position: absolute; inset: 0; }
-  .beach-bg  { background: linear-gradient(135deg, #1A7A9E, #0D4F6C); }
-  .hike-bg   { background: linear-gradient(135deg, #2D6A3F, #1A4228); }
-  .market-bg { background: linear-gradient(135deg, #D69E2E, #975A16); }
-  .mini-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 28px; }
+  .mini-visual { height: 110px; position: relative; overflow: hidden; }
+  .mini-visual-bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+  /* Fond de secours sans photo : memes degrades que les vignettes du catalogue */
+  .beach-bg  { background-image: linear-gradient(135deg, #1A7A9E, #0D4F6C); }
+  .hike-bg   { background-image: linear-gradient(135deg, #2D6A3F, #1A4228); }
+  .rum-bg    { background-image: linear-gradient(135deg, #8B4513, #5C2D08); }
+  .resto-bg  { background-image: linear-gradient(135deg, #C8392B, #8B1A0D); }
   .mini-badge {
     position: absolute; top: 8px; right: 8px;
     font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 500;
   }
-  .mini-body { padding: 14px 16px; flex: 1; }
-  .mini-name { font-family: var(--font-titre); font-size: 16px; margin-bottom: 4px; }
+  .mini-body { padding: 14px 16px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .mini-name { font-family: var(--font-titre); font-size: 16px; line-height: 1.25; }
   .mini-loc { font-size: 12px; color: var(--doux); }
+  /* Trajet : la donnee utile de la carte, mise en avant */
+  .mini-trajet {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px;
+    font-size: 13px; color: var(--texte); font-variant-numeric: tabular-nums;
+  }
+  .mini-trajet strong { font-weight: 600; }
+  .mini-trajet span { color: var(--doux); font-size: 12px; }
+  .nearby-note { margin-top: 14px; font-size: 12px; color: var(--doux); line-height: 1.5; }
+  .nearby-note a { color: var(--doux); }
+  .nearby-note a:hover { color: var(--rouge); }
 
   footer { background: var(--nuit); border-top: 1px solid rgba(255,255,255,.06); padding: 32px 6%; text-align: center; }
   footer span { font-size: 12px; color: rgba(255,255,255,.25); }
@@ -342,7 +362,6 @@
   @media (max-width: 900px) {
     .page-body { grid-template-columns: 1fr; }
     .sidebar { position: static; }
-    .nearby-grid { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 600px) {
     .access-grid { grid-template-columns: 1fr; }
