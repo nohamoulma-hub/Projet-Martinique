@@ -1,4 +1,4 @@
-# Endpoints du catalogue d'activités : liste paginée et détail par id.
+# Endpoints du catalogue d'activités : liste paginée, détail par id et activités proches.
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
@@ -9,7 +9,8 @@ from app.models.restaurant_details import RestaurantDetails
 from app.models.rum_distillery_details import RumDistilleryDetails
 from app.models.poi_image import PoiImage
 from app.models.point_of_interest import Category, PointOfInterest
-from app.schemas.point_of_interest import PointOfInterestDetail, PointOfInterestRead
+from app.schemas.point_of_interest import ActiviteProche, PointOfInterestDetail, PointOfInterestRead
+from app.services import trajets_service
 from app.services.communes_service import COMMUNES, distance_km, rectangle_englobant
 
 router = APIRouter(prefix="/activites", tags=["activites"])
@@ -103,6 +104,29 @@ def list_activites(
         "page": page,
         "has_more": (offset + PAGE_SIZE) < len(proches),
     }
+
+
+@router.get("/{activite_id}/proximite", response_model=list[ActiviteProche], summary="Activités à proximité")
+def list_proximite(
+    activite_id: int,
+    limite: int = Query(3, ge=1, le=12, description="Nombre d'activités renvoyées"),
+    categorie: Category | None = Query(None, description="Limiter à une catégorie"),
+    db: Session = Depends(get_db),
+):
+    """Retourne les activités les plus proches, triées par temps de trajet en voiture."""
+    poi = db.get(PointOfInterest, activite_id)
+    if poi is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Activité introuvable",
+        )
+    champs = ("id", "name", "category", "address", "image_url", "latitude", "longitude")
+    points = [{c: getattr(p, c) for c in champs} for p in db.query(PointOfInterest).all()]
+    origine = next(p for p in points if p["id"] == poi.id)
+    # Le filtre porte sur les voisins : l'origine peut être d'une autre catégorie
+    if categorie:
+        points = [p for p in points if p["category"] == categorie]
+    return trajets_service.nearby(origine, points, limite)
 
 
 @router.get("/{activite_id}", response_model=PointOfInterestDetail, summary="Détail d'une activité")
