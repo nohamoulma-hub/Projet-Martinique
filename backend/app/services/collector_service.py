@@ -41,7 +41,9 @@ def _activities() -> list[dict]:
 JOBS = [
     ("animation", "meteo/animation.json", 600, meteo_animation_service.refresh_animation),
     ("temperatures", "meteo/temperatures.json", 3600, meteo_service.refresh_temperature_grid),
-    ("plages", "meteo/plages.json", 3600, lambda: meteo_service.refresh_beach_conditions(_beaches())),
+    # Toutes les 2 h : chaque plage compte pour un appel Open-Meteo (quota de 10 000 par
+    # jour), et avec 70 plages un relevé horaire laisserait trop peu de marge
+    ("plages", "meteo/plages.json", 7200, lambda: meteo_service.refresh_beach_conditions(_beaches())),
     ("h2s", "sargasses/h2s.json", 3600, h2s_service.refresh_h2s),
     ("sargasses", "sargasses/etat.json", 6 * 3600, lambda: sargasses_service.refresh_sargasses(_beaches())),
     # Vérifiée chaque heure, mais le serveur d'itinéraires n'est appelé que si une activité
