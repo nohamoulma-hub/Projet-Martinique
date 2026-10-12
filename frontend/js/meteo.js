@@ -955,8 +955,15 @@ async function loadCommunes() {
 async function renderBathing() {
   const commune = $('#communeSelect').value;
   if (!commune || !state.sargassum) return;
-  const data = await fetchApi(`/activites?categorie=beach&commune=${encodeURIComponent(commune)}&rayon=100`);
-  const beaches = (data ? data.items : []).map((b) => ({ ...b, level: (state.sargassum.beaches[b.id] || {}).level }));
+  // Toutes les pages : l'API en renvoie 18 par page, et la moins exposée peut être plus loin
+  const items = [];
+  for (let page = 1; page < 10; page++) {
+    const data = await fetchApi(`/activites?categorie=beach&commune=${encodeURIComponent(commune)}&rayon=100&page=${page}`);
+    if (!data) break;
+    items.push(...data.items);
+    if (!data.has_more) break;
+  }
+  const beaches = items.map((b) => ({ ...b, level: (state.sargassum.beaches[b.id] || {}).level }));
   // Les moins exposées d'abord, puis les plus proches
   beaches.sort((a, b) => sargassumRank(a.level) - sargassumRank(b.level) || a.distance_km - b.distance_km);
   const chosen = beaches.slice(0, 3);
@@ -986,10 +993,15 @@ async function renderBathing() {
     </article>`;
   }).join('');
 
-  const others = beaches.slice(3).filter((b) => sargassumRank(b.level) >= 2);
+  // Les plus proches seulement : avec 70 plages, la liste complète noierait la recommandation
+  const others = beaches.slice(3).filter((b) => sargassumRank(b.level) >= 2)
+    .sort((a, b) => a.distance_km - b.distance_km);
+  const shown = others.slice(0, 8);
+  const rest = others.length - shown.length;
   $('#recoExcluded').innerHTML = others.length
-    ? '<span>Plus exposées aujourd\'hui :</span>' + others.map((b) =>
+    ? '<span>Plus exposées aujourd\'hui :</span>' + shown.map((b) =>
       `<span class="ecartee" style="--niveau:${levelColor(b.level)}"><i></i>${escapeHtml(b.name)} · ${sargassumLabel(b.level).toLowerCase()} · ${Math.round(b.distance_km)} km</span>`).join('')
+      + (rest > 0 ? `<span>et ${rest} autre${rest > 1 ? 's' : ''} plage${rest > 1 ? 's' : ''}</span>` : '')
     : '';
 }
 
