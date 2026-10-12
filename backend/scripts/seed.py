@@ -16,7 +16,9 @@ from app.models.restaurant_details import RestaurantDetails
 from app.models.rum_distillery_details import RumDistilleryDetails
 
 
-# Données des plages : vraies plages de Martinique avec coordonnées GPS réelles
+# Données des plages : vraies plages de Martinique. Positions relevées dans
+# OpenStreetMap (objet "plage") le 09/10/2026 : les premières, saisies de mémoire,
+# plaçaient certaines plages à plusieurs kilomètres, Anse Céron dans la forêt.
 BEACHES = [
     {
         "poi": {
@@ -27,8 +29,8 @@ BEACHES = [
                 "connue pour ses cocotiers et son caractère préservé. "
                 "Accessible en voiture depuis Saint-Pierre."
             ),
-            "latitude": 14.8442,
-            "longitude": -61.1812,
+            "latitude": 14.8334,
+            "longitude": -61.2242,
             "address": "Le Prêcheur, Martinique",
             # Acces libre
             "price_eur": 0,
@@ -47,8 +49,8 @@ BEACHES = [
                 "Sable blanc fin, eau turquoise, cocotiers et filaos. "
                 "Idéale pour les familles, bien équipée."
             ),
-            "latitude": 14.3969,
-            "longitude": -60.8726,
+            "latitude": 14.4018,
+            "longitude": -60.8800,
             "address": "Sainte-Anne, Martinique",
             # Acces libre
             "price_eur": 0,
@@ -67,8 +69,8 @@ BEACHES = [
                 "de sable sombre de Martinique. Eaux calmes, idéales pour la plongée en apnée. "
                 "Accessible à pied depuis Anse Dufour (10 minutes)."
             ),
-            "latitude": 14.5383,
-            "longitude": -61.0726,
+            "latitude": 14.5277,
+            "longitude": -61.0874,
             "address": "Les Anses-d'Arlet, Martinique",
             # Acces libre
             "price_eur": 0,
@@ -87,8 +89,8 @@ BEACHES = [
                 "Eaux claires, bateaux de pêche colorés, tortues marines régulièrement observées. "
                 "Ambiance locale préservée."
             ),
-            "latitude": 14.5397,
-            "longitude": -61.0705,
+            "latitude": 14.5258,
+            "longitude": -61.0895,
             "address": "Les Anses-d'Arlet, Martinique",
             # Acces libre
             "price_eur": 0,
@@ -107,8 +109,8 @@ BEACHES = [
                 "de la Martinique. Courants forts, baignade déconseillée, mais paysage magnifique. "
                 "Surf et kitesurf pratiqués."
             ),
-            "latitude": 14.4706,
-            "longitude": -61.0276,
+            "latitude": 14.4758,
+            "longitude": -61.0314,
             "address": "Le Diamant, Martinique",
             # Acces libre
             "price_eur": 0,
@@ -127,8 +129,8 @@ BEACHES = [
                 "Vue sur les Anses-d'Arlet et les Trois-Ilets. "
                 "Idéale pour les enfants et le snorkeling."
             ),
-            "latitude": 14.5488,
-            "longitude": -61.0574,
+            "latitude": 14.5411,
+            "longitude": -61.0658,
             "address": "Les Trois-Ilets, Martinique",
             # Acces libre
             "price_eur": 0,
@@ -147,8 +149,8 @@ BEACHES = [
                 "Vagues régulières appréciées des surfeurs. "
                 "Village de pêcheurs à proximité."
             ),
-            "latitude": 14.7622,
-            "longitude": -60.8821,
+            "latitude": 14.7699,
+            "longitude": -60.8996,
             "address": "La Trinité, Martinique",
             # Acces libre
             "price_eur": 0,
@@ -167,8 +169,8 @@ BEACHES = [
                 "Nombreux restaurants, hôtels et clubs de plongée à proximité. "
                 "Très animée en été."
             ),
-            "latitude": 14.5562,
-            "longitude": -61.0596,
+            "latitude": 14.5523,
+            "longitude": -61.0552,
             "address": "Les Trois-Ilets, Martinique",
             # Acces libre
             "price_eur": 0,
@@ -187,8 +189,8 @@ BEACHES = [
                 "accessible uniquement à pied depuis Le Prêcheur. Eaux transparentes, "
                 "sable noir et ambiance préservée. Le sentier qui y mène longe la Cascade Couleuvre."
             ),
-            "latitude": 14.8465,
-            "longitude": -61.2283,
+            "latitude": 14.8418,
+            "longitude": -61.2199,
             "address": "Le Prêcheur, Martinique",
             # Acces libre
             "price_eur": 0,
@@ -200,7 +202,9 @@ BEACHES = [
     },
 ]
 
-# Données des randonnées : vraies randonnées de Martinique
+# Données des randonnées : vraies randonnées de Martinique. Le point est le départ
+# du sentier (parking ou début du chemin balisé, relevé dans OpenStreetMap le
+# 09/10/2026), là où le voyageur doit se rendre, pas le sommet.
 HIKES = [
     {
         "poi": {
@@ -212,8 +216,8 @@ HIKES = [
                 "Vue panoramique sur toute l'île par temps clair. "
                 "Prévoir vêtements chauds et imperméables."
             ),
-            "latitude": 14.8157,
-            "longitude": -61.1672,
+            "latitude": 14.8061,
+            "longitude": -61.1514,
             "address": "Morne Rouge, Martinique",
             # Acces libre
             "price_eur": 0,
@@ -235,8 +239,8 @@ HIKES = [
                 "Ruines du château Dubuc accessibles sur le chemin. "
                 "Très accessible pour tous niveaux."
             ),
-            "latitude": 14.7736,
-            "longitude": -60.8598,
+            "latitude": 14.7705,
+            "longitude": -60.8933,
             "address": "La Trinité, Martinique",
             # Acces libre
             "price_eur": 0,
@@ -258,9 +262,9 @@ HIKES = [
                 "Vue exceptionnelle sur la baie de Fort-de-France. "
                 "Guide recommandé par mauvais temps."
             ),
-            "latitude": 14.7014,
-            "longitude": -61.1242,
-            "address": "Carbet, Martinique",
+            "latitude": 14.7202,
+            "longitude": -61.0983,
+            "address": "Fonds-Saint-Denis, Martinique",
             # Acces libre
             "price_eur": 0,
         },
@@ -280,8 +284,8 @@ HIKES = [
                 "On marche dans l'eau (niveau mollets à ceinture) pour atteindre la cascade. "
                 "Tenue aquatique obligatoire. Déconseillé après de fortes pluies."
             ),
-            "latitude": 14.8245,
-            "longitude": -61.1238,
+            "latitude": 14.8202,
+            "longitude": -61.1295,
             "address": "Ajoupa-Bouillon, Martinique",
         },
         "details": {
@@ -300,8 +304,8 @@ HIKES = [
                 "Sentier ombragé en forêt tropicale. "
                 "Possibilité de descendre sur la plage du Diamant en fin de randonnée."
             ),
-            "latitude": 14.4782,
-            "longitude": -61.0282,
+            "latitude": 14.4677,
+            "longitude": -61.0482,
             "address": "Le Diamant, Martinique",
             # Acces libre
             "price_eur": 0,
@@ -322,8 +326,8 @@ HIKES = [
                 "Idéale pour une sortie familiale. Chemin bien balisé. "
                 "Baignade possible dans le bassin en bas de la cascade."
             ),
-            "latitude": 14.8261,
-            "longitude": -61.1835,
+            "latitude": 14.8397,
+            "longitude": -61.2174,
             "address": "Le Prêcheur, Martinique",
             # Acces libre
             "price_eur": 0,
@@ -342,10 +346,10 @@ HIKES = [
             "description": (
                 "Randonnée côtière au sud de la Martinique reliant plusieurs plages et criques. "
                 "Paysages de savanes et de falaises calcaires. "
-                "Vue sur les Saintes et la Dominique par temps clair."
+                "Vue sur Sainte-Lucie par temps clair."
             ),
-            "latitude": 14.4025,
-            "longitude": -60.8895,
+            "latitude": 14.4028,
+            "longitude": -60.8772,
             "address": "Sainte-Anne, Martinique",
             # Acces libre
             "price_eur": 0,
@@ -381,7 +385,7 @@ RHUMERIES = [
             "latitude": 14.7002,
             "longitude": -61.1765,
             "address": "Route de Belfond, 97221 Le Carbet, Martinique",
-            "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Chai_de_la_distillerie_Neisson.jpg/1280px-Chai_de_la_distillerie_Neisson.jpg",
+            "image_url": "/assets/images/wikimedia/chai_de_la_distillerie_neisson.jpg",
         },
         "details": {
             "opening_hours": "Mo-Fr 08:00-17:00; Sa 08:30-12:00; Su 09:00-12:00",
@@ -405,7 +409,7 @@ RHUMERIES = [
             "latitude": 14.4797,
             "longitude": -60.9648,
             "address": "Chemin Terre Patrice, 97228 Sainte-Luce, Martinique",
-            "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/34/Trois_Rivieres_facade_enseigne_moulin_2015.jpg/1280px-Trois_Rivieres_facade_enseigne_moulin_2015.jpg",
+            "image_url": "/assets/images/wikimedia/trois_rivieres_facade_enseigne_moulin_2015.jpg",
         },
         "details": {
             "opening_hours": "Mo-Su 09:00-17:00",
@@ -429,7 +433,7 @@ RHUMERIES = [
             "latitude": 14.7835,
             "longitude": -60.9973,
             "address": "97230 Sainte-Marie, Martinique",
-            "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/Martinique-sainte-marie-rhumerie-saint-james.jpg/1280px-Martinique-sainte-marie-rhumerie-saint-james.jpg",
+            "image_url": "/assets/images/wikimedia/martinique_sainte_marie_rhumerie_saint_james.jpg",
         },
         "details": {
             "opening_hours": "Mo-Su 09:00-17:00",
@@ -454,7 +458,7 @@ RHUMERIES = [
             "latitude": 14.8628,
             "longitude": -61.1367,
             "address": "Chemin de Fonds Préville, 97218 Macouba, Martinique",
-            "image_url": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Rhumerie_JM.JPG",
+            "image_url": "/assets/images/wikimedia/rhumerie_jm.jpg",
         },
         "details": {
             "opening_hours": "Mo-Su 09:00-17:00",
@@ -478,7 +482,7 @@ RHUMERIES = [
             "latitude": 14.5089,
             "longitude": -60.9063,
             "address": "2888 Route Nationale 8, 97211 Rivière-Pilote, Martinique",
-            "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/La_Mauny_001.jpg/1280px-La_Mauny_001.jpg",
+            "image_url": "/assets/images/wikimedia/la_mauny_001.jpg",
         },
         "details": {
             # Saisis a la main : absents d'OpenStreetMap
@@ -505,7 +509,7 @@ RHUMERIES = [
             "latitude": 14.6021,
             "longitude": -60.9067,
             "address": "97240 Le François, Martinique",
-            "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a2/Les_chais_de_l%27habitation_Cl%C3%A9ment_en_Martinique.jpg/1280px-Les_chais_de_l%27habitation_Cl%C3%A9ment_en_Martinique.jpg",
+            "image_url": "/assets/images/wikimedia/les_chais_de_l_habitation_clement_en_martinique.jpg",
         },
         "details": {
             "opening_hours": "Mo-Su 09:00-18:30",
@@ -529,7 +533,7 @@ RHUMERIES = [
             "latitude": 14.7588,
             "longitude": -61.1651,
             "address": "Impasse Lakou Romen, 97250 Saint-Pierre, Martinique",
-            "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Ch%C3%A2teau_Depaz.jpg/1280px-Ch%C3%A2teau_Depaz.jpg",
+            "image_url": "/assets/images/wikimedia/chateau_depaz.jpg",
         },
         "details": {
             "opening_hours": "Mo-Su 09:00-16:30",
@@ -554,7 +558,7 @@ RHUMERIES = [
             "latitude": 14.6168,
             "longitude": -61.0494,
             "address": "97200 Fort-de-France, Martinique",
-            "image_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Distillerie_Dillon.JPG/1280px-Distillerie_Dillon.JPG",
+            "image_url": "/assets/images/wikimedia/distillerie_dillon.jpg",
         },
         "details": {
             # Saisis a la main : absents d'OpenStreetMap
@@ -962,11 +966,11 @@ def seed():
         # a une base existante sans la detruire.
         existants = {p.name: p for p in db.query(PointOfInterest).all()}
         ajouts = ignores = details_ajoutes = details_completes = adresses_maj = prix_maj = 0
-        descriptions_maj = 0
+        descriptions_maj = positions_maj = photos_maj = 0
 
         def ajouter(data, libelle, classe_details=None, champ=None):
             nonlocal ajouts, ignores, details_ajoutes, details_completes, adresses_maj, prix_maj
-            nonlocal descriptions_maj
+            nonlocal descriptions_maj, positions_maj, photos_maj
             nom = data["poi"]["name"]
             poi = existants.get(nom)
 
@@ -997,6 +1001,20 @@ def seed():
                     poi.description = data["poi"]["description"]
                     descriptions_maj += 1
                     print(f"    description mise à jour : {nom}")
+                # Et pour la position : la carte de la fiche et les niveaux de
+                # sargasses par plage en dépendent.
+                position = (data["poi"]["latitude"], data["poi"]["longitude"])
+                if (poi.latitude, poi.longitude) != position:
+                    poi.latitude, poi.longitude = position
+                    positions_maj += 1
+                    print(f"    position mise à jour : {nom}")
+                # La photo seulement quand le script en donne une : celles des plages
+                # et randonnées viennent de update_images.py.
+                photo = data["poi"].get("image_url")
+                if photo is not None and poi.image_url != photo:
+                    poi.image_url = photo
+                    photos_maj += 1
+                    print(f"    photo mise à jour : {nom}")
 
             # Les details sont traites a part : une fiche peut exister sans eux, par
             # exemple quand la table de details a ete creee apres l'insertion de la fiche.
@@ -1045,7 +1063,8 @@ def seed():
             f"\n{ajouts} ajoutée(s), {ignores} déjà présente(s), "
             f"{details_ajoutes} fiche(s) de détails créée(s), "
             f"{details_completes} complétée(s), {adresses_maj} adresse(s), "
-            f"{descriptions_maj} description(s) et {prix_maj} prix mis à jour. "
+            f"{descriptions_maj} description(s), {positions_maj} position(s), "
+            f"{photos_maj} photo(s) et {prix_maj} prix mis à jour. "
             f"{total} activités au total."
         )
 
