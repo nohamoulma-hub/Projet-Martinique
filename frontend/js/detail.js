@@ -429,19 +429,150 @@ function injectBackButton() {
   breadcrumb.nextElementSibling.appendChild(btn);
 }
 
+// Couleur de l'epingle sur la carte : celle de la categorie, en version vive pour
+// rester visible sur le fond satellite
+const PIN_COLORS = {
+  beach: '#1A5C8A',
+  hike: '#1D7A4E',
+  rum_distillery: '#C8392B',
+  restaurant: '#F0B429',
+};
+
+// Carte satellite centree sur l'activite, avec le meme fond que la page Meteo
+function initLocationMap(activite) {
+  const container = document.getElementById('carteLieu');
+  if (!container) return;
+  // Sans Leaflet (CDN injoignable), on garde seulement les coordonnees
+  if (typeof L === 'undefined') {
+    container.hidden = true;
+    return;
+  }
+  const position = [activite.latitude, activite.longitude];
+  const map = L.map(container, { center: position, zoom: 13, minZoom: 9, maxZoom: 15, scrollWheelZoom: false });
+  map.attributionControl.setPrefix(false);
+  // La molette ne zoome qu'apres un clic sur la carte : le defilement de la page reste libre
+  map.on('click', () => map.scrollWheelZoom.enable());
+  container.addEventListener('mouseleave', () => map.scrollWheelZoom.disable());
+
+  // Sentinel-2 a 10 m par pixel : au-dela du zoom 14 l'image est agrandie, donc 15 au plus
+  L.tileLayer('https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2024_3857/default/g/{z}/{y}/{x}.jpg', {
+    maxZoom: 15,
+    attribution: '<a href="https://s2maps.eu">Sentinel-2 cloudless 2024</a> par EOX (données Copernicus modifiées)',
+  }).addTo(map);
+
+  const color = PIN_COLORS[activite.category] || '#C8392B';
+  const pin = L.divIcon({
+    className: 'epingle',
+    html: `<svg width="30" height="40" viewBox="0 0 30 40" aria-hidden="true">
+      <path d="M15 1C7.3 1 1 7.2 1 14.9 1 25.3 15 39 15 39s14-13.7 14-24.1C29 7.2 22.7 1 15 1z" fill="${color}" stroke="#F5EDD8" stroke-width="2"/>
+      <circle cx="15" cy="15" r="5" fill="#F5EDD8"/></svg>`,
+    iconSize: [30, 40],
+    iconAnchor: [15, 39],
+    tooltipAnchor: [0, -38],
+  });
+  L.marker(position, { icon: pin, title: activite.name, keyboard: false })
+    .addTo(map)
+    .bindTooltip(activite.name, { permanent: true, direction: 'top', offset: [0, 0] });
+}
+
+// Couleurs par categorie, tirees du design system Madras : bleu pour la mer,
+// vert pour la foret, rouge pour le rhum. Servent au badge du hero et aux vignettes
+// "A proximite".
+const ACCENTS = {
+  beach:          { accent: '#1A5C8A', fond: 'rgba(26,92,138,.75)', texte: '#B8ECF7' },
+  hike:           { accent: '#1D7A4E', fond: 'rgba(29,122,78,.75)', texte: '#ADFFD7' },
+  // Fond plus opaque que les deux autres : le rouge sur une photo claire tombait
+  // sous le seuil de lisibilite (2,98:1). A 0,92 et en blanc pur : 4,58:1.
+  rum_distillery: { accent: '#C8392B', fond: 'rgba(200,57,43,.92)', texte: '#FFFFFF' },
+  // Jaune Madras : sur ce fond clair, le texte doit etre sombre (--nuit), 9,4:1
+  restaurant:     { accent: '#B07C0A', fond: 'rgba(240,180,41,.92)', texte: '#0D1F2D' },
+};
+
+// Libelle et fond de secours des vignettes "A proximite", par categorie
+const NEARBY_TYPES = {
+  beach: { label: 'Plage', bg: 'beach-bg' },
+  hike: { label: 'Randonnée', bg: 'hike-bg' },
+  rum_distillery: { label: 'Rhumerie', bg: 'rum-bg' },
+  restaurant: { label: 'Restaurant', bg: 'resto-bg' },
+};
+
+// En dessous de cette distance, un temps en voiture n'a pas de sens : on y va a pied
+const WALKING_KM = 0.5;
+
+// Duree de trajet lisible : "8 min", "1 h", "1 h 25"
+function formatDuree(minutes) {
+  if (minutes < 60) return `${Math.max(minutes, 1)} min`;
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return m ? `${h} h ${String(m).padStart(2, '0')}` : `${h} h`;
+}
+
+// Ligne de trajet d'une vignette : temps en voiture si connu, sinon distance a vol d'oiseau
+function trajetHtml(item) {
+  const km = `${String(item.distance_km).replace('.', ',')} km`;
+  if (item.distance_km < WALKING_KM) return '<strong>À quelques pas</strong>';
+  if (item.par_la_route) {
+    return `<strong>${formatDuree(item.duree_min)} en voiture</strong><span>${km} par la route</span>`;
+  }
+  return `<strong>${km}</strong><span>à vol d'oiseau</span>`;
+}
+
+// Echappe un texte avant de l'inserer dans du HTML
+function escapeHtml(text) {
+  return String(text ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// Remplit "A proximite" avec les activites les plus proches, en temps de trajet
+async function loadNearby(activite) {
+  const section = document.querySelector('.nearby-section');
+  const grid = document.querySelector('.nearby-grid');
+  if (!section || !grid) return;
+  let items;
+  try {
+    const res = await fetch(`${API_URL}/activites/${activite.id}/proximite?limite=3`);
+    if (!res.ok) return;
+    items = await res.json();
+  } catch {
+    return; // la section reste masquee : mieux vaut rien qu'un bloc vide
+  }
+  if (!items.length) return;
+
+  grid.innerHTML = items.map(item => {
+    const type = NEARBY_TYPES[item.category] || { label: 'Activité', bg: 'beach-bg' };
+    const couleurs = ACCENTS[item.category] || ACCENTS.beach;
+    // L'URL est deja encodee en base : on n'echappe que les guillemets. Le degrade reste
+    // sur le parent, visible si la photo ne charge pas.
+    const photo = item.image_url
+      ? `<div class="mini-visual-bg" style="background-image:url('${item.image_url.replace(/'/g, '%27').replace(/"/g, '%22')}')"></div>`
+      : '';
+    return `
+      <a href="detail.html?id=${item.id}" class="mini-card">
+        <div class="mini-visual ${type.bg}">
+          ${photo}
+          <span class="mini-badge" style="background:${couleurs.fond};color:${couleurs.texte};">${type.label}</span>
+        </div>
+        <div class="mini-body">
+          <p class="mini-name">${escapeHtml(item.name)}</p>
+          <p class="mini-loc">${escapeHtml(extractCommune(item.address))}</p>
+          <p class="mini-trajet">${trajetHtml(item)}</p>
+        </div>
+      </a>`;
+  }).join('');
+
+  // La FOSSGIS demande de citer la source et d'offrir un lien pour corriger la carte
+  const note = document.querySelector('.nearby-note');
+  if (note) {
+    note.innerHTML = items.some(i => i.par_la_route)
+      ? 'Temps en voiture estimés hors embouteillages, d\'un parking ou d\'une entrée à l\'autre. '
+        + 'Itinéraires calculés par OSRM (FOSSGIS) sur les routes © OpenStreetMap. '
+        + '<a href="https://www.openstreetmap.org/fixthemap" target="_blank" rel="noopener">Signaler une erreur de carte</a>'
+      : 'Distances à vol d\'oiseau : les temps de trajet seront affichés après le prochain calcul d\'itinéraires.';
+  }
+  section.hidden = false;
+}
+
 // Applique la couleur d'accent selon le type (beach = bleu, hike = vert)
 function applyTypeAccent(category) {
-  // Couleurs par categorie, tirees du design system Madras : bleu pour la mer,
-  // vert pour la foret, rouge pour le rhum.
-  const ACCENTS = {
-    beach:          { accent: '#1A5C8A', fond: 'rgba(26,92,138,.75)', texte: '#B8ECF7' },
-    hike:           { accent: '#1D7A4E', fond: 'rgba(29,122,78,.75)', texte: '#ADFFD7' },
-    // Fond plus opaque que les deux autres : le rouge sur une photo claire tombait
-    // sous le seuil de lisibilite (2,98:1). A 0,92 et en blanc pur : 4,58:1.
-    rum_distillery: { accent: '#C8392B', fond: 'rgba(200,57,43,.92)', texte: '#FFFFFF' },
-    // Jaune Madras : sur ce fond clair, le texte doit etre sombre (--nuit), 9,4:1
-    restaurant:     { accent: '#B07C0A', fond: 'rgba(240,180,41,.92)', texte: '#0D1F2D' },
-  };
   const couleurs = ACCENTS[category];
   if (!couleurs) return;
 
@@ -463,13 +594,6 @@ function applyTypeAccent(category) {
   }
 }
 
-// Distance en km entre deux points (formule de haversine)
-function distanceKm(lat1, lon1, lat2, lon2) {
-  const rad = Math.PI / 180;
-  const h = Math.sin((lat2 - lat1) * rad / 2) ** 2
-    + Math.cos(lat1 * rad) * Math.cos(lat2 * rad) * Math.sin((lon2 - lon1) * rad / 2) ** 2;
-  return 2 * 6371 * Math.asin(Math.sqrt(h));
-}
 
 // Bloc sargasses d'une plage : niveau du jour (NOAA), estimation des 4 jours suivants
 // et plage moins exposée la plus proche. Masqué pour les autres activités.
@@ -492,15 +616,18 @@ async function loadSargassumCard(activite) {
       `<span class="alerte-jour" style="--jour:${SARGASSUM_LEVELS[f.level].color}">${formatDayFr(f.date, { weekday: 'short' })} ${sargassumLabel(f.level).toLowerCase()}</span>`).join('')}</div>`);
   }
 
-  // Plage du catalogue moins exposée, la plus proche
+  // Plage du catalogue moins exposée, la plus rapide à rejoindre en voiture : l'API
+  // trie les plages par temps de route (à vol d'oiseau tant que les trajets manquent)
   if (sargassumRank(info.level) > 0) {
-    const list = await fetchApi('/activites?categorie=beach');
-    const better = (list ? list.items : [])
-      .filter((b) => b.id !== activite.id && data.beaches[b.id] && sargassumRank(data.beaches[b.id].level) < sargassumRank(info.level))
-      .map((b) => ({ ...b, km: distanceKm(activite.latitude, activite.longitude, b.latitude, b.longitude) }))
-      .sort((a, b) => a.km - b.km)[0];
+    const beaches = await fetchApi(`/activites/${activite.id}/proximite?categorie=beach&limite=12`);
+    const better = (beaches || [])
+      .find((b) => data.beaches[b.id] && sargassumRank(data.beaches[b.id].level) < sargassumRank(info.level));
     if (better) {
-      lines.push(`<p>Moins exposée et la plus proche : <a href="detail.html?id=${better.id}">${better.name}</a> (${sargassumLabel(data.beaches[better.id].level).toLowerCase()}), à ${Math.round(better.km)} km.</p>`);
+      const km = `${String(better.distance_km).replace('.', ',')} km`;
+      let trajet = `à ${km} à vol d'oiseau`;
+      if (better.distance_km < WALKING_KM) trajet = `à quelques pas (${km})`;
+      else if (better.par_la_route) trajet = `à ${formatDuree(better.duree_min)} en voiture (${km})`;
+      lines.push(`<p>Moins exposée et la plus proche : <a href="detail.html?id=${better.id}">${escapeHtml(better.name)}</a> (${sargassumLabel(data.beaches[better.id].level).toLowerCase()}), ${trajet}.</p>`);
     }
   }
   lines.push('<p class="alerte-source">Jours suivants : estimation du site. <a href="meteo.html#sargasses">Voir la carte des sargasses</a></p>');
@@ -636,11 +763,13 @@ async function loadActivite(id) {
       descSection.innerHTML = `<p>${activite.description}</p>`;
     }
 
-    // Coordonnées GPS
+    // Coordonnées GPS et carte satellite du lieu
     const coords = document.querySelector('.map-coords');
     if (coords) {
       coords.textContent = `${activite.latitude.toFixed(4)}° N, ${Math.abs(activite.longitude).toFixed(4)}° O`;
     }
+    initLocationMap(activite);
+    loadNearby(activite);
 
     // Galerie photos
     fillGallery(activite.images || []);
