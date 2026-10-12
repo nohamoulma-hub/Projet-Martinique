@@ -8,7 +8,7 @@ import time
 from app.core.database import SessionLocal
 from app.models.point_of_interest import Category, PointOfInterest
 from app.services import (cache_service, h2s_service, meteo_animation_service, meteo_service,
-                          sargasses_service)
+                          sargasses_service, trajets_service)
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +27,16 @@ def _beaches() -> list[dict]:
         db.close()
 
 
+def _activities() -> list[dict]:
+    """Toutes les activités du catalogue, avec leur position."""
+    db = SessionLocal()
+    try:
+        return [{"id": p.id, "latitude": p.latitude, "longitude": p.longitude}
+                for p in db.query(PointOfInterest).order_by(PointOfInterest.id).all()]
+    finally:
+        db.close()
+
+
 # (nom, fichier produit, intervalle en secondes, tâche)
 JOBS = [
     ("animation", "meteo/animation.json", 600, meteo_animation_service.refresh_animation),
@@ -34,6 +44,9 @@ JOBS = [
     ("plages", "meteo/plages.json", 3600, lambda: meteo_service.refresh_beach_conditions(_beaches())),
     ("h2s", "sargasses/h2s.json", 3600, h2s_service.refresh_h2s),
     ("sargasses", "sargasses/etat.json", 6 * 3600, lambda: sargasses_service.refresh_sargasses(_beaches())),
+    # Vérifiée chaque heure, mais le serveur d'itinéraires n'est appelé que si une activité
+    # a été ajoutée ou déplacée, ou si la matrice a plus d'une semaine
+    ("trajets", trajets_service.CACHE_FILE, 3600, lambda: trajets_service.refresh_trajets(_activities())),
 ]
 
 
