@@ -36,82 +36,82 @@ GALLERIES = {
 
 
 
-# Galeries des rhumeries : photos Wikimedia Commons sous licence libre.
-# Contrairement aux plages, ces URL sont distantes et non des fichiers locaux de
-# /assets/. La page de description de chaque fichier, qui porte l'attribution
-# exigee par les licences CC BY et CC BY-SA, est listee dans CREDITS_PHOTOS.md.
+# Galeries des rhumeries : photos Wikimedia Commons sous licence libre, copiees en
+# local dans /assets/images/wikimedia/ (vignettes 1280 px) : chargees chez Wikimedia,
+# elles etaient refusees (429) des que le debit montait. L'auteur et la licence de
+# chaque fichier, exiges par les licences CC BY et CC BY-SA, sont dans CREDITS_PHOTOS.md.
 GALLERIES_RHUMERIES = {
     "Distillerie Neisson": [
         # Chai de la distillerie Neisson.jpg (CC BY-SA 4.0)
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Chai_de_la_distillerie_Neisson.jpg/1280px-Chai_de_la_distillerie_Neisson.jpg",
+        "/assets/images/wikimedia/chai_de_la_distillerie_neisson.jpg",
         # Colonne à distiller.JPG (CC BY-SA 3.0)
-        "https://upload.wikimedia.org/wikipedia/commons/1/11/Colonne_%C3%A0_distiller.JPG",
+        "/assets/images/wikimedia/colonne_a_distiller.jpg",
         # Rhum Neisson.jpg (CC BY-SA 4.0)
-        "https://upload.wikimedia.org/wikipedia/commons/0/00/Rhum_Neisson.jpg",
+        "/assets/images/wikimedia/rhum_neisson.jpg",
     ],
     "Rhum Trois Rivières": [
         # Trois Rivieres facade enseigne moulin 2015.jpg (CC BY-SA 4.0)
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/34/Trois_Rivieres_facade_enseigne_moulin_2015.jpg/1280px-Trois_Rivieres_facade_enseigne_moulin_2015.jpg",
+        "/assets/images/wikimedia/trois_rivieres_facade_enseigne_moulin_2015.jpg",
         # Trois-Rivières - Martinique.jpg (CC BY-SA 4.0)
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/Trois-Rivi%C3%A8res_-_Martinique.jpg/1280px-Trois-Rivi%C3%A8res_-_Martinique.jpg",
+        "/assets/images/wikimedia/trois_rivieres_martinique.jpg",
         # Trois Rivières 001.jpg (CC BY-SA 3.0)
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/43/Trois_Rivi%C3%A8res_001.jpg/1280px-Trois_Rivi%C3%A8res_001.jpg",
+        "/assets/images/wikimedia/trois_rivieres_001.jpg",
         # 3 rivieres colonne distiller.jpg (CC BY-SA 3.0)
-        "https://upload.wikimedia.org/wikipedia/commons/d/d5/3_rivieres_colonne_distiller.jpg",
+        "/assets/images/wikimedia/3_rivieres_colonne_distiller.jpg",
         # Rhum Trois Rivières.jpg (CC BY-SA 4.0)
-        "https://upload.wikimedia.org/wikipedia/commons/7/7c/Rhum_Trois_Rivi%C3%A8res.jpg",
+        "/assets/images/wikimedia/rhum_trois_rivieres.jpg",
     ],
     "Distillerie Saint-James": [
         # Martinique-sainte-marie-rhumerie-saint-james.jpg (Public domain)
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/Martinique-sainte-marie-rhumerie-saint-james.jpg/1280px-Martinique-sainte-marie-rhumerie-saint-james.jpg",
+        "/assets/images/wikimedia/martinique_sainte_marie_rhumerie_saint_james.jpg",
         # St James Rhum museum in Martinique.jpg (CC BY 4.0)
-        "https://upload.wikimedia.org/wikipedia/commons/2/27/St_James_Rhum_museum_in_Martinique.jpg",
+        "/assets/images/wikimedia/st_james_rhum_museum_in_martinique.jpg",
         # Rhum des plantations Saint James-IMG 6029.jpg (CC BY-SA 2.0 fr)
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a3/Rhum_des_plantations_Saint_James-IMG_6029.jpg/1280px-Rhum_des_plantations_Saint_James-IMG_6029.jpg",
+        "/assets/images/wikimedia/rhum_des_plantations_saint_james_img_6029.jpg",
         # Saint james livraison canne.jpg (CC BY-SA 3.0)
-        "https://upload.wikimedia.org/wikipedia/commons/a/ae/Saint_james_livraison_canne.jpg",
+        "/assets/images/wikimedia/saint_james_livraison_canne.jpg",
         # J. Depaz - Distillery, Plantation St. James, Martinique 5610834659.jpg (Public domain)
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/J._Depaz_-_Distillery%2C_Plantation_St._James%2C_Martinique_5610834659.jpg/1280px-J._Depaz_-_Distillery%2C_Plantation_St._James%2C_Martinique_5610834659.jpg",
+        "/assets/images/wikimedia/j_depaz_distillery_plantation_st_james_martinique_5610834659.jpg",
     ],
     "Distillerie J.M": [
         # Rhumerie JM.JPG (CC BY-SA 3.0)
-        "https://upload.wikimedia.org/wikipedia/commons/a/a3/Rhumerie_JM.JPG",
+        "/assets/images/wikimedia/rhumerie_jm.jpg",
         # Distillerie de Fonds-Préville.JPG (CC BY-SA 3.0)
-        "https://upload.wikimedia.org/wikipedia/commons/e/e6/Distillerie_de_Fonds-Pr%C3%A9ville.JPG",
+        "/assets/images/wikimedia/distillerie_de_fonds_preville.jpg",
         # Rhum J.M.jpg (CC BY-SA 4.0)
-        "https://upload.wikimedia.org/wikipedia/commons/a/a3/Rhum_J.M.jpg",
+        "/assets/images/wikimedia/rhum_j_m.jpg",
     ],
     "Distillerie La Mauny": [
         # La Mauny 001.jpg (CC BY-SA 3.0)
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/La_Mauny_001.jpg/1280px-La_Mauny_001.jpg",
+        "/assets/images/wikimedia/la_mauny_001.jpg",
     ],
     "Habitation Clément": [
         # Les chais de l'habitation Clément en Martinique.jpg (CC BY-SA 4.0)
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a2/Les_chais_de_l%27habitation_Cl%C3%A9ment_en_Martinique.jpg/1280px-Les_chais_de_l%27habitation_Cl%C3%A9ment_en_Martinique.jpg",
+        "/assets/images/wikimedia/les_chais_de_l_habitation_clement_en_martinique.jpg",
         # Habitation Clément, Martinique.jpg (CC BY-SA 4.0)
-        "https://upload.wikimedia.org/wikipedia/commons/8/80/Habitation_Cl%C3%A9ment%2C_Martinique.jpg",
+        "/assets/images/wikimedia/habitation_clement_martinique.jpg",
         # Ancienne distillerie habitation Clément 1.JPG (CC BY-SA 4.0)
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/aa/Ancienne_distillerie_habitation_Cl%C3%A9ment_1.JPG/1280px-Ancienne_distillerie_habitation_Cl%C3%A9ment_1.JPG",
+        "/assets/images/wikimedia/ancienne_distillerie_habitation_clement_1.jpg",
         # Habitation Clément (Le François, Martinique) - 01.jpg (CC0)
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f3/Habitation_Cl%C3%A9ment_%28Le_Fran%C3%A7ois%2C_Martinique%29_-_01.jpg/1280px-Habitation_Cl%C3%A9ment_%28Le_Fran%C3%A7ois%2C_Martinique%29_-_01.jpg",
+        "/assets/images/wikimedia/habitation_clement_le_francois_martinique_01.jpg",
         # Jardin habitation Clément 24.JPG (CC BY-SA 4.0)
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Jardin_habitation_Cl%C3%A9ment_24.JPG/1280px-Jardin_habitation_Cl%C3%A9ment_24.JPG",
+        "/assets/images/wikimedia/jardin_habitation_clement_24.jpg",
     ],
     "Distillerie Depaz": [
         # Château Depaz.jpg (CC BY-SA 1.0)
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Ch%C3%A2teau_Depaz.jpg/1280px-Ch%C3%A2teau_Depaz.jpg",
+        "/assets/images/wikimedia/chateau_depaz.jpg",
         # Rhumerie Depaz.jpg (CC BY-SA 4.0)
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fc/Rhumerie_Depaz.jpg/1280px-Rhumerie_Depaz.jpg",
+        "/assets/images/wikimedia/rhumerie_depaz.jpg",
         # Rhum Depaz 01.jpg (CC BY-SA 4.0)
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/Rhum_Depaz_01.jpg/1280px-Rhum_Depaz_01.jpg",
+        "/assets/images/wikimedia/rhum_depaz_01.jpg",
         # Rhum Depaz 02.jpg (CC BY-SA 4.0)
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0d/Rhum_Depaz_02.jpg/1280px-Rhum_Depaz_02.jpg",
+        "/assets/images/wikimedia/rhum_depaz_02.jpg",
         # Rhum Depaz 03.jpg (CC BY-SA 4.0)
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/Rhum_Depaz_03.jpg/1280px-Rhum_Depaz_03.jpg",
+        "/assets/images/wikimedia/rhum_depaz_03.jpg",
     ],
     "Distillerie Dillon": [
         # Distillerie Dillon.JPG (CC BY-SA 3.0)
-        "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Distillerie_Dillon.JPG/1280px-Distillerie_Dillon.JPG",
+        "/assets/images/wikimedia/distillerie_dillon.jpg",
     ],
 }
 
