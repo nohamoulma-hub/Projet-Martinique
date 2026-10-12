@@ -1,0 +1,612 @@
+[
+  {
+    "name": "Plage La Française",
+    "address": "Fort-de-France, Martinique",
+    "latitude": 14.60132,
+    "longitude": -61.0677,
+    "description": "Petite plage de Fort-de-France. Sable : blond, herbe. Eau : turquoise. Mer : calme. Végétation : cocotiers. Sous l'eau : snorkeling.",
+    "amenities": "Parking, ponton, éclairage le soir, surveillance vidéo (le soir le lieu peut être mal fréquenté)",
+    "image_url": "/assets/images/wikimedia/plage_la_francaise_fort_de_france_martinique_01.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-la-francaise-fort-de-france-fr-1398608/"
+  },
+  {
+    "name": "Plage de Batelière",
+    "address": "Schœlcher, Martinique",
+    "latitude": 14.60544,
+    "longitude": -61.09611,
+    "description": "Petite crique de Schœlcher. Sable : blanc. Eau : turquoise. Mer : calme. Végétation : quelques cocotiers. Sous l'eau : club de Plongée La Batelière, snorkeling.",
+    "amenities": "Parasols, transats, ponton, restaurant, bar sur la plage",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-bateliere-schoelcher-fr-1398607/"
+  },
+  {
+    "name": "Plage de Cap Chevalier - Anse Michel",
+    "address": "Sainte-Anne, Martinique",
+    "latitude": 14.43637,
+    "longitude": -60.82625,
+    "description": "Grande plage de Sainte-Anne, en plusieurs anses. Sable : fin. Eau : cristalline. Mer : peu profonde, calme, vent (parfait pour le kite-surf et le wind-surf). Végétation : ombragée.",
+    "amenities": "Activités nautiques, tables de pique-nique, restaurant",
+    "image_url": "/assets/images/wikimedia/ilet_chevalier.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-cap-chevalier-anse-michel-sainte-anne-fr-1399473/"
+  },
+  {
+    "name": "Plage de Cap Macré",
+    "address": "Le Marin, Martinique",
+    "latitude": 14.47397,
+    "longitude": -60.81361,
+    "description": "Deux petites anses du Marin : Anse Baleine et Anse Four à Chaux. Sable : fin. Eau : turquoise. Mer : calme, parfois quelque algues. Végétation : très ombragée.",
+    "amenities": "Parking, snack",
+    "image_url": "/assets/images/wikimedia/cap_macre_beach_le_marin.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-cap-macre-le-marin-fr-1399476/"
+  },
+  {
+    "name": "Plage de Case Navire",
+    "address": "Schœlcher, Martinique",
+    "latitude": 14.61509,
+    "longitude": -61.10133,
+    "description": "Plage de Schœlcher. Sable : blond. Qualité de l'eau : bonne. Mer : calme. Végétation : cocotiers, palmiers.",
+    "amenities": "Parasols, parking, parcours de santé",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-case-navire-schoelcher-fr-1398600/"
+  },
+  {
+    "name": "Plage de Corps de Garde",
+    "address": "Sainte-Luce, Martinique",
+    "latitude": 14.46595,
+    "longitude": -60.94221,
+    "description": "Plage de Sainte-Luce, de taille moyenne. Sable : fin. Eau : turquoise. Mer : calme. Végétation : ombragée.",
+    "amenities": "Grand parking, douches, piscine aménagée, activités nautiques",
+    "image_url": "/assets/images/wikimedia/plage_de_corps_de_garde_martinique.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-corps-de-garde-sainte-luce-fr-1399416/"
+  },
+  {
+    "name": "Plage de Fond Banane",
+    "address": "Sainte-Luce, Martinique",
+    "latitude": 14.46703,
+    "longitude": -60.94671,
+    "description": "Petite plage de Sainte-Luce. Sable : fin. Eau : turquoise. Mer : calme. Végétation : ombragée.",
+    "amenities": null,
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-fond-banane-sainte-luce-fr-1399413/"
+  },
+  {
+    "name": "Plage de Fond Boucher",
+    "address": "Bellefontaine, Martinique",
+    "latitude": 14.65619,
+    "longitude": -61.15412,
+    "description": "Petite plage de quartier de Bellefontaine. Sable : gris volcanique, gros galets. Eau : cristalline. Mer : calme. Végétation : peu ombragée. Sous l'eau : plongée, pêche sous-marine.",
+    "amenities": null,
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-fond-boucher-bellefontaine-fr-1398575/"
+  },
+  {
+    "name": "Plage de Fond Coré",
+    "address": "Saint-Pierre, Martinique",
+    "latitude": 14.76374,
+    "longitude": -61.19307,
+    "description": "Plage de Saint-Pierre. Sable : noir volcanique, gros galets. Eau : cristalline. Mer : calme. Végétation : peu ombragée. Sous l'eau : fonds marins extrêmement riches, épaves datant de 1902.",
+    "amenities": null,
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-fond-core-saint-pierre-fr-1398555/"
+  },
+  {
+    "name": "Plage de Fond Lahaye",
+    "address": "Schœlcher, Martinique",
+    "latitude": 14.62627,
+    "longitude": -61.11231,
+    "description": "Plage de Schœlcher. Sable : gris. Qualité de l'eau : moyenne. Mer : calme. Végétation : cocotiers.",
+    "amenities": null,
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-fond-lahaye-schoelcher-fr-1398591/"
+  },
+  {
+    "name": "Plage de Grand Anse (Le coin Nord)",
+    "address": "Le Carbet, Martinique",
+    "latitude": 14.70771,
+    "longitude": -61.1844,
+    "description": "Grande plage familiale du Carbet. Sable : noir volcanique, gros galets. Eau : cristalline, mer calme. Mer : rapidement profonde. Végétation : ombragée.",
+    "amenities": "Parking, restaurants, bars, ponton",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-grand-anse-le-coin-nord-le-carbet-fr-1398565/"
+  },
+  {
+    "name": "Plage de Grand Macabou",
+    "address": "Le Vauclin, Martinique",
+    "latitude": 14.49722,
+    "longitude": -60.82366,
+    "description": "Grande plage du Vauclin. Sable : fin. Eau : turquoise. Mer : légèrement agitée, vent. Végétation : très ombragée.",
+    "amenities": "Tables",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-grand-macabou-le-vauclin-fr-1399487/"
+  },
+  {
+    "name": "Plage de Grande Anse",
+    "address": "Les Anses-d'Arlet, Martinique",
+    "latitude": 14.50337,
+    "longitude": -61.0846,
+    "description": "Grande plage des Anses-d'Arlet. Sable : blond. Eau : turquoise. Mer : calme. Sous l'eau : snorkeling.",
+    "amenities": "Activités nautiques, ponton",
+    "image_url": "/assets/images/wikimedia/grand_anse_beach_anses_d_arlet.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-grande-anse-les-anses-darlet-fr-1398639/"
+  },
+  {
+    "name": "Plage de Grande Terre - Anse à Prunes",
+    "address": "Sainte-Anne, Martinique",
+    "latitude": 14.39477,
+    "longitude": -60.86867,
+    "description": "Grande plage de Sainte-Anne. Sable : fin. Eau : turquoise. Mer : calme. Végétation : ombragée.",
+    "amenities": "Restaurant",
+    "image_url": "/assets/images/wikimedia/grande_terre_des_salines.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-grande-terre-anse-a-prunes-sainte-anne-fr-1399459/"
+  },
+  {
+    "name": "Plage de Gros-Raisin",
+    "address": "Sainte-Luce, Martinique",
+    "latitude": 14.46439,
+    "longitude": -60.9297,
+    "description": "Deux petites anses de Sainte-Luce, séparées par un pont. Sable : fin. Eau : turquoise. Mer : calme mais avec courant. Végétation : ombragée.",
+    "amenities": null,
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-gros-raisin-sainte-luce-fr-1399420/"
+  },
+  {
+    "name": "Plage de Madiana",
+    "address": "Schœlcher, Martinique",
+    "latitude": 14.61214,
+    "longitude": -61.0988,
+    "description": "Plage de Schœlcher, de taille moyenne. Sable : gris et cailloux. Qualité de l'eau : moyenne. Mer : calme et tranquille. Végétation : de nombreux cocotiers, bien ordonnée.",
+    "amenities": "Parking, club nautique, terrain de beach volley",
+    "image_url": "/assets/images/wikimedia/la_plage_de_madiana_panoramio.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-madiana-schoelcher-fr-1398604/"
+  },
+  {
+    "name": "Plage de Petit Macabou",
+    "address": "Le Vauclin, Martinique",
+    "latitude": 14.50542,
+    "longitude": -60.82397,
+    "description": "Plage du Vauclin, de taille moyenne. Sable : fin. Eau : turquoise. Mer : légèrement agitée, vent. Végétation : ombragée (attention risque de chute de noix de coco).",
+    "amenities": null,
+    "image_url": "/assets/images/wikimedia/plage_de_petite_anse_macabou.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-petit-macabou-le-vauclin-fr-1399489/"
+  },
+  {
+    "name": "Plage de Petite Anse",
+    "address": "Les Anses-d'Arlet, Martinique",
+    "latitude": 14.46921,
+    "longitude": -61.07164,
+    "description": "Petite plage des Anses-d'Arlet. Sable : fin avec des petits galets. Eau : bleue. Mer : un peu agitée. Végétation : ombragée par des cocotiers.",
+    "amenities": null,
+    "image_url": "/assets/images/wikimedia/petite_anse_d_arlet_wharf_40318283303.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-petite-anse-les-anses-darlet-fr-1398641/"
+  },
+  {
+    "name": "Plage de Pont Café",
+    "address": "Sainte-Luce, Martinique",
+    "latitude": 14.4647,
+    "longitude": -60.93957,
+    "description": "Plage de Sainte-Luce. Sable : fin. Eau : turquoise. Mer : calme. Végétation : ombragée.",
+    "amenities": "Activités nautiques",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-pont-cafe-sainte-luce-fr-1399419/"
+  },
+  {
+    "name": "Plage de Sinaï",
+    "address": "Grand'Rivière, Martinique",
+    "latitude": 14.87179,
+    "longitude": -61.18264,
+    "description": "Petite plage de Grand'Rivière. Sable : noir volcanique. Eau : cristalline. Mer : moyennement agitée, rapidement profonde, courants. Végétation : très peu ombragée.",
+    "amenities": null,
+    "image_url": "/assets/images/wikimedia/la_plage_de_sinai_a_grand_riviere_martinique_02.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-sinai-grandriviere-fr-1399532/"
+  },
+  {
+    "name": "Plage de l'Anse Azérot",
+    "address": "Sainte-Marie, Martinique",
+    "latitude": 14.77055,
+    "longitude": -60.97999,
+    "description": "Grande plage de Sainte-Marie. Sable : fin. Eau : azur. Mer : agitée et peut facilement devenir violente en cas de forte houle. Végétation : ombragée.",
+    "amenities": "Tables de pique-nique, douches",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-azerot-sainte-marie-fr-1399527/"
+  },
+  {
+    "name": "Plage de l'Anse Belleville",
+    "address": "Le Prêcheur, Martinique",
+    "latitude": 14.81919,
+    "longitude": -61.22858,
+    "description": "Petite crique du Prêcheur. Sable : gros rochers, petite bande sablonneuse. Eau : cristalline. Mer : rapidement profonde, houle parfois, fort dénivelé des fonds. Végétation : raisiniers, cocotiers.",
+    "amenities": null,
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-belleville-le-precheur-fr-1398550/"
+  },
+  {
+    "name": "Plage de l'Anse Caffard",
+    "address": "Le Diamant, Martinique",
+    "latitude": 14.46927,
+    "longitude": -61.0457,
+    "description": "Petite plage du Diamant. Sable : fin. Eau : bleue. Mer : agitée, fort courant. Végétation : ombragée.",
+    "amenities": null,
+    "image_url": "/assets/images/wikimedia/memorial_erige_a_l_anse_caffard_le_diamant_martinique_concep.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-caffard-le-diamant-fr-1398649/"
+  },
+  {
+    "name": "Plage de l'Anse Caritan 1",
+    "address": "Sainte-Anne, Martinique",
+    "latitude": 14.4237,
+    "longitude": -60.88921,
+    "description": "Grande plage de Sainte-Anne. Sable : fin. Eau : turquoise. Mer : calme. Végétation : ombragée. Sous l'eau : snorkeling.",
+    "amenities": "Tables",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-caritan-1-sainte-anne-fr-1399442/"
+  },
+  {
+    "name": "Plage de l'Anse Caritan 2",
+    "address": "Sainte-Anne, Martinique",
+    "latitude": 14.42442,
+    "longitude": -60.88857,
+    "description": "Grande plage de Sainte-Anne. Sable : fin. Eau : turquoise. Mer : calme. Végétation : ombragée. Sous l'eau : snorkeling.",
+    "amenities": "Tables",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-caritan-2-sainte-anne-fr-3015903/"
+  },
+  {
+    "name": "Plage de l'Anse Charpentier",
+    "address": "Sainte-Marie, Martinique",
+    "latitude": 14.80961,
+    "longitude": -61.01831,
+    "description": "Petite plage de Sainte-Marie. Sable : gris. Eau : bleu foncé. Mer : agitée avec de forts courants (baignade interdite). Végétation : peu ombragée.",
+    "amenities": null,
+    "image_url": "/assets/images/wikimedia/anse_charpentier_sainte_marie_martinique_01.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-charpentier-sainte-marie-fr-1399530/"
+  },
+  {
+    "name": "Plage de l'Anse Cosmy",
+    "address": "La Trinité, Martinique",
+    "latitude": 14.75827,
+    "longitude": -60.96723,
+    "description": "Grande plage de La Trinité. Sable : fin. Eau : turquoise. Mer : calme. Végétation : peu ombragée. Sous l'eau : snorkeling surtout pour la flore (gorgones).",
+    "amenities": null,
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-cosmy-la-trinite-fr-1399526/"
+  },
+  {
+    "name": "Plage de l'Anse Désert",
+    "address": "Sainte-Luce, Martinique",
+    "latitude": 14.46685,
+    "longitude": -60.95163,
+    "description": "Petite plage de Sainte-Luce. Sable : fin. Eau : turquoise. Mer : calme mais avec courants, plaques de roches. Végétation : ombragée.",
+    "amenities": "Table de pique nique",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-desert-sainte-luce-fr-1398657/"
+  },
+  {
+    "name": "Plage de l'Anse Figuier",
+    "address": "Rivière-Pilote, Martinique",
+    "latitude": 14.46022,
+    "longitude": -60.90993,
+    "description": "Plage de Rivière-Pilote, de taille moyenne. Sable : fin. Eau : turquoise. Mer : calme. Végétation : cocotiers. Sous l'eau : snorkeling.",
+    "amenities": "Parking, kiosques",
+    "image_url": "/assets/images/wikimedia/anse_figuier.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-figuier-riviere-pilote-fr-1399422/"
+  },
+  {
+    "name": "Plage de l'Anse Grosse Roche",
+    "address": "Le Vauclin, Martinique",
+    "latitude": 14.48434,
+    "longitude": -60.81354,
+    "description": "Plage du Vauclin, de taille moyenne. Sable : fin. Eau : turquoise. Mer : agitée. Végétation : large bande de cocotiers (attention risque de chute de noix de coco !).",
+    "amenities": null,
+    "image_url": "/assets/images/wikimedia/anse_grosse_roche_le_marin.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-grosse-roche-le-vauclin-fr-1399485/"
+  },
+  {
+    "name": "Plage de l'Anse Latouche",
+    "address": "Le Carbet, Martinique",
+    "latitude": 14.73208,
+    "longitude": -61.17933,
+    "description": "Petite plage du Carbet. Sable : noir volcanique. Eau : cristalline. Mer : courant. Végétation : peu ombragé. Sous l'eau : snorkeling pour bon nageur, épaves l'éruption de la Montagne Pelée.",
+    "amenities": "Parking",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-latouche-le-carbet-fr-1398563/"
+  },
+  {
+    "name": "Plage de l'Anse Mabouya",
+    "address": "Sainte-Luce, Martinique",
+    "latitude": 14.46801,
+    "longitude": -60.95755,
+    "description": "Anse de Sainte-Luce. Sable : fin. Eau : turquoise. Mer : calme. Végétation : ombragée, cocotiers.",
+    "amenities": "Toilettes, douches, activités nautiques",
+    "image_url": "/assets/images/wikimedia/anse_mabouya_vue_cote_sud.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-mabouya-sainte-luce-fr-1399409/"
+  },
+  {
+    "name": "Plage de l'Anse Madame",
+    "address": "Schœlcher, Martinique",
+    "latitude": 14.61723,
+    "longitude": -61.10356,
+    "description": "Plage de Schœlcher. Sable : gris. Qualité de l'eau : moyenne. Mer : calme. Végétation : très peu ombragée, quelques cocotiers.",
+    "amenities": "Esplanade de jeux pour enfants, parcours de santé",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-madame-schoelcher-fr-1398598/"
+  },
+  {
+    "name": "Plage de l'Anse Meunier",
+    "address": "Sainte-Anne, Martinique",
+    "latitude": 14.41501,
+    "longitude": -60.88657,
+    "description": "Grande plage de Sainte-Anne. Sable : fin. Eau : turquoise. Mer : calme. Végétation : ombragé. Sous l'eau : snorkeling.",
+    "amenities": "Parking",
+    "image_url": "/assets/images/wikimedia/anse_meunier_1_etang_des_salines_martinique.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-meunier-sainte-anne-fr-1399448/"
+  },
+  {
+    "name": "Plage de l'Anse Tamarinier",
+    "address": "Le Prêcheur, Martinique",
+    "latitude": 14.83193,
+    "longitude": -61.22609,
+    "description": "Plage sauvage du Prêcheur. Sable : noir volcanique. Eau : cristalline. Mer : rapidement profonde, houle parfois, fort dénivelé des fonds. Végétation : ombragée, boisée. Sous l'eau : snorkeling pour les bons nageurs.",
+    "amenities": "Parking, tables",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-tamarinier-le-precheur-fr-1398546/"
+  },
+  {
+    "name": "Plage de l'Anse Tonnoir",
+    "address": "Sainte-Anne, Martinique",
+    "latitude": 14.4339,
+    "longitude": -60.88212,
+    "description": "Petite plage de Sainte-Anne. Sable : fin. Eau : turquoise. Mer : calme. Sous l'eau : snorkeling.",
+    "amenities": null,
+    "image_url": "/assets/images/wikimedia/plage_de_sainte_anne.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-tonnoir-sainte-anne-fr-1399439/"
+  },
+  {
+    "name": "Plage de l'Anse Trabaud",
+    "address": "Sainte-Anne, Martinique",
+    "latitude": 14.4133,
+    "longitude": -60.84682,
+    "description": "Grande plage de Sainte-Anne. Sable : fin. Eau : turquoise. Mer : peu agitée. Végétation : ombragée.",
+    "amenities": "Bodyboard",
+    "image_url": "/assets/images/wikimedia/anse_trabaud.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-trabaud-sainte-anne-fr-1399470/"
+  },
+  {
+    "name": "Plage de l'Anse Turin",
+    "address": "Le Carbet, Martinique",
+    "latitude": 14.7286,
+    "longitude": -61.1801,
+    "description": "Plage familiale du Carbet, très fréquentée le week-end. Sable : gris volcanique. Eau : cristalline. Mer : un peu de courant, eau profonde rapidement. Végétation : peu ombragée (uniquement en lisère de plage).",
+    "amenities": "Parking, douches, sanitaires, restaurants, marchands ambulants",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-turin-le-carbet-fr-1398560/"
+  },
+  {
+    "name": "Plage de l'Anse l'Etang",
+    "address": "La Trinité, Martinique",
+    "latitude": 14.76621,
+    "longitude": -60.90525,
+    "description": "Plage de La Trinité, de taille moyenne. Sable : fin. Eau : bleu azur. Mer : vagues. Végétation : ombragée par de nombreux cocotiers et raisiniers.",
+    "amenities": "Parking, tables, bancs, poste de surveillance",
+    "image_url": "/assets/images/wikimedia/anse_l_etang_panoramio.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-lanse-letang-la-trinite-fr-1399514/"
+  },
+  {
+    "name": "Plage de l'Autre Bord",
+    "address": "La Trinité, Martinique",
+    "latitude": 14.74397,
+    "longitude": -60.95279,
+    "description": "Plage de La Trinité, de taille moyenne. Sable : fin. Eau : azur. Mer : calme, peu profonde. Végétation : peu ombragée.",
+    "amenities": null,
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-lautre-bord-la-trinite-fr-1399521/"
+  },
+  {
+    "name": "Plage de la Brêche",
+    "address": "La Trinité, Martinique",
+    "latitude": 14.76374,
+    "longitude": -60.91121,
+    "description": "Plage de La Trinité, de taille moyenne. Sable : fin. Eau : azur. Mer : calme. Végétation : ombragée. Sous l'eau : snorkeling.",
+    "amenities": "Tables, deck facilitant l'accès aux fauteuils roulants",
+    "image_url": "/assets/images/wikimedia/la_breche.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-la-breche-la-trinite-fr-1399516/"
+  },
+  {
+    "name": "Plage de la Chery",
+    "address": "Le Diamant, Martinique",
+    "latitude": 14.47423,
+    "longitude": -61.00794,
+    "description": "Petite plage du Diamant. Sable : fin. Eau : turquoise. Mer : calme. Végétation : ombragée.",
+    "amenities": null,
+    "image_url": "/assets/images/wikimedia/diamond_rock_and_morne_larcher_bay.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-la-chery-le-diamant-fr-1398655/"
+  },
+  {
+    "name": "Plage de la Paillote",
+    "address": "Saint-Pierre, Martinique",
+    "latitude": 14.74667,
+    "longitude": -61.17754,
+    "description": "Plage de Saint-Pierre. Sable : noir volcanique, un peu caillouteux. Eau : cristalline. Mer : peu agitée. Végétation : peu ombragée. Sous l'eau : épaves datant de 1902.",
+    "amenities": "Parking, ponton bateau, départ des navettes pour Fort de France, la Dominique et la Guadeloupe",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-la-paillote-saint-pierre-fr-1398557/"
+  },
+  {
+    "name": "Plage de la Pointe Borgnèse",
+    "address": "Le Marin, Martinique",
+    "latitude": 14.45337,
+    "longitude": -60.90243,
+    "description": "Petite plage du Marin. Sable : fin. Eau : turquoise. Mer : calme. Végétation : peu ombragée. Sous l'eau : masque et tuba (Snorkeling).",
+    "amenities": null,
+    "image_url": "/assets/images/wikimedia/pointe_borgnese.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-la-pointe-borgnese-le-marin-fr-1399425/"
+  },
+  {
+    "name": "Plage de la Pointe Chaudière",
+    "address": "Le Vauclin, Martinique",
+    "latitude": 14.57642,
+    "longitude": -60.84784,
+    "description": "Petite plage du Vauclin. Sable : galets. Eau : turquoise, émeraude. Mer : calme. Végétation : peu ombragée. Sous l'eau : épave du bateau « le Mississipi » (on peut apercevoir la cheminée quand le temps et la marée s'y prêtent).",
+    "amenities": null,
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-la-pointe-chaudiere-le-vauclin-fr-1399494/"
+  },
+  {
+    "name": "Plage de la Pointe Faula",
+    "address": "Le Vauclin, Martinique",
+    "latitude": 14.54157,
+    "longitude": -60.82817,
+    "description": "Petite plage du Vauclin. Sable : fin, herbe. Eau : turquoise. Mer : calme, vent, peu profonde.",
+    "amenities": "Tables, club nautique (kite surf, planche à voile etc…), loueur de vélos",
+    "image_url": "/assets/images/wikimedia/plage_de_pointe_faula.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-la-pointe-faula-le-vauclin-fr-1399491/"
+  },
+  {
+    "name": "Plage de la Pointe Marin",
+    "address": "Sainte-Anne, Martinique",
+    "latitude": 14.44406,
+    "longitude": -60.8819,
+    "description": "Grande plage de Sainte-Anne. Sable : fin. Eau : turquoise. Mer : calme (idéale pour les jeunes enfants). Végétation : ombragée. Sous l'eau : snorkeling.",
+    "amenities": "Plage sous surveillance, parking",
+    "image_url": "/assets/images/wikimedia/pointe_marin_sainte_anne_martinique.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-de-la-pointe-marin-sainte-anne-fr-2791813/"
+  },
+  {
+    "name": "Plage de la Pointe du Bout",
+    "address": "Les Trois-Îlets, Martinique",
+    "latitude": 14.55983,
+    "longitude": -61.05279,
+    "description": "Plage des Trois-Îlets, en plusieurs petites anses. Sable : fin. Eau : turquoise. Mer : calme, peu profonde (parfait pour les jeunes enfants). Végétation : ombragée. Sous l'eau : snorkeling.",
+    "amenities": "Navette venant de Fort-de-France, parking",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-la-pointe-du-bout-les-trois-ilets-fr-1398610/"
+  },
+  {
+    "name": "Plage de la Pointe la Rose - Baie Coco",
+    "address": "Le Robert, Martinique",
+    "latitude": 14.65133,
+    "longitude": -60.8917,
+    "description": "Petite plage du Robert. Sable : galets. Mer : calme, peu profonde. Sous l'eau : snorkeling.",
+    "amenities": "Loueur de kayaks",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-de-la-pointe-la-rose-baie-coco-le-robert-fr-1399497/"
+  },
+  {
+    "name": "Plage des Petites Salines",
+    "address": "Sainte-Anne, Martinique",
+    "latitude": 14.40929,
+    "longitude": -60.8858,
+    "description": "Plage de Sainte-Anne, de taille moyenne. Sable : fin. Eau : turquoise. Mer : calme. Végétation : ombragée. Sous l'eau : snorkeling.",
+    "amenities": null,
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-des-petites-salines-sainte-anne-fr-1399451/"
+  },
+  {
+    "name": "Plage des Raisiniers",
+    "address": "La Trinité, Martinique",
+    "latitude": 14.73623,
+    "longitude": -60.9567,
+    "description": "Plage de La Trinité, de taille moyenne. Sable : fin. Eau : azur. Mer : calme. Végétation : ombragée.",
+    "amenities": "Idéale pour le sport (aquagym, footing)",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-des-raisiniers-la-trinite-fr-1399523/"
+  },
+  {
+    "name": "Plage du Bakoua",
+    "address": "Les Trois-Îlets, Martinique",
+    "latitude": 14.55733,
+    "longitude": -61.05379,
+    "description": "Petite crique des Trois-Îlets. Sable : fin. Eau : turquoise. Mer : calme, peu profonde (parfait pour les jeunes enfants). Sous l'eau : snorkeling.",
+    "amenities": "Bar sur pilotis, transats, parasols, parking",
+    "image_url": "/assets/images/wikimedia/pointe_du_bout.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-du-bakoua-les-trois-ilets-fr-1398618/"
+  },
+  {
+    "name": "Plage du Bourg (Bellefontaine)",
+    "address": "Bellefontaine, Martinique",
+    "latitude": 14.6732,
+    "longitude": -61.16511,
+    "description": "Petite plage de Bellefontaine. Sable : gris volcanique, gros galets. Eau : cristalline. Mer : calme. Végétation : très peu ombragée.",
+    "amenities": "Ponton",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-du-bourg-bellefontaine-bellefontaine-fr-1398568/"
+  },
+  {
+    "name": "Plage du Bourg (Case Pilote)",
+    "address": "Case-Pilote, Martinique",
+    "latitude": 14.64192,
+    "longitude": -61.13879,
+    "description": "Petite plage de Case-Pilote. Sable : gris volcanique. Eau : cristalline. Mer : calme. Végétation : très peu ombragée.",
+    "amenities": "Ponton",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-du-bourg-case-pilote-case-pilote-fr-1398579/"
+  },
+  {
+    "name": "Plage du Bourg (Les Anses-d'Arlet)",
+    "address": "Les Anses-d'Arlet, Martinique",
+    "latitude": 14.4905,
+    "longitude": -61.08046,
+    "description": "Grande plage des Anses-d'Arlet. Sable : fin et blond. Eau : turquoise. Mer : calme. Végétation : ombragée grâce à quelques cocotiers. Sous l'eau : snorkeling.",
+    "amenities": "Ponton",
+    "image_url": "/assets/images/wikimedia/anses_d_arlet_churchside_beach.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-du-bourg-les-anses-darlet-les-anses-darlet-fr-1398640/"
+  },
+  {
+    "name": "Plage du Bourg (Sainte-Marie)",
+    "address": "Sainte-Marie, Martinique",
+    "latitude": 14.7859,
+    "longitude": -60.99471,
+    "description": "Grande plage de Sainte-Marie. Sable : gris. Eau : bleu foncé. Mer : agitée avec de forts courants (baignade interdite).",
+    "amenities": null,
+    "image_url": "/assets/images/wikimedia/tombolo_de_sainte_marie_martinique.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-du-bourg-sainte-marie-sainte-marie-fr-1399529/"
+  },
+  {
+    "name": "Plage du Bourg de Tartane",
+    "address": "La Trinité, Martinique",
+    "latitude": 14.75833,
+    "longitude": -60.92095,
+    "description": "Petite plage de La Trinité. Sable : fin. Eau : azur. Mer : calme. Végétation : peu ombragée.",
+    "amenities": "Ponton",
+    "image_url": "/assets/images/wikimedia/plage_de_tartane_martinique.jpg",
+    "source": "https://www.martinique-tour.com/offres/plage-du-bourg-de-tartane-la-trinite-fr-1399519/"
+  },
+  {
+    "name": "Plage du Cap Ferré",
+    "address": "Sainte-Anne, Martinique",
+    "latitude": 14.46265,
+    "longitude": -60.81533,
+    "description": "Plage de Sainte-Anne, de taille moyenne. Sable : fin. Eau : turquoise. Mer : agitée. Végétation : ombragée.",
+    "amenities": null,
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-du-cap-ferre-sainte-anne-fr-1399475/"
+  },
+  {
+    "name": "Plage du Lido Anse Collat",
+    "address": "Schœlcher, Martinique",
+    "latitude": 14.62184,
+    "longitude": -61.10757,
+    "description": "Petite plage de Schœlcher. Sable : gris. Qualité de l'eau : moyenne. Mer : calme. Végétation : cocotiers.",
+    "amenities": null,
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-du-lido-anse-collat-schoelcher-fr-1398596/"
+  },
+  {
+    "name": "Plage du Marouba (Grand anse Le coin Sud)",
+    "address": "Le Carbet, Martinique",
+    "latitude": 14.6963,
+    "longitude": -61.17997,
+    "description": "Plage du Carbet, de taille moyenne. Sable : noir volcanique, gros galets. Eau : cristalline. Mer : rapidement profonde, courants, fort dénivelé des fonds. Végétation : très peu ombragée.",
+    "amenities": "Parking, restaurants, bars, ponton",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-du-marouba-grande-anse-le-coin-sud-le-carbet-fr-1398567/"
+  },
+  {
+    "name": "Plage du Vétiver",
+    "address": "Case-Pilote, Martinique",
+    "latitude": 14.63339,
+    "longitude": -61.13045,
+    "description": "Petite plage de Case-Pilote. Sable : une partie en galets et une autre partie un peu plus sableuse. Eau : cristalline. Mer : calme. Végétation : très peu ombragée. Sous l'eau : snorkeling, pêche sous marine.",
+    "amenities": "Parking",
+    "image_url": null,
+    "source": "https://www.martinique-tour.com/offres/plage-du-vetiver-case-pilote-fr-1398587/"
+  }
+]
