@@ -143,6 +143,34 @@ def test_fetch_matrix_convertit_les_unites(monkeypatch):
                        "distances_km": [[0, 9.8], [None, 0]]}
 
 
+def test_fetch_matrix_par_blocs(monkeypatch):
+    """Au-delà de MAX_SOURCES points, les lignes arrivent en plusieurs requêtes, dans l'ordre."""
+    appels = []
+
+    def faux_get(url, params, **kw):
+        sources = [int(i) for i in params["sources"].split(";")]
+        appels.append(sources)
+
+        class Reponse:
+            def raise_for_status(self):
+                pass
+
+            def json(self):
+                # Chaque case vaut le numéro de la ligne : on vérifie l'ordre des blocs
+                return {"code": "Ok", "durations": [[60.0 * s] * 3 for s in sources],
+                        "distances": [[1000.0 * s] * 3 for s in sources]}
+        return Reponse()
+
+    monkeypatch.setattr(trajets_service, "MAX_SOURCES", 2)
+    monkeypatch.setattr(trajets_service, "PAUSE_SECONDS", 0)
+    monkeypatch.setattr(trajets_service.httpx, "get", faux_get)
+    points = [{"id": i, "latitude": 14.7, "longitude": -61.1} for i in range(3)]
+    matrice = trajets_service.fetch_matrix(points)
+    assert appels == [[0, 1], [2]]
+    assert matrice["durations_min"] == [[0, 0, 0], [1, 1, 1], [2, 2, 2]]
+    assert matrice["distances_km"] == [[0, 0, 0], [1.0, 1.0, 1.0], [2.0, 2.0, 2.0]]
+
+
 def test_refresh_trajets_appelle_le_serveur_seulement_si_besoin(monkeypatch):
     """Pas de nouvel appel tant que les activités n'ont pas bougé et que la matrice est récente."""
     appels = []
