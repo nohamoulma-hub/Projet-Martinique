@@ -1288,3 +1288,92 @@ Fichier partagé `js/meteo-utils.js` (icônes SVG, niveaux, appels), sur le mod�
 - La première collecte des nuages prend quelques minutes après un démarrage à froid ;
   les routes répondent 503 en attendant, et les pages l'indiquent.
 - Les photos Wikimedia des plages restent sans crédit affiché, comme sur le reste du site.
+
+## 2026-10-09 - Carte de localisation, positions corrigées et activités à proximité
+
+### Construit
+
+- **Catalogue** : toute la vignette est cliquable. Le lien « Voir le détail » s'étend à la
+  carte entière par un pseudo-élément, sans imbriquer de liens ; au clavier, la vignette
+  s'entoure quand le lien a le focus.
+- **Fiche activité, section Localisation** : carte Leaflet sur le même fond satellite que
+  la page Météo (Sentinel-2 d'EOX), épingle à la couleur de la catégorie, zoom 9 à 15
+  (au-delà, l'image à 10 m par pixel n'est plus nette). Remplace l'ancien encart figé.
+- **À proximité** : les 3 activités les plus proches en temps de trajet en voiture, avec
+  photo, commune, durée et distance par la route. Nouvelle route
+  `GET /api/activites/{id}/proximite?limite=3` et service `trajets_service`.
+
+### Décisions
+
+- **Positions relevées dans OpenStreetMap.** La carte a montré Anse Céron en pleine forêt,
+  à 4,8 km de sa plage. Comparaison faite pour les 40 activités : rhumeries et restaurants
+  (venus d'OSM) étaient justes ; les 9 plages et 7 randonnées, saisies de mémoire,
+  avaient jusqu'à 5 km d'écart. Plages : objet « plage » d'OSM. Randonnées : le départ du
+  sentier (parking officiel ou début du chemin balisé), là où le voyageur se rend.
+- **Choix à signaler** : « Anse Tartane » placée sur la plage des Surfeurs (quartier de
+  l'Anse Bonneville), la seule plage de Tartane qui colle à la description (côte
+  atlantique, surf). Pitons du Carbet : départ de Plateau Boucher, commune
+  Fonds-Saint-Denis (et non Carbet). Pelée : parking de l'Aileron, adresse laissée au
+  Morne-Rouge bien qu'OSM le place sur L'Ajoupa-Bouillon.
+- **Le script de peuplement met à jour les positions** des fiches existantes, comme il le
+  faisait déjà pour l'adresse et la description.
+- **Temps de trajet par OSRM de la FOSSGIS** (routing.openstreetmap.de), gratuit et sans
+  clé : toute la matrice 40 × 40 tient en une requête. Conditions respectées : agent
+  utilisateur explicite, source citée avec un lien « Signaler une erreur de carte », pas
+  d'usage intensif. La collecte vérifie chaque heure mais n'appelle le serveur que si une
+  activité a été ajoutée ou déplacée, ou si la matrice a plus de 7 jours.
+- **Repli** : sans matrice à jour pour un couple d'activités, la distance s'affiche à vol
+  d'oiseau, sans durée, et la page le dit. Sous 500 m, « À quelques pas » remplace le
+  temps en voiture (Anse Noire et Anse Dufour, Refuge et parking de l'Aileron).
+- **Tri par temps de route** et non par distance : une baie à traverser ou une route de
+  montagne rendent la distance à vol d'oiseau trompeuse.
+
+### Tests
+
+8 tests ajoutés, 120 au total : activité inconnue, repli sans matrice, limite, tri par
+temps de route, activité déplacée depuis le calcul, route inexistante, conversion des
+unités, déclenchement du recalcul.
+
+### Limites connues
+
+- Temps estimés hors embouteillages, d'un parking ou d'une entrée à l'autre.
+
+Les autres points relevés ce jour-là sont traités dans l'entrée du 12/10/2026.
+
+## 2026-10-12 - Photos en local, plage moins exposée en temps de route, sources citées
+
+### Construit
+
+- **Photos servies par le site.** Les 41 photos Wikimedia Commons (couvertures, galeries
+  des rhumeries, deux rubriques de l'accueil) sont copiées dans
+  `frontend/assets/images/wikimedia/`. Chargées chez Wikimedia, elles étaient refusées
+  (erreur 429) dès que le débit montait, et une URL avait déjà changé une fois. Plus aucune
+  URL distante en base ni dans le frontend ; `verifier_photos.py` ne trouve plus rien à tester.
+- **Plage moins exposée en temps de route** sur la carte sargasses de la fiche plage : la
+  route de proximité accepte un filtre `categorie`, et la fiche prend la première plage
+  moins exposée dans l'ordre du temps de trajet. Sous 500 m : « à quelques pas ».
+- **Description du Sentier des Caps** : « vue sur Sainte-Lucie », et non « les Saintes et
+  la Dominique », invisibles depuis Sainte-Anne.
+- **Pieds de page** de l'accueil et du catalogue : ils citaient Météo France, qui n'est
+  utilisé nulle part. Ils citent désormais les vraies sources de chaque page.
+
+### Décisions
+
+- **Vignettes de 1280 px**, fournies par l'API de Commons avec l'auteur et la licence de
+  chaque fichier, téléchargées une par une, espacées, avec un agent utilisateur explicite.
+  Réduites à 1600 px au plus (limite du projet), chaque fichier décodé en entier après coup :
+  un téléchargement tronqué (47 Ko sur 94) est passé inaperçu à la simple vérification
+  d'en-tête, d'où ce contrôle.
+- **Crédits complétés** dans `CREDITS_PHOTOS.md` : les 28 crédits des rhumeries concordent
+  avec Commons, les 13 photos des plages, randonnées et de l'accueil y sont ajoutées.
+- **Le script de peuplement met à jour la photo** des fiches existantes quand il en donne une
+  (les rhumeries), comme il le fait pour l'adresse et la position.
+
+### Tests
+
+1 test ajouté, 121 au total : filtre par catégorie de la route de proximité.
+
+### Reste ouvert
+
+- Les crédits photos ne sont toujours visibles que dans le dépôt : les licences CC BY et
+  CC BY-SA demandent une mention accessible depuis le site avant la mise en ligne.
