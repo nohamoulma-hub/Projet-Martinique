@@ -2,6 +2,7 @@
 Script de peuplement de la base de données avec des données réalistes de Martinique.
 Lancer depuis le dossier backend/ avec : python scripts/seed.py
 """
+import json
 import sys
 import os
 
@@ -142,7 +143,7 @@ BEACHES = [
     },
     {
         "poi": {
-            "name": "Anse Tartane",
+            "name": "Plage de l'Anse Bonneville",
             "category": Category.BEACH,
             "description": (
                 "Plage sur la côte atlantique de la presqu'île de la Caravelle. "
@@ -201,6 +202,43 @@ BEACHES = [
         },
     },
 ]
+
+
+def plages_martinique_tour():
+    """Plages relevées sur martinique-tour.com (site de l'office de tourisme) le 12/10/2026.
+
+    Position et commune viennent des données de chaque fiche, vérifiées contre le trait de
+    côte d'OpenStreetMap. La description reprend les faits de la fiche (sable, eau, mer...),
+    pas son texte. La fréquentation n'y figure pas : 0 signifie « non renseignée ».
+    """
+    chemin = os.path.join(os.path.dirname(os.path.abspath(__file__)), "plages_martinique_tour.json")
+    with open(chemin, encoding="utf-8") as fichier:
+        plages = json.load(fichier)
+    return [
+        {
+            "poi": {
+                "name": p["name"],
+                "category": Category.BEACH,
+                "description": p["description"],
+                "latitude": p["latitude"],
+                "longitude": p["longitude"],
+                "address": p["address"],
+                # Acces libre
+                "price_eur": 0,
+                "image_url": p["image_url"],
+            },
+            "details": {"tourist_score": 0, "amenities": p["amenities"]},
+        }
+        for p in plages
+    ]
+
+
+BEACHES += plages_martinique_tour()
+
+# Ancien nom -> nouveau. La fiche est renommée et non recréée : elle garde son id, donc
+# sa place dans les projets de voyage. "Anse Tartane" était en fait l'Anse Bonneville,
+# la plage de surf ; la plage du bourg de Tartane est une autre fiche.
+RENOMMAGES = {"Anse Tartane": "Plage de l'Anse Bonneville"}
 
 # Données des randonnées : vraies randonnées de Martinique. Le point est le départ
 # du sentier (parking ou début du chemin balisé, relevé dans OpenStreetMap le
@@ -960,6 +998,15 @@ def seed():
     db = SessionLocal()
     try:
         print("Peuplement de la base de données...")
+
+        # Renommages d'abord, sinon la fiche serait vue comme absente et recréée en double
+        for ancien, nouveau in RENOMMAGES.items():
+            poi = db.query(PointOfInterest).filter(PointOfInterest.name == ancien).first()
+            deja = db.query(PointOfInterest).filter(PointOfInterest.name == nouveau).first()
+            if poi and not deja:
+                poi.name = nouveau
+                print(f"  renommée : {ancien} -> {nouveau}")
+        db.flush()
 
         # Idempotence par fiche et non tout-ou-rien : l'ancienne version s'arretait des
         # que la table contenait une ligne, ce qui empechait d'ajouter une categorie
