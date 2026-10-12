@@ -86,6 +86,19 @@ class RestaurantDetailsRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class ActiviteProche(BaseModel):
+    """Activité voisine, avec la distance et le temps de trajet en voiture."""
+    id: int
+    name: str
+    category: Category
+    address: str | None = None
+    image_url: str | None = None
+    distance_km: float
+    # Absent tant que la matrice d'itinéraires n'est pas collectée : distance à vol d'oiseau
+    duree_min: int | None = None
+    par_la_route: bool
+
+
 class PointOfInterestDetail(PointOfInterestRead):
     """Détail complet : inclut les informations spécifiques à la catégorie."""
     beach_details: BeachDetailsRead | None = None
