@@ -132,18 +132,22 @@ function fillFicheCard(activite) {
 
   if (activite.category === 'beach' && activite.beach_details) {
     const bd = activite.beach_details;
-    const score = bd.tourist_score || 0;
+    // 0 = frequentation inconnue (plages relevees sur Martinique Tour, qui ne la donne pas)
+    const vide = '<span class="fiche-row-value fiche-vide">Non renseigné</span>';
+    const frequentation = bd.tourist_score
+      ? `<div class="score-inline">
+          <div class="score-dots-row">${buildDotsRow(bd.tourist_score)}</div>
+          <span style="font-size:11px;color:var(--doux);">${scoreLabel(bd.tourist_score)}</span>
+        </div>`
+      : vide;
     ficheBody.innerHTML = `
       <div class="fiche-row">
         <span class="fiche-row-label">Fréquentation</span>
-        <div class="score-inline">
-          <div class="score-dots-row">${buildDotsRow(score)}</div>
-          <span style="font-size:11px;color:var(--doux);">${scoreLabel(score)}</span>
-        </div>
+        ${frequentation}
       </div>
       <div class="fiche-row">
         <span class="fiche-row-label">Équipements</span>
-        <span class="fiche-row-value">${bd.amenities || '-'}</span>
+        ${bd.amenities ? `<span class="fiche-row-value">${bd.amenities}</span>` : vide}
       </div>
       <div class="fiche-row">
         <span class="fiche-row-label">Accès</span>
@@ -361,7 +365,7 @@ function fillAccessGrid(activite) {
 
   if (activite.category === 'beach' && activite.beach_details) {
     items.push({ icon: '📍', label: 'Commune', value: commune || '-' });
-    items.push({ icon: '🏖️', label: 'Équipements', value: activite.beach_details.amenities || '-' });
+    items.push({ icon: '🏖️', label: 'Équipements', value: activite.beach_details.amenities || 'Non renseigné' });
   } else if (activite.category === 'hike' && activite.hike_details) {
     items.push({ icon: '📍', label: 'Départ', value: commune || '-' });
     items.push({ icon: '🥾', label: 'Difficulté', value: activite.hike_details.difficulty || '-' });
@@ -619,7 +623,7 @@ async function loadSargassumCard(activite) {
   // Plage du catalogue moins exposée, la plus rapide à rejoindre en voiture : l'API
   // trie les plages par temps de route (à vol d'oiseau tant que les trajets manquent)
   if (sargassumRank(info.level) > 0) {
-    const beaches = await fetchApi(`/activites/${activite.id}/proximite?categorie=beach&limite=12`);
+    const beaches = await fetchApi(`/activites/${activite.id}/proximite?categorie=beach&limite=100`);
     const better = (beaches || [])
       .find((b) => data.beaches[b.id] && sargassumRank(data.beaches[b.id].level) < sargassumRank(info.level));
     if (better) {
